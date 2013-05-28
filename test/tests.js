@@ -1,5 +1,5 @@
 (function($){
-
+  module("resolved");
   asyncTest("recipe", function(){
     expect(19);
     recipe({
@@ -37,6 +37,24 @@
     });
   });
 
+  asyncTest("only libraries", function(){
+    expect(4);
+    recipe({
+      libraries: [
+        "fettuccine.alfredo"
+      ]
+    }).then(function(){
+      ok(recipe.version);
+      ok(recipe.dependencies);
+
+      ok(fettuccine.alfredo);
+
+      equal( $("script[src*='/fettuccine.alfredo.js']").length, 1);
+
+      start();
+    });
+  });
+
   asyncTest("only scripts", function(){
     expect(4);
     recipe({
@@ -51,6 +69,44 @@
 
       equal( $("script[src*='/miscellaneous.js']").length, 1);
 
+      start();
+    });
+  });
+
+  asyncTest("no dependencies", function(){
+    expect(2);
+    $.when(
+      recipe(),
+      recipe({}),
+      recipe({libraries:[],scripts:[]})
+    ).done(function(){
+      ok(recipe.version);
+      ok(recipe.dependencies);
+      start();
+    });
+  });
+
+  module("reject");
+  asyncTest("Ingredients not found", function(){
+    expect(1);
+    recipe({
+      libraries: [
+        "dragon.egg"
+      ]
+    }).fail(function(mes){
+      equal(mes, "Ingredients not found. namespace[dragon.egg]");
+      start();
+    });
+  });
+
+  asyncTest("Illegal URL were exists", function(){
+    expect(1);
+    recipe({
+      scripts: [
+        ""
+      ]
+    }).fail(function(mes){
+      equal(mes, "Illegal URL were exists. [\"\"]");
       start();
     });
   });

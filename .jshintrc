@@ -17,13 +17,17 @@
   "globals": {
     "head": true,
     "sinon": true,
+
     "test": true,
     "asyncTest": true,
     "expect": true,
+    "equal": true,
+    "start": true,
     "stop": true,
     "ok": true,
     "assert": true,
-    "recipe": true,
     "QUnit": true
+
+    "recipe": true,
   }
 }

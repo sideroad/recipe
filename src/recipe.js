@@ -20,8 +20,8 @@
       },
       recipe = function(options){
         var namespace,
-            libraries = options.libraries||[],
-            scripts = options.scripts||[],
+            libraries = (options||{}).libraries||[],
+            scripts = (options||{}).scripts||[],
             dependencies = recipe.dependencies,
             urls = [],
             args = [],
@@ -34,7 +34,8 @@
         for( i = 0, len = libraries.length; i<len; i++){
           deps = dependencies[libraries[i]];
           if(!deps) {
-            throw "Ingredients not found. namespace["+libraries[i]+"]";
+            dfd.reject("Ingredients not found. namespace["+libraries[i]+"]");
+            return dfd;
           }
           urls = urls.concat( deps );
         }
@@ -43,16 +44,20 @@
         for( i = 0, len = urls.length; i<len; i++){
           set = urls[i].split("#");
           if(!set[0]){
-            throw "Illegal URL were exists. ["+urls.join(", ")+"]";
+            dfd.reject("Illegal URL were exists. [\""+urls.join("\", \"")+"\"]");
+            return dfd;
           }
           args.push(set[0]+"?_="+recipe.version+(set[1]?"#"+set[1]:""));
         }
 
-        args.push(function(){
+        if(args.length) {
+          args.push(function(){
+            dfd.resolve();
+          });
+          head.js.apply(head, args);
+        } else {
           dfd.resolve();
-        });
-        head.js.apply(head, args);
-
+        }
         return dfd;
       },
       methods = {
