@@ -1,7 +1,8 @@
-(function(globals, localStorage, $, head){
+(function(globals, $, head){
 
   var base = '',
       method = '',
+      cache = {},
       dfd = {
         version: new $.Deferred(),
         dependencies: new $.Deferred()
@@ -22,7 +23,7 @@
             libraries = options.libraries||[],
             scripts = options.scripts||[],
             dependencies = recipe.dependencies,
-            urls = [].concat(scripts),
+            urls = [],
             args = [],
             dfd = new $.Deferred(),
             len,
@@ -38,8 +39,7 @@
           urls = urls.concat( deps );
         }
 
-        urls = uniq( urls.concat(options.scripts) );
-
+        urls = uniq( urls.concat(scripts) );
         for( i = 0, len = urls.length; i<len; i++){
           set = urls[i].split("#");
           if(!set[0]){
@@ -48,13 +48,10 @@
           args.push(set[0]+"?_="+recipe.version+(set[1]?"#"+set[1]:""));
         }
 
-        head.ready(function(){
+        args.push(function(){
           dfd.resolve();
         });
         head.js.apply(head, args);
-        if(!urls.length){
-          head.ready();
-        }
 
         return dfd;
       },
@@ -63,7 +60,7 @@
           var script = $("script[src$='/recipe.js'][data-menu]"),
               url = script.data("menu");
           
-          base = script.attr("src").replace(/\/recipe\.js$/, '');
+          base = url.replace(/[^\/]+$/, '');
           if(!url) {
             throw "You might forget to order because of menu was not founded.";
           }
@@ -98,12 +95,6 @@
               dfd.dependencies.resolve(recipe.dependencies);
             }
             return dfd.dependencies;
-          },
-          cache: function(){
-            var cache = {};
-            if(localStorage){
-
-            }
           }
         }
       };
@@ -114,4 +105,4 @@
 
   recipe.init();
   globals.recipe = recipe;
-})(this, this.localStorage, jQuery, head);
+})(this, jQuery, head);

@@ -13,7 +13,17 @@
   "es5": true,
   "jquery": true,
   "browser": true,
+  "qunit": true,
   "globals": {
-    "head": true
+    "head": true,
+    "sinon": true,
+    "test": true,
+    "asyncTest": true,
+    "expect": true,
+    "stop": true,
+    "ok": true,
+    "assert": true,
+    "recipe": true,
+    "QUnit": true
   }
 }
