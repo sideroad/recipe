@@ -1,0 +1,35 @@
+TAP version 13
+ok 1 - test/index.html - Safari missin menu: recipe
+ok 2 - test/index.html - Chrome init: get version
+ok 3 - test/index.html - Chrome init: get dependencies
+ok 4 - test/index.html - Chrome resolved: recipe
+ok 5 - test/index.html - Chrome resolved: only libraries
+ok 6 - test/index.html - Chrome resolved: only scripts
+ok 7 - test/index.html - Chrome resolved: no dependencies
+ok 8 - test/index.html - Chrome reject: Ingredients not found
+ok 9 - test/index.html - Chrome reject: Illegal URL were exists
+ok 10 - test/index.html - Firefox init: get version
+ok 11 - test/index.html - Firefox init: get dependencies
+ok 12 - test/index.html - Firefox resolved: recipe
+ok 13 - test/index.html - Firefox resolved: only libraries
+ok 14 - test/index.html - Firefox resolved: only scripts
+ok 15 - test/index.html - Firefox resolved: no dependencies
+ok 16 - test/index.html - Firefox reject: Ingredients not found
+ok 17 - test/index.html - Firefox reject: Illegal URL were exists
+ok 18 - test/index.html - PhantomJS init: get version
+ok 19 - test/index.html - PhantomJS init: get dependencies
+ok 20 - test/index.html - PhantomJS resolved: recipe
+ok 21 - test/index.html - PhantomJS resolved: only libraries
+ok 22 - test/index.html - PhantomJS resolved: only scripts
+ok 23 - test/index.html - PhantomJS resolved: no dependencies
+ok 24 - test/index.html - PhantomJS reject: Ingredients not found
+ok 25 - test/index.html - PhantomJS reject: Illegal URL were exists
+ok 26 - test/missing.menu.html - Safari missin menu: recipe
+ok 27 - test/missing.menu.html - Chrome missin menu: recipe
+ok 28 - test/missing.menu.html - Firefox missin menu: recipe
+ok 29 - test/missing.menu.html - PhantomJS missin menu: recipe
+
+1..29
+# tests 29
+# pass 29
+# fail 0

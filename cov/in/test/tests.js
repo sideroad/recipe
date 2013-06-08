@@ -19,10 +19,6 @@
     });
   });
 
-  test("get menu", function(){
-    equal( "fixture/recipe/menu.mock.js", recipe.get.menu());
-  });
-
   module("resolved");
   asyncTest("recipe", function(){
     expect(19);
@@ -35,7 +31,6 @@
         "fixture/scripts/miscellaneous.js"
       ]
     }).then(function(){
-      console.log("then");
       ok(recipe.version);
       ok(recipe.dependencies);
 
@@ -59,7 +54,7 @@
       equal( $("script[src*='/salt.js']").length, 1);
 
       start();
-    }).done();
+    });
   });
 
   asyncTest("only libraries", function(){

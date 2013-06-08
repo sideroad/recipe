@@ -62,16 +62,15 @@
       },
       methods = {
         init: function(){
-          var script = $("script[src$='/recipe.js'][data-menu]"),
-              url = script.data("menu");
+          var menu = recipe.get.menu();
           
-          base = url.replace(/[^\/]+$/, '');
-          if(!url) {
+          base = menu.replace(/[^\/]+$/, '');
+          if(!menu) {
             throw "You might forget to order because of menu was not founded.";
           }
           recipe.get.version().then(function(){
             recipe.get.dependencies().then(function(){
-              recipe.resolve(url);
+              recipe.resolve(menu);
             });
           });
 
@@ -81,6 +80,11 @@
           head.js(set[0]+"?_="+recipe.version+(set[1]?"#"+set[1]:""));
         },
         get: {
+          menu: function(){
+            var script = $("script[src$='/recipe.js'][data-menu]"),
+                url = script.data("menu")||"";
+            return url;
+          },
           version: function(){
             if( !recipe.version ) {
               head.js(base+'/recipe.version.js?_='+(new Date().getTime()), function(){
