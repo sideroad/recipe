@@ -8,5 +8,9 @@
     "components",
     "metrics",
     "cov"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sideroad/jquery.sidebar"
+  }
 }
