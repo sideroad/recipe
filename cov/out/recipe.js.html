@@ -51,7 +51,6 @@
 <div class="code hit">        var namespace,</div>
 <div class="code undef">            libraries = (options||{}).libraries||[],</div>
 <div class="code undef">            scripts = (options||{}).scripts||[],</div>
-<div class="code undef">            dependencies = recipe.dependencies,</div>
 <div class="code undef">            urls = [],</div>
 <div class="code undef">            args = [],</div>
 <div class="code undef">            dfd = new $.Deferred(),</div>
@@ -60,56 +59,63 @@
 <div class="code undef">            set,</div>
 <div class="code undef">            i;</div>
 <div class="code undef"></div>
-<div class="code hit">        for( i = 0, len = libraries.length; i&lt;len; i++){</div>
-<div class="code hit">          deps = dependencies[libraries[i]];</div>
-<div class="code hit">          if(!deps) {</div>
-<div class="code hit">            dfd.reject("Ingredients not found. namespace["+libraries[i]+"]");</div>
-<div class="code hit">            return dfd;</div>
-<div class="code undef">          }</div>
-<div class="code hit">          urls = urls.concat( deps );</div>
-<div class="code undef">        }</div>
+<div class="code hit">        recipe.get.version().then(function(version){</div>
+<div class="code hit">          recipe.get.dependencies().then(function(dependencies){</div>
+<div class="code hit">            for( i = 0, len = libraries.length; i&lt;len; i++){</div>
+<div class="code hit">              deps = dependencies[libraries[i]];</div>
+<div class="code hit">              if(!deps) {</div>
+<div class="code hit">                dfd.reject("Ingredients not found. namespace["+libraries[i]+"]");</div>
+<div class="code hit">                return dfd;</div>
+<div class="code undef">              }</div>
+<div class="code hit">              urls = urls.concat( deps );</div>
+<div class="code undef">            }</div>
 <div class="code undef"></div>
-<div class="code hit">        urls = uniq( urls.concat(scripts) );</div>
-<div class="code hit">        for( i = 0, len = urls.length; i&lt;len; i++){</div>
-<div class="code hit">          set = urls[i].split("#");</div>
-<div class="code hit">          if(!set[0]){</div>
-<div class="code hit">            dfd.reject("Illegal URL were exists. [\""+urls.join("\", \"")+"\"]");</div>
-<div class="code hit">            return dfd;</div>
-<div class="code undef">          }</div>
-<div class="code hit">          args.push(set[0]+"?_="+recipe.version+(set[1]?"#"+set[1]:""));</div>
-<div class="code undef">        }</div>
+<div class="code hit">            urls = uniq( urls.concat(scripts) );</div>
+<div class="code hit">            for( i = 0, len = urls.length; i&lt;len; i++){</div>
+<div class="code hit">              set = urls[i].split("#");</div>
+<div class="code hit">              if(!set[0]){</div>
+<div class="code hit">                dfd.reject("Illegal URL were exists. [\""+urls.join("\", \"")+"\"]");</div>
+<div class="code hit">                return dfd;</div>
+<div class="code undef">              }</div>
+<div class="code hit">              args.push(set[0]+"?_="+version+(set[1]?"#"+set[1]:""));</div>
+<div class="code undef">            }</div>
 <div class="code undef"></div>
-<div class="code hit">        if(args.length) {</div>
-<div class="code hit">          args.push(function(){</div>
-<div class="code hit">            dfd.resolve();</div>
+<div class="code hit">            if(args.length) {</div>
+<div class="code hit">              args.push(function(){</div>
+<div class="code hit">                dfd.resolve();</div>
+<div class="code undef">              });</div>
+<div class="code hit">              head.js.apply(head, args);</div>
+<div class="code undef">            } else {</div>
+<div class="code hit">              dfd.resolve();</div>
+<div class="code undef">            }</div>
+<div class="code undef"></div>
 <div class="code undef">          });</div>
-<div class="code hit">          head.js.apply(head, args);</div>
-<div class="code undef">        } else {</div>
-<div class="code hit">          dfd.resolve();</div>
-<div class="code undef">        }</div>
+<div class="code undef">        });</div>
 <div class="code hit">        return dfd;</div>
 <div class="code undef">      },</div>
 <div class="code undef">      methods = {</div>
 <div class="code undef">        init: function(){</div>
-<div class="code hit">          var script = $("script[src$='/recipe.js'][data-menu]"),</div>
-<div class="code undef">              url = script.data("menu")||"";</div>
+<div class="code hit">          var menu = recipe.get.menu();</div>
 <div class="code undef">          </div>
-<div class="code hit">          base = url.replace(/[^\/]+$/, '');</div>
-<div class="code hit">          if(!url) {</div>
-<div class="code hit">            throw new ReferenceError("You might forget to order because of menu was not founded.");</div>
+<div class="code hit">          base = menu.replace(/[^\/]+$/, '');</div>
+<div class="code hit">          if(!menu) {</div>
+<div class="code hit">            throw "You might forget to order because of menu was not founded.";</div>
 <div class="code undef">          }</div>
-<div class="code hit">          recipe.get.version().then(function(){</div>
-<div class="code hit">            recipe.get.dependencies().then(function(){</div>
-<div class="code hit">              recipe.resolve(url);</div>
-<div class="code undef">            });</div>
+<div class="code hit">          recipe.get.version().then(function(version){</div>
+<div class="code hit">            recipe.resolve(menu, version);</div>
 <div class="code undef">          });</div>
 <div class="code undef"></div>
 <div class="code undef">        },</div>
-<div class="code undef">        resolve: function(url){</div>
+<div class="code undef">        resolve: function(url, version){</div>
 <div class="code hit">          var set = url.split("#");</div>
-<div class="code hit">          head.js(set[0]+"?_="+recipe.version+(set[1]?"#"+set[1]:""));</div>
+<div class="code hit">          head.js(set[0]+"?_="+version+(set[1]?"#"+set[1]:""));</div>
 <div class="code undef">        },</div>
 <div class="code undef">        get: {</div>
+<div class="code undef">          menu: function(){</div>
+<div class="code hit">            var script = $("script[src$='/recipe.js'][data-menu]"),</div>
+<div class="code undef">                url = script.data("menu")||"";</div>
+<div class="code hit">            return url;</div>
+<div class="code undef">          },</div>
 <div class="code undef">          version: function(){</div>
 <div class="code hit">            if( !recipe.version ) {</div>
 <div class="code hit">              head.js(base+'/recipe.version.js?_='+(new Date().getTime()), function(){</div>
@@ -137,8 +143,8 @@
 <div class="code hit">    recipe[method] = methods[method];</div>
 <div class="code undef">  }</div>
 <div class="code undef"></div>
-<div class="code hit">  globals.recipe = recipe;</div>
 <div class="code hit">  recipe.init();</div>
+<div class="code hit">  globals.recipe = recipe;</div>
 <div class="code undef">})(this, jQuery, head);</div>
 
 

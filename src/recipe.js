@@ -22,7 +22,6 @@
         var namespace,
             libraries = (options||{}).libraries||[],
             scripts = (options||{}).scripts||[],
-            dependencies = recipe.dependencies,
             urls = [],
             args = [],
             dfd = new $.Deferred(),
@@ -31,33 +30,38 @@
             set,
             i;
 
-        for( i = 0, len = libraries.length; i<len; i++){
-          deps = dependencies[libraries[i]];
-          if(!deps) {
-            dfd.reject("Ingredients not found. namespace["+libraries[i]+"]");
-            return dfd;
-          }
-          urls = urls.concat( deps );
-        }
+        recipe.get.version().then(function(version){
+          recipe.get.dependencies().then(function(dependencies){
+            for( i = 0, len = libraries.length; i<len; i++){
+              deps = dependencies[libraries[i]];
+              if(!deps) {
+                dfd.reject("Ingredients not found. namespace["+libraries[i]+"]");
+                return dfd;
+              }
+              urls = urls.concat( deps );
+            }
 
-        urls = uniq( urls.concat(scripts) );
-        for( i = 0, len = urls.length; i<len; i++){
-          set = urls[i].split("#");
-          if(!set[0]){
-            dfd.reject("Illegal URL were exists. [\""+urls.join("\", \"")+"\"]");
-            return dfd;
-          }
-          args.push(set[0]+"?_="+recipe.version+(set[1]?"#"+set[1]:""));
-        }
+            urls = uniq( urls.concat(scripts) );
+            for( i = 0, len = urls.length; i<len; i++){
+              set = urls[i].split("#");
+              if(!set[0]){
+                dfd.reject("Illegal URL were exists. [\""+urls.join("\", \"")+"\"]");
+                return dfd;
+              }
+              args.push(set[0]+"?_="+version+(set[1]?"#"+set[1]:""));
+            }
 
-        if(args.length) {
-          args.push(function(){
-            dfd.resolve();
+            if(args.length) {
+              args.push(function(){
+                dfd.resolve();
+              });
+              head.js.apply(head, args);
+            } else {
+              dfd.resolve();
+            }
+
           });
-          head.js.apply(head, args);
-        } else {
-          dfd.resolve();
-        }
+        });
         return dfd;
       },
       methods = {
@@ -68,16 +72,14 @@
           if(!menu) {
             throw "You might forget to order because of menu was not founded.";
           }
-          recipe.get.version().then(function(){
-            recipe.get.dependencies().then(function(){
-              recipe.resolve(menu);
-            });
+          recipe.get.version().then(function(version){
+            recipe.resolve(menu, version);
           });
 
         },
-        resolve: function(url){
+        resolve: function(url, version){
           var set = url.split("#");
-          head.js(set[0]+"?_="+recipe.version+(set[1]?"#"+set[1]:""));
+          head.js(set[0]+"?_="+version+(set[1]?"#"+set[1]:""));
         },
         get: {
           menu: function(){

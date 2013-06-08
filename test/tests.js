@@ -56,7 +56,7 @@
       ok(acqua.pazza.consistOf[1]);
       ok(blah.blah.blah);
 
-      equal( $("script[src*='/salt.js']").length, 1);
+      equal( $("script[src*='/salt.js'][type='text/javascript']").length, 1);
 
       start();
     }).done();
@@ -74,7 +74,7 @@
 
       ok(fettuccine.alfredo);
 
-      equal( $("script[src*='/fettuccine.alfredo.js']").length, 1);
+      equal( $("script[src*='/fettuccine.alfredo.js'][type='text/javascript']").length, 1);
 
       start();
     });
@@ -92,7 +92,7 @@
 
       ok(blah.blah.blah);
 
-      equal( $("script[src*='/miscellaneous.js']").length, 1);
+      equal( $("script[src*='/miscellaneous.js'][type='text/javascript']").length, 1);
 
       start();
     });

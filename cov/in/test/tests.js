@@ -19,6 +19,10 @@
     });
   });
 
+  test("get menu", function(){
+    equal( "fixture/recipe/menu.mock.js", recipe.get.menu());
+  });
+
   module("resolved");
   asyncTest("recipe", function(){
     expect(19);
@@ -31,6 +35,7 @@
         "fixture/scripts/miscellaneous.js"
       ]
     }).then(function(){
+      console.log("then");
       ok(recipe.version);
       ok(recipe.dependencies);
 
@@ -51,10 +56,10 @@
       ok(acqua.pazza.consistOf[1]);
       ok(blah.blah.blah);
 
-      equal( $("script[src*='/salt.js']").length, 1);
+      equal( $("script[src*='/salt.js'][type='text/javascript']").length, 1);
 
       start();
-    });
+    }).done();
   });
 
   asyncTest("only libraries", function(){
@@ -69,7 +74,7 @@
 
       ok(fettuccine.alfredo);
 
-      equal( $("script[src*='/fettuccine.alfredo.js']").length, 1);
+      equal( $("script[src*='/fettuccine.alfredo.js'][type='text/javascript']").length, 1);
 
       start();
     });
@@ -87,7 +92,7 @@
 
       ok(blah.blah.blah);
 
-      equal( $("script[src*='/miscellaneous.js']").length, 1);
+      equal( $("script[src*='/miscellaneous.js'][type='text/javascript']").length, 1);
 
       start();
     });
