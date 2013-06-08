@@ -1,4 +1,12 @@
 /*!
+ * Recipe.js  Cook your javascript with recipe.js
+ * Author     sideroad
+ * License    MIT
+ *
+ * Version    0.1.0
+ * https://github.com/sideroad/recipe/
+ */
+/*!
  * HeadJS     The only script in your <HEAD>    
  * Author     Tero Piirainen  (tipiirai)
  * Maintainer Robert Hoffmann (itechnology)
