@@ -36,10 +36,18 @@ module.exports = function(grunt) {
     jshint: ['src/recipe.js'],
 
     testem: {
-      options: {
-        launch_in_ci: ['safari', 'chrome', 'firefox', 'PhantomJS']
-      },
       main: {
+        options: {
+          launch_in_ci: ['safari', 'chrome', 'firefox', 'PhantomJS']
+        },
+        files: {
+          'test/tests.tap': ['test/*.html']
+        }
+      },
+      cui: {
+        options: {
+          launch_in_ci: ['PhantomJS']
+        },
         files: {
           'test/tests.tap': ['test/*.html']
         }
@@ -62,20 +70,33 @@ module.exports = function(grunt) {
           'metrics': ['src/recipe.js']
         }
       }
+    },
+
+    watch: {
+      scripts: {
+        files: ['**/*.js'],
+        tasks: ['jshint', 'testem:cui'],
+        options: {
+          nospawn: true,
+        }
+      }
     }
   });
 
 
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-yui-compressor');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-devtools');
   grunt.loadNpmTasks('grunt-testem');
   grunt.loadNpmTasks('grunt-qunit-cov');
   grunt.loadNpmTasks('grunt-plato');
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', ['clean', 'concat', 'min', 'jshint', 'testem', 'qunit-cov', 'plato']);
-  grunt.registerTask('test', ['clean', 'testem', 'qunit-cov']);
+  grunt.registerTask('default', ['clean', 'concat', 'min', 'jshint', 'testem:main', 'qunit-cov', 'plato']);
+  grunt.registerTask('test', ['clean', 'testem:main', 'qunit-cov']);
+  grunt.registerTask('jenkins', ['clean', 'concat', 'min', 'jshint', 'testem:cui', 'qunit-cov', 'plato']);
 
 };
