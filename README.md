@@ -1,4 +1,5 @@
-# Cook your javascript with recipe.js
+# Cook your javascript with recipe.js[![Build Status](https://api.travis-ci.org/sideroad/recipe.png?branch=master)](https://travis-ci.org/sideroad/recipe)
+
 
 ## Overview
 
