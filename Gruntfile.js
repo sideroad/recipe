@@ -37,9 +37,6 @@ module.exports = function(grunt) {
 
     testem: {
       main: {
-        options: {
-          launch_in_ci: ['safari', 'chrome', 'firefox', 'PhantomJS']
-        },
         files: {
           'test/tests.tap': ['test/*.html']
         }
