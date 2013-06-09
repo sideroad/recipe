@@ -93,7 +93,7 @@ module.exports = function(grunt) {
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['clean', 'concat', 'min', 'jshint', 'testem:main', 'qunit-cov', 'plato']);
-  grunt.registerTask('test', ['clean', 'testem:main', 'qunit-cov']);
+  grunt.registerTask('test', ['clean', 'jshint', 'testem:cui', 'qunit-cov']);
   grunt.registerTask('jenkins', ['clean', 'concat', 'min', 'jshint', 'testem:cui', 'qunit-cov', 'plato']);
 
 };
