@@ -1,1 +1,1 @@
-var whitefish=!0;
+var whitefish=true;

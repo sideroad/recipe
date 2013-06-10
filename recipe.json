@@ -1,0 +1,56 @@
+{
+  "fettuccine.alfredo": {
+    "path": "test/fixture/libraries-src/fettuccine.alfredo.js",
+    "dest": "test/fixture/libraries",
+    "url": "../fixture/libraries/fettuccine.alfredo.js",
+    "dependencies": ["fettuccine", "butter", "parmigianoReggiano", "salt"]
+  },
+  "fettuccine": {
+    "path": "test/fixture/libraries-src/fettuccine.js",
+    "dest": "test/fixture/libraries",
+    "url": "../fixture/libraries/fettuccine.js",
+    "dependencies": []
+  },
+  "butter": {
+    "path": "test/fixture/libraries-src/butter.js",
+    "dest": "test/fixture/libraries",
+    "url": "../fixture/libraries/butter.js",
+    "dependencies": ["salt", "milk"]
+  },
+  "parmigianoReggiano": {
+    "path": "test/fixture/libraries-src/parmigianoReggiano.js",
+    "dest": "test/fixture/libraries",
+    "url": "../fixture/libraries/parmigianoReggiano.js",
+    "dependencies": ["salt", "milk"]
+  },
+  "salt": {
+    "path": "test/fixture/libraries-src/salt.js",
+    "dest": "test/fixture/libraries",
+    "url": "../fixture/libraries/salt.js",
+    "dependencies": []
+  },
+  "milk": {
+    "path": "test/fixture/libraries-src/milk.js",
+    "dest": "test/fixture/libraries",
+    "url": "../fixture/libraries/milk.js",
+    "dependencies": []
+  },
+  "pomodorini": {
+    "path": "test/fixture/libraries-src/pomodorini.js",
+    "dest": "test/fixture/libraries",
+    "url": "../fixture/libraries/pomodorini.js",
+    "dependencies": []
+  },
+  "whitefish": {
+    "path": "test/fixture/libraries-src/whitefish.js",
+    "dest": "test/fixture/libraries",
+    "url": "../fixture/libraries/whitefish.js",
+    "dependencies": []
+  },
+  "acqua.pazza": {
+    "path": "test/fixture/libraries-src/acqua.pazza.js",
+    "dest": "test/fixture/libraries",
+    "url": "../fixture/libraries/acqua.pazza.js",
+    "dependencies": ["pomodorini", "salt", "whitefish"]
+  }
+}

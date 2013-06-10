@@ -20,7 +20,7 @@
   });
 
   test("get menu", function(){
-    equal( "fixture/recipe/menu.mock.js", recipe.get.menu());
+    equal( "../fixture/recipe/menu.mock.js", recipe.get.menu());
   });
 
   module("resolved");
@@ -32,10 +32,9 @@
         "acqua.pazza"
       ],
       scripts: [
-        "fixture/scripts/miscellaneous.js"
+        "../fixture/scripts/miscellaneous.js"
       ]
     }).then(function(){
-      console.log("then");
       ok(recipe.version);
       ok(recipe.dependencies);
 
@@ -57,7 +56,6 @@
       ok(blah.blah.blah);
 
       equal( $("script[src*='/salt.js'][type='text/javascript']").length, 1);
-
       start();
     }).done();
   });
@@ -75,7 +73,6 @@
       ok(fettuccine.alfredo);
 
       equal( $("script[src*='/fettuccine.alfredo.js'][type='text/javascript']").length, 1);
-
       start();
     });
   });
@@ -84,7 +81,7 @@
     expect(4);
     recipe({
       scripts: [
-        "fixture/scripts/miscellaneous.js"
+        "../fixture/scripts/miscellaneous.js"
       ]
     }).then(function(){
       ok(recipe.version);
@@ -93,7 +90,6 @@
       ok(blah.blah.blah);
 
       equal( $("script[src*='/miscellaneous.js'][type='text/javascript']").length, 1);
-
       start();
     });
   });

@@ -1,1 +1,1 @@
-var fettuccine={},salt=!0,milk=!0,butter={consistOf:[this.salt,this.milk]},parmigianoReggiano={consistOf:[this.salt,this.milk]};fettuccine.alfredo=!0;
+var fettuccine={};var salt=true;var milk=true;var butter={consistOf:[this.salt,this.milk]};var parmigianoReggiano={consistOf:[this.salt,this.milk]};fettuccine.alfredo=true;

@@ -1,1 +1,1 @@
-var salt=!0;
+var salt=true;

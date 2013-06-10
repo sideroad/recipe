@@ -1,5 +1,5 @@
 (function($){
-  module("missin menu");
+  module("missing menu");
   var err;
 
   window.onerror=function(e){

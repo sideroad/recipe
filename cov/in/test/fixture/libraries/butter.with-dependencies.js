@@ -1,1 +1,1 @@
-var salt=!0,milk=!0,butter={consistOf:[this.salt,this.milk]};
+var salt=true;var milk=true;var butter={consistOf:[this.salt,this.milk]};

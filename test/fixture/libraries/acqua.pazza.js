@@ -1,1 +1,1 @@
-if(!acqua)var acqua={};acqua.pazza={consistOf:[this.pomodorini,this.whitefish]};
+if(!acqua){var acqua={}}acqua.pazza={consistOf:[this.pomodorini,this.whitefish]};

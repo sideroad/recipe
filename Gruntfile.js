@@ -5,20 +5,31 @@ module.exports = function(grunt) {
   grunt.initConfig({
     component: grunt.file.readJSON('component.json'),
 
-    clean: ['dist', 'test/tests.tap'],
+    clean: ['dist', 'test/tests.tap', 'test/fixture/libraries/*.js'],
 
-    concat: {
+    recipe: {
       options: {
-        banner:'/*!\n'+
-               ' * Recipe.js  Cook your javascript with recipe.js\n'+
-               ' * Author     sideroad\n'+
-               ' * License    MIT\n'+
-               ' *\n'+
-               ' * Version    <%= component.version %>\n'+
-               ' * https://github.com/sideroad/recipe/\n'+
-               ' */\n'
+        min: 'min'
       },
       main: {
+        files: {
+          'test/fixture/recipe': ['recipe.json']
+        }
+      }
+    },
+
+    concat: {
+      main: {
+        options: {
+          banner:'/*!\n'+
+                 ' * Recipe.js  Cook your javascript with recipe.js\n'+
+                 ' * Author     sideroad\n'+
+                 ' * License    MIT\n'+
+                 ' *\n'+
+                 ' * Version    <%= component.version %>\n'+
+                 ' * https://github.com/sideroad/recipe/\n'+
+                 ' */\n'
+        },
         files: {
           'dist/recipe.unpack.js': ['lib/head.load.js', 'src/recipe.js']
         }
@@ -26,9 +37,13 @@ module.exports = function(grunt) {
     },
 
     min: {
+      options: {
+        report: false
+      },
       main: {
         files: {
-          'dist/recipe.js': ['dist/recipe.unpack.js']
+          'dist/recipe.js': ['dist/recipe.unpack.js'],
+          'test/fixture/recipe/recipe.js': ['dist/recipe.unpack.js']
         }
       }
     },
@@ -41,7 +56,7 @@ module.exports = function(grunt) {
       },
       main: {
         files: {
-          'test/tests.tap': ['test/*.html']
+          'test/tests.tap': ['test/target/*.html']
         }
       },
       cui: {
@@ -49,7 +64,7 @@ module.exports = function(grunt) {
           launch_in_ci: ['PhantomJS']
         },
         files: {
-          'test/tests.tap': ['test/*.html']
+          'test/tests.tap': ['test/target/*.html']
         }
       }
     },
@@ -57,10 +72,10 @@ module.exports = function(grunt) {
     'qunit-cov': {
       main: {
         minimum: 0.9,
-        srcDir: 'src',
-        depDirs: ['lib', 'test'],
+        srcDir: 'test/fixture/recipe',
+        depDirs: ['lib', 'test/fixture/libraries', 'test/fixture/scripts', 'test/target', 'test/lib'],
         outDir: 'cov',
-        testFiles: ['test/*.html']
+        testFiles: ['test/target/*.html']
       }
     },
 
@@ -93,10 +108,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-testem');
   grunt.loadNpmTasks('grunt-qunit-cov');
   grunt.loadNpmTasks('grunt-plato');
+  grunt.loadNpmTasks('grunt-recipe');
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', ['clean', 'concat', 'min', 'jshint', 'testem:main', 'qunit-cov', 'plato']);
-  grunt.registerTask('test', ['clean', 'jshint', 'testem:cui']);
-  grunt.registerTask('jenkins', ['clean', 'concat', 'min', 'jshint', 'testem:cui', 'qunit-cov', 'plato']);
+  grunt.registerTask('default', ['clean', 'recipe', 'jshint', 'concat', 'min', 'testem:main', 'qunit-cov', 'plato']);
+  grunt.registerTask('test', ['clean', 'recipe', 'jshint', 'concat', 'min', 'testem:cui']);
+  grunt.registerTask('jenkins', ['clean', 'recipe', 'jshint', 'concat', 'min', 'testem:cui', 'qunit-cov', 'plato']);
 
 };

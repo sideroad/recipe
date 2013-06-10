@@ -694,7 +694,7 @@ var recipe = (function(globals, $, head){
         init: function(){
           var menu = recipe.get.menu();
           
-          base = menu.replace(/[^\/]+$/, '');
+          base = menu.replace(/\/[^\/]+$/, "");
           if(!menu) {
             throw "You might forget to order because of menu was not founded.";
           }
@@ -710,8 +710,9 @@ var recipe = (function(globals, $, head){
         get: {
           menu: function(){
             var script = $("script[src$='/recipe.js'][data-menu]"),
-                url = script.data("menu")||"";
-            return url;
+                menu = script.data("menu"),
+                url = (script.attr("src")||"").replace(/[^\/]+$/, "")+menu+".js";
+            return menu ? url : "";
           },
           version: function(){
             if( !recipe.version ) {
