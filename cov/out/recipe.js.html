@@ -27,7 +27,7 @@
 </head>
 <body>
 
-<div class="code hit">(function(globals, $, head){</div>
+<div class="code hit">var recipe = (function(globals, $, head){</div>
 <div class="code undef"></div>
 <div class="code hit">  var base = '',</div>
 <div class="code undef">      method = '',</div>
@@ -42,7 +42,7 @@
 <div class="code undef">            uniqued = [];</div>
 <div class="code hit">        for(i = 0, len = array.length; i &lt; len; i++){</div>
 <div class="code hit">          if( $.inArray(array[i], uniqued) === -1 ){</div>
-<div class="code hit">            uniqued.push(array[i]);</div>
+<div class="code hit">           uniqued.push(array[i]);</div>
 <div class="code undef">          }</div>
 <div class="code undef">        }</div>
 <div class="code hit">        return uniqued;</div>
@@ -144,7 +144,7 @@
 <div class="code undef">  }</div>
 <div class="code undef"></div>
 <div class="code hit">  recipe.init();</div>
-<div class="code hit">  globals.recipe = recipe;</div>
+<div class="code hit">  return recipe;</div>
 <div class="code undef">})(this, jQuery, head);</div>
 
 

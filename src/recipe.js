@@ -1,4 +1,4 @@
-(function(globals, $, head){
+var recipe = (function(globals, $, head){
 
   var base = '',
       method = '',
@@ -13,7 +13,7 @@
             uniqued = [];
         for(i = 0, len = array.length; i < len; i++){
           if( $.inArray(array[i], uniqued) === -1 ){
-            uniqued.push(array[i]);
+           uniqued.push(array[i]);
           }
         }
         return uniqued;
@@ -115,5 +115,5 @@
   }
 
   recipe.init();
-  globals.recipe = recipe;
+  return recipe;
 })(this, jQuery, head);

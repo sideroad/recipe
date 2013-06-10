@@ -36,6 +36,9 @@ module.exports = function(grunt) {
     jshint: ['src/recipe.js'],
 
     testem: {
+      options: {
+        timeout: 10000
+      },
       main: {
         files: {
           'test/tests.tap': ['test/*.html']
