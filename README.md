@@ -5,8 +5,8 @@
 
 - Resolving libraries dependencies (Such as AMD, But It does not use `define` API)
 - Avoiding browser cache without using cache manifest when you update libraries
-- Multiple charset setting each script
-- Parallel script downloads
+- Multiple charset setting for each script
+- Parallel script downloads for web performance. This feature was realized by `head.js`
 
 ## Prepare to cook
 
