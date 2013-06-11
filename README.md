@@ -3,17 +3,15 @@
 
 ## Overview
 
-- Resolving libraries dependencies (AMD)
+- Resolving libraries dependencies (Such as AMD, But It does not use `define` API)
 - Avoiding browser cache without using cache manifest when you update libraries
 - Multiple charset setting each script
 - Parallel script downloads
 
-I strongly recommend to use [grunt-recipe](https://github.com/sideroad/grunt-recipe/)
-
 ## Prepare to cook
 
 ### Preparing dependencies, version script
-Before using this plugins, please setting grunt-recipe and make recipe.version.js, recipe.dependencies.js
+Before using this plugins, please install [grunt-recipe](https://github.com/sideroad/grunt-recipe/) then make recipe.version.js, recipe.dependencies.js
 
 ### Preparing menu for each page
 
@@ -25,7 +23,7 @@ Before using this plugins, please setting grunt-recipe and make recipe.version.j
 |scripts|Array<String>|scripts URL list|
 
 recipe function return `Deferred` object.
-`then` function call after all libraries, scripts loaded
+`then` function call after all libraries, scripts were loaded
 
 ```js
 recipe({
@@ -40,16 +38,43 @@ recipe({
   console.log("Dig in!");
 });
 ```
+Please append `#${charset}` into scripts path, if you want to load script with specified charset.
+example below
+```js
+recipe({
+  libraries: [
+    "fettuccine.alfredo",
+    "acqua.pazza"
+  ],
+  scripts: [
+    "path/to/script.js#utf-8"
+  ]
+}).then(function(){
+  console.log("Dig in!");
+});
+```
+
+### Deploy recipe, version, dependencies and menu scripts
+|Name             |Role        |Notice                       |
+|-----------------|------------|-----------------------------|
+|recipe.js        |Core library|                             |
+|recipe.version.js|Version file|Update version when you release libraries or script for avoiding browser cache |
+|recipe.dependencies.js|Defining dependencies file|Update dependencies when adding library, changing dependencies |
+Required: Release your menu files, recipe.js, recipe.version.js and recipe.dependecies.js onto same directory.
+
 
 ### Embedded on recipe.js
 ```html
-<script charset="UTF-8" src="path/to/recipe.js" data-menu="path/to/menu.js" async="true" ></script>
+<script charset="UTF-8" src="path/to/recipe.js" data-menu="${name_of_menu}" async="true" ></script>
 ```
+Please set `data-menu` attribute with menu name without extention just like `fettuccine.alfredo`, if your menu file is `fettuccine.alfredo.js`.
+
 
 ## Loading Flow
-- recipe.js get version file with random value parameter into request for avoiding cache.
+- recipe.js get version file with random value parameter into request for avoiding cache. this is single point always requested without cache.
 - recipe.js get dependencies file with version parameter.
 - recipe.js get menu file. After that, recipe.js resolve libraries dependencies by given options.
-- recipe.js load libraries and scripts javascript files with version parameter.
+- recipe.js load libraries and scripts with version parameter.
+- recipe.js call `then` function
 
 
