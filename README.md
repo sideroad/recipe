@@ -71,6 +71,7 @@ Please set `data-menu` attribute with menu name without extention just like `fet
 
 
 ## Loading Flow
+![Loading Flow](https://github.com/sideroad/recipe/raw/master/img/recipe.js.png)
 - recipe.js get version file with random value parameter into request for avoiding cache. this is single point always requested without cache.
 - recipe.js get dependencies file with version parameter.
 - recipe.js get menu file. After that, recipe.js resolve libraries dependencies by given options.
