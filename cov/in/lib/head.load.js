@@ -351,7 +351,7 @@
             asset.state     = PRELOADING;
             asset.onpreload = [];
 
-            loadAsset({ url: asset.url, type: 'cache' }, function () {
+            loadAsset({ url: asset.url, type: 'cache', charset: asset.charset }, function () {
                 onPreload(asset);
             });
         }
