@@ -2,672 +2,375 @@
 if (typeof _$jscoverage === 'undefined') _$jscoverage = {};
 if (! _$jscoverage['recipe.js']) {
   _$jscoverage['recipe.js'] = [];
-  _$jscoverage['recipe.js'][9] = 0;
-  _$jscoverage['recipe.js'][19] = 0;
+  _$jscoverage['recipe.js'][1] = 0;
 }
-_$jscoverage['recipe.js'][9]++;
-;
-_$jscoverage['recipe.js'][19]++;
-;
-_$jscoverage['recipe.js'][19]++;
-(function (i, l) {
-  _$jscoverage['recipe.js'][19]++;
-  var I = i.document, j = [], x = [], v = {}, D = {}, o = "async" in I.createElement("script") || "MozAppearance" in I.documentElement.style || i.opera, s, f, b = i.head_conf && i.head_conf.head || "head", t = i[b] = (i[b] || (function () {
-  _$jscoverage['recipe.js'][19]++;
-  t.ready.apply(null, arguments);
-})), G = 1, z = 2, C = 3, k = 4;
-  _$jscoverage['recipe.js'][19]++;
-  if (o) {
-    _$jscoverage['recipe.js'][19]++;
-    t.load = (function () {
-  _$jscoverage['recipe.js'][19]++;
-  var J = arguments, K = J[J.length - 1], e = {};
-  _$jscoverage['recipe.js'][19]++;
-  if (! a(K)) {
-    _$jscoverage['recipe.js'][19]++;
-    K = null;
-  }
-  _$jscoverage['recipe.js'][19]++;
-  g(J, (function (M, L) {
-  _$jscoverage['recipe.js'][19]++;
-  if (M !== K) {
-    _$jscoverage['recipe.js'][19]++;
-    M = H(M);
-    _$jscoverage['recipe.js'][19]++;
-    e[M.name] = M;
-    _$jscoverage['recipe.js'][19]++;
-    n(M, K && L === J.length - 2? (function () {
-  _$jscoverage['recipe.js'][19]++;
-  if (B(e)) {
-    _$jscoverage['recipe.js'][19]++;
-    w(K);
-  }
-}): null);
-  }
-}));
-  _$jscoverage['recipe.js'][19]++;
-  return t;
-});
-  }
-  else {
-    _$jscoverage['recipe.js'][19]++;
-    t.load = (function () {
-  _$jscoverage['recipe.js'][19]++;
-  var e = arguments, K = [].slice.call(e, 1), J = K[0];
-  _$jscoverage['recipe.js'][19]++;
-  if (! s) {
-    _$jscoverage['recipe.js'][19]++;
-    x.push((function () {
-  _$jscoverage['recipe.js'][19]++;
-  t.load.apply(null, e);
-}));
-    _$jscoverage['recipe.js'][19]++;
-    return t;
-  }
-  _$jscoverage['recipe.js'][19]++;
-  if (! ! J) {
-    _$jscoverage['recipe.js'][19]++;
-    g(K, (function (L) {
-  _$jscoverage['recipe.js'][19]++;
-  if (! a(L)) {
-    _$jscoverage['recipe.js'][19]++;
-    y(H(L));
-  }
-}));
-    _$jscoverage['recipe.js'][19]++;
-    n(H(e[0]), a(J)? J: (function () {
-  _$jscoverage['recipe.js'][19]++;
-  t.load.apply(null, K);
-}));
-  }
-  else {
-    _$jscoverage['recipe.js'][19]++;
-    n(H(e[0]));
-  }
-  _$jscoverage['recipe.js'][19]++;
-  return t;
-});
-  }
-  _$jscoverage['recipe.js'][19]++;
-  t.js = t.load;
-  _$jscoverage['recipe.js'][19]++;
-  t.test = (function (N, K, e, M) {
-  _$jscoverage['recipe.js'][19]++;
-  var J = (typeof N === "object")? N: {test: N, success: ! ! K? r(K)? K: [K]: false, failure: ! ! e? r(e)? e: [e]: false, callback: M || h};
-  _$jscoverage['recipe.js'][19]++;
-  var L = ! ! J.test;
-  _$jscoverage['recipe.js'][19]++;
-  if (L && ! ! J.success) {
-    _$jscoverage['recipe.js'][19]++;
-    J.success.push(J.callback);
-    _$jscoverage['recipe.js'][19]++;
-    t.load.apply(null, J.success);
-  }
-  else {
-    _$jscoverage['recipe.js'][19]++;
-    if (! L && ! ! J.failure) {
-      _$jscoverage['recipe.js'][19]++;
-      J.failure.push(J.callback);
-      _$jscoverage['recipe.js'][19]++;
-      t.load.apply(null, J.failure);
+_$jscoverage['recipe.js'][1]++;
+! (function (a, b) {
+  _$jscoverage['recipe.js'][1]++;
+  "use strict";
+  _$jscoverage['recipe.js'][1]++;
+  function c() {
+}
+  _$jscoverage['recipe.js'][1]++;
+  function d(a, b) {
+    _$jscoverage['recipe.js'][1]++;
+    if (a) {
+      _$jscoverage['recipe.js'][1]++;
+      "object" == typeof a && (a = [].slice.call(a));
+      _$jscoverage['recipe.js'][1]++;
+      for (var c = 0, d = a.length; d > c; c++) {
+        _$jscoverage['recipe.js'][1]++;
+        b.call(a, a[c], c);
+}
     }
-    else {
-      _$jscoverage['recipe.js'][19]++;
-      M();
-    }
-  }
-  _$jscoverage['recipe.js'][19]++;
-  return t;
-});
-  _$jscoverage['recipe.js'][19]++;
-  t.ready = (function (J, L) {
-  _$jscoverage['recipe.js'][19]++;
-  if (J === I) {
-    _$jscoverage['recipe.js'][19]++;
-    if (f) {
-      _$jscoverage['recipe.js'][19]++;
-      w(L);
-    }
-    else {
-      _$jscoverage['recipe.js'][19]++;
-      j.push(L);
-    }
-    _$jscoverage['recipe.js'][19]++;
-    return t;
-  }
-  _$jscoverage['recipe.js'][19]++;
-  if (a(J)) {
-    _$jscoverage['recipe.js'][19]++;
-    L = J;
-    _$jscoverage['recipe.js'][19]++;
-    J = "ALL";
-  }
-  _$jscoverage['recipe.js'][19]++;
-  if (typeof J !== "string" || ! a(L)) {
-    _$jscoverage['recipe.js'][19]++;
-    return t;
-  }
-  _$jscoverage['recipe.js'][19]++;
-  var K = D[J];
-  _$jscoverage['recipe.js'][19]++;
-  if (K && K.state === k || J === "ALL" && B() && f) {
-    _$jscoverage['recipe.js'][19]++;
-    w(L);
-    _$jscoverage['recipe.js'][19]++;
-    return t;
-  }
-  _$jscoverage['recipe.js'][19]++;
-  var e = v[J];
-  _$jscoverage['recipe.js'][19]++;
-  if (! e) {
-    _$jscoverage['recipe.js'][19]++;
-    e = v[J] = [L];
-  }
-  else {
-    _$jscoverage['recipe.js'][19]++;
-    e.push(L);
-  }
-  _$jscoverage['recipe.js'][19]++;
-  return t;
-});
-  _$jscoverage['recipe.js'][19]++;
-  t.ready(I, (function () {
-  _$jscoverage['recipe.js'][19]++;
-  if (B()) {
-    _$jscoverage['recipe.js'][19]++;
-    g(v.ALL, (function (e) {
-  _$jscoverage['recipe.js'][19]++;
-  w(e);
-}));
-  }
-  _$jscoverage['recipe.js'][19]++;
-  if (t.feature) {
-    _$jscoverage['recipe.js'][19]++;
-    t.feature("domloaded", true);
-  }
-}));
-  _$jscoverage['recipe.js'][19]++;
-  function h() {
 }
-  _$jscoverage['recipe.js'][19]++;
-  function g(e, L) {
-    _$jscoverage['recipe.js'][19]++;
-    if (! e) {
-      _$jscoverage['recipe.js'][19]++;
-      return;
-    }
-    _$jscoverage['recipe.js'][19]++;
-    if (typeof e === "object") {
-      _$jscoverage['recipe.js'][19]++;
-      e = [].slice.call(e);
-    }
-    _$jscoverage['recipe.js'][19]++;
-    for (var K = 0, J = e.length; K < J; K++) {
-      _$jscoverage['recipe.js'][19]++;
-      L.call(e, e[K], K);
+  _$jscoverage['recipe.js'][1]++;
+  function e(a, c) {
+    _$jscoverage['recipe.js'][1]++;
+    var d = Object.prototype.toString.call(c).slice(8, -1);
+    _$jscoverage['recipe.js'][1]++;
+    return c !== b && null !== c && d === a;
 }
+  _$jscoverage['recipe.js'][1]++;
+  function f(a) {
+    _$jscoverage['recipe.js'][1]++;
+    return e("Function", a);
 }
-  _$jscoverage['recipe.js'][19]++;
-  function m(e, J) {
-    _$jscoverage['recipe.js'][19]++;
-    var K = Object.prototype.toString.call(J).slice(8, -1);
-    _$jscoverage['recipe.js'][19]++;
-    return J !== l && J !== null && K === e;
+  _$jscoverage['recipe.js'][1]++;
+  function g(a) {
+    _$jscoverage['recipe.js'][1]++;
+    return e("Array", a);
 }
-  _$jscoverage['recipe.js'][19]++;
-  function a(e) {
-    _$jscoverage['recipe.js'][19]++;
-    return m("Function", e);
+  _$jscoverage['recipe.js'][1]++;
+  function h(a) {
+    _$jscoverage['recipe.js'][1]++;
+    var b = a.split("/"), c = b[b.length - 1], d = c.indexOf("?");
+    _$jscoverage['recipe.js'][1]++;
+    return -1 !== d? c.substring(0, d): c;
 }
-  _$jscoverage['recipe.js'][19]++;
-  function r(e) {
-    _$jscoverage['recipe.js'][19]++;
-    return m("Array", e);
+  _$jscoverage['recipe.js'][1]++;
+  function i(a) {
+    _$jscoverage['recipe.js'][1]++;
+    a = a || c, a._done || (a(), a._done = 1);
 }
-  _$jscoverage['recipe.js'][19]++;
-  function A(K) {
-    _$jscoverage['recipe.js'][19]++;
-    var e = K.split("/"), J = e[e.length - 1], L = J.indexOf("?");
-    _$jscoverage['recipe.js'][19]++;
-    return L !== -1? J.substring(0, L): J;
-}
-  _$jscoverage['recipe.js'][19]++;
-  function w(e) {
-    _$jscoverage['recipe.js'][19]++;
-    e = e || h;
-    _$jscoverage['recipe.js'][19]++;
-    if (e._done) {
-      _$jscoverage['recipe.js'][19]++;
-      return;
-    }
-    _$jscoverage['recipe.js'][19]++;
-    e();
-    _$jscoverage['recipe.js'][19]++;
-    e._done = 1;
-}
-  _$jscoverage['recipe.js'][19]++;
-  function H(L) {
-    _$jscoverage['recipe.js'][19]++;
-    var J = {};
-    _$jscoverage['recipe.js'][19]++;
-    if (typeof L === "object") {
-      _$jscoverage['recipe.js'][19]++;
-      for (var e in L) {
-        _$jscoverage['recipe.js'][19]++;
-        if (! ! L[e]) {
-          _$jscoverage['recipe.js'][19]++;
-          J = {name: e, url: L[e], charset: L[e].split("#")[1] || "utf-8"};
-        }
+  _$jscoverage['recipe.js'][1]++;
+  function j(a) {
+    _$jscoverage['recipe.js'][1]++;
+    var b = {};
+    _$jscoverage['recipe.js'][1]++;
+    if ("object" == typeof a) {
+      _$jscoverage['recipe.js'][1]++;
+      for (var c in a) {
+        _$jscoverage['recipe.js'][1]++;
+        a[c] && (b = {name: c, url: a[c], charset: a[c].split("#")[1] || "utf-8"});
 }
     }
     else {
-      _$jscoverage['recipe.js'][19]++;
-      J = {name: A(L), url: L, charset: L.split("#")[1] || "utf-8"};
+      _$jscoverage['recipe.js'][1]++;
+      b = {name: h(a), url: a, charset: a.split("#")[1] || "utf-8"};
     }
-    _$jscoverage['recipe.js'][19]++;
-    var K = D[J.name];
-    _$jscoverage['recipe.js'][19]++;
-    if (K && K.url === J.url) {
-      _$jscoverage['recipe.js'][19]++;
-      return K;
-    }
-    _$jscoverage['recipe.js'][19]++;
-    D[J.name] = J;
-    _$jscoverage['recipe.js'][19]++;
-    return J;
+    _$jscoverage['recipe.js'][1]++;
+    var d = x[b.name];
+    _$jscoverage['recipe.js'][1]++;
+    return d && d.url === b.url? d: (x[b.name] = b, b);
 }
-  _$jscoverage['recipe.js'][19]++;
-  function B(e) {
-    _$jscoverage['recipe.js'][19]++;
-    e = e || D;
-    _$jscoverage['recipe.js'][19]++;
-    for (var J in e) {
-      _$jscoverage['recipe.js'][19]++;
-      if (e.hasOwnProperty(J) && e[J].state !== k) {
-        _$jscoverage['recipe.js'][19]++;
+  _$jscoverage['recipe.js'][1]++;
+  function k(a) {
+    _$jscoverage['recipe.js'][1]++;
+    a = a || x;
+    _$jscoverage['recipe.js'][1]++;
+    for (var b in a) {
+      _$jscoverage['recipe.js'][1]++;
+      if (a.hasOwnProperty(b) && a[b].state !== E) {
+        _$jscoverage['recipe.js'][1]++;
         return false;
       }
 }
-    _$jscoverage['recipe.js'][19]++;
+    _$jscoverage['recipe.js'][1]++;
     return true;
 }
-  _$jscoverage['recipe.js'][19]++;
-  function F(e) {
-    _$jscoverage['recipe.js'][19]++;
-    e.state = z;
-    _$jscoverage['recipe.js'][19]++;
-    g(e.onpreload, (function (J) {
-  _$jscoverage['recipe.js'][19]++;
-  J.call();
+  _$jscoverage['recipe.js'][1]++;
+  function l(a) {
+    _$jscoverage['recipe.js'][1]++;
+    a.state = C, d(a.onpreload, (function (a) {
+  _$jscoverage['recipe.js'][1]++;
+  a.call();
 }));
 }
-  _$jscoverage['recipe.js'][19]++;
-  function y(e, J) {
-    _$jscoverage['recipe.js'][19]++;
-    if (e.state === l) {
-      _$jscoverage['recipe.js'][19]++;
-      e.state = G;
-      _$jscoverage['recipe.js'][19]++;
-      e.onpreload = [];
-      _$jscoverage['recipe.js'][19]++;
-      c({url: e.url, type: "cache", charset: e.charset}, (function () {
-  _$jscoverage['recipe.js'][19]++;
-  F(e);
-}));
-    }
+  _$jscoverage['recipe.js'][1]++;
+  function m(a) {
+    _$jscoverage['recipe.js'][1]++;
+    a.state === b && (a.state = B, a.onpreload = [], o({url: a.url, type: "cache", charset: a.charset}, (function () {
+  _$jscoverage['recipe.js'][1]++;
+  l(a);
+})));
 }
-  _$jscoverage['recipe.js'][19]++;
-  function n(e, J) {
-    _$jscoverage['recipe.js'][19]++;
-    J = J || h;
-    _$jscoverage['recipe.js'][19]++;
-    if (e.state === k) {
-      _$jscoverage['recipe.js'][19]++;
-      J();
-      _$jscoverage['recipe.js'][19]++;
-      return;
-    }
-    _$jscoverage['recipe.js'][19]++;
-    if (e.state === C) {
-      _$jscoverage['recipe.js'][19]++;
-      t.ready(e.name, J);
-      _$jscoverage['recipe.js'][19]++;
-      return;
-    }
-    _$jscoverage['recipe.js'][19]++;
-    if (e.state === G) {
-      _$jscoverage['recipe.js'][19]++;
-      e.onpreload.push((function () {
-  _$jscoverage['recipe.js'][19]++;
-  n(e, J);
+  _$jscoverage['recipe.js'][1]++;
+  function n(a, b) {
+    _$jscoverage['recipe.js'][1]++;
+    return b = b || c, a.state === E? (b(), void 0): a.state === D? (A.ready(a.name, b), void 0): a.state === B? (a.onpreload.push((function () {
+  _$jscoverage['recipe.js'][1]++;
+  n(a, b);
+})), void 0): (a.state = D, o(a, (function () {
+  _$jscoverage['recipe.js'][1]++;
+  a.state = E, b(), d(w[a.name], (function (a) {
+  _$jscoverage['recipe.js'][1]++;
+  i(a);
+})), s && k() && d(w.ALL, (function (a) {
+  _$jscoverage['recipe.js'][1]++;
+  i(a);
 }));
-      _$jscoverage['recipe.js'][19]++;
-      return;
-    }
-    _$jscoverage['recipe.js'][19]++;
-    e.state = C;
-    _$jscoverage['recipe.js'][19]++;
-    c(e, (function () {
-  _$jscoverage['recipe.js'][19]++;
-  e.state = k;
-  _$jscoverage['recipe.js'][19]++;
-  J();
-  _$jscoverage['recipe.js'][19]++;
-  g(v[e.name], (function (K) {
-  _$jscoverage['recipe.js'][19]++;
-  w(K);
-}));
-  _$jscoverage['recipe.js'][19]++;
-  if (f && B()) {
-    _$jscoverage['recipe.js'][19]++;
-    g(v.ALL, (function (K) {
-  _$jscoverage['recipe.js'][19]++;
-  w(K);
-}));
-  }
-}));
+})), void 0);
 }
-  _$jscoverage['recipe.js'][19]++;
-  function c(K, N) {
-    _$jscoverage['recipe.js'][19]++;
-    N = N || h;
-    _$jscoverage['recipe.js'][19]++;
-    var L;
-    _$jscoverage['recipe.js'][19]++;
-    if (/\.css[^\.]*$/.test(K.url)) {
-      _$jscoverage['recipe.js'][19]++;
-      L = I.createElement("link");
-      _$jscoverage['recipe.js'][19]++;
-      L.type = "text/" + (K.type || "css");
-      _$jscoverage['recipe.js'][19]++;
-      L.rel = "stylesheet";
-      _$jscoverage['recipe.js'][19]++;
-      L.href = K.url;
-    }
-    else {
-      _$jscoverage['recipe.js'][19]++;
-      L = I.createElement("script");
-      _$jscoverage['recipe.js'][19]++;
-      L.charset = K.charset;
-      _$jscoverage['recipe.js'][19]++;
-      L.type = "text/" + (K.type || "javascript");
-      _$jscoverage['recipe.js'][19]++;
-      L.src = K.url;
-    }
-    _$jscoverage['recipe.js'][19]++;
-    L.onload = L.onreadystatechange = M;
-    _$jscoverage['recipe.js'][19]++;
-    L.onerror = e;
-    _$jscoverage['recipe.js'][19]++;
-    L.async = false;
-    _$jscoverage['recipe.js'][19]++;
-    L.defer = false;
-    _$jscoverage['recipe.js'][19]++;
-    function e(O) {
-      _$jscoverage['recipe.js'][19]++;
-      O = O || i.event;
-      _$jscoverage['recipe.js'][19]++;
-      L.onload = L.onreadystatechange = L.onerror = null;
-      _$jscoverage['recipe.js'][19]++;
-      N();
+  _$jscoverage['recipe.js'][1]++;
+  function o(b, d) {
+    _$jscoverage['recipe.js'][1]++;
+    function e(b) {
+      _$jscoverage['recipe.js'][1]++;
+      b = b || a.event, g.onload = g.onreadystatechange = g.onerror = null, d();
 }
-    _$jscoverage['recipe.js'][19]++;
-    function M(O) {
-      _$jscoverage['recipe.js'][19]++;
-      O = O || i.event;
-      _$jscoverage['recipe.js'][19]++;
-      if (O.type === "load" || (/loaded|complete/.test(L.readyState) && (! I.documentMode || I.documentMode < 9))) {
-        _$jscoverage['recipe.js'][19]++;
-        L.onload = L.onreadystatechange = L.onerror = null;
-        _$jscoverage['recipe.js'][19]++;
-        N();
-      }
+    _$jscoverage['recipe.js'][1]++;
+    function f(b) {
+      _$jscoverage['recipe.js'][1]++;
+      b = b || a.event, ("load" === b.type || /loaded|complete/.test(g.readyState) && (! t.documentMode || t.documentMode < 9)) && (g.onload = g.onreadystatechange = g.onerror = null, d());
 }
-    _$jscoverage['recipe.js'][19]++;
-    var J = I.head || I.getElementsByTagName("head")[0];
-    _$jscoverage['recipe.js'][19]++;
-    J.insertBefore(L, J.lastChild);
+    _$jscoverage['recipe.js'][1]++;
+    d = d || c;
+    _$jscoverage['recipe.js'][1]++;
+    var g;
+    _$jscoverage['recipe.js'][1]++;
+    /\.css[^\.]*$/.test(b.url)? (g = t.createElement("link"), g.type = "text/" + (b.type || "css"), g.rel = "stylesheet", g.href = b.url): (g = t.createElement("script"), g.charset = b.charset, g.type = "text/" + (b.type || "javascript"), g.src = b.url), g.onload = g.onreadystatechange = f, g.onerror = e, g.async = false, g.defer = false;
+    _$jscoverage['recipe.js'][1]++;
+    var h = t.head || t.getElementsByTagName("head")[0];
+    _$jscoverage['recipe.js'][1]++;
+    h.insertBefore(g, h.lastChild);
 }
-  _$jscoverage['recipe.js'][19]++;
+  _$jscoverage['recipe.js'][1]++;
   function p() {
-    _$jscoverage['recipe.js'][19]++;
-    if (! I.body) {
-      _$jscoverage['recipe.js'][19]++;
-      i.clearTimeout(t.readyTimeout);
-      _$jscoverage['recipe.js'][19]++;
-      t.readyTimeout = i.setTimeout(p, 50);
-      _$jscoverage['recipe.js'][19]++;
-      return;
-    }
-    _$jscoverage['recipe.js'][19]++;
-    if (! f) {
-      _$jscoverage['recipe.js'][19]++;
-      f = true;
-      _$jscoverage['recipe.js'][19]++;
-      g(j, (function (e) {
-  _$jscoverage['recipe.js'][19]++;
-  w(e);
-}));
-    }
+    _$jscoverage['recipe.js'][1]++;
+    return t.body? (s || (s = true, d(u, (function (a) {
+  _$jscoverage['recipe.js'][1]++;
+  i(a);
+}))), void 0): (a.clearTimeout(A.readyTimeout), A.readyTimeout = a.setTimeout(p, 50), void 0);
 }
-  _$jscoverage['recipe.js'][19]++;
+  _$jscoverage['recipe.js'][1]++;
   function q() {
-    _$jscoverage['recipe.js'][19]++;
-    if (I.addEventListener) {
-      _$jscoverage['recipe.js'][19]++;
-      I.removeEventListener("DOMContentLoaded", q, false);
-      _$jscoverage['recipe.js'][19]++;
-      p();
-    }
-    else {
-      _$jscoverage['recipe.js'][19]++;
-      if (I.readyState === "complete") {
-        _$jscoverage['recipe.js'][19]++;
-        I.detachEvent("onreadystatechange", q);
-        _$jscoverage['recipe.js'][19]++;
-        p();
-      }
-    }
+    _$jscoverage['recipe.js'][1]++;
+    t.addEventListener? (t.removeEventListener("DOMContentLoaded", q, false), p()): "complete" === t.readyState && (t.detachEvent("onreadystatechange", q), p());
 }
-  _$jscoverage['recipe.js'][19]++;
-  if (I.readyState === "complete") {
-    _$jscoverage['recipe.js'][19]++;
+  _$jscoverage['recipe.js'][1]++;
+  var r, s, t = a.document, u = [], v = [], w = {}, x = {}, y = "async" in t.createElement("script") || "MozAppearance" in t.documentElement.style || a.opera, z = a.head_conf && a.head_conf.head || "head", A = a[z] = a[z] || (function () {
+  _$jscoverage['recipe.js'][1]++;
+  A.ready.apply(null, arguments);
+}), B = 1, C = 2, D = 3, E = 4;
+  _$jscoverage['recipe.js'][1]++;
+  if (A.load = y? (function () {
+  _$jscoverage['recipe.js'][1]++;
+  var a = arguments, b = a[a.length - 1], c = {};
+  _$jscoverage['recipe.js'][1]++;
+  return f(b) || (b = null), d(a, (function (d, e) {
+  _$jscoverage['recipe.js'][1]++;
+  d !== b && (d = j(d), c[d.name] = d, n(d, b && e === a.length - 2? (function () {
+  _$jscoverage['recipe.js'][1]++;
+  k(c) && i(b);
+}): null));
+})), A;
+}): (function () {
+  _$jscoverage['recipe.js'][1]++;
+  var a = arguments, b = [].slice.call(a, 1), c = b[0];
+  _$jscoverage['recipe.js'][1]++;
+  return r? (c? (d(b, (function (a) {
+  _$jscoverage['recipe.js'][1]++;
+  f(a) || m(j(a));
+})), n(j(a[0]), f(c)? c: (function () {
+  _$jscoverage['recipe.js'][1]++;
+  A.load.apply(null, b);
+}))): n(j(a[0])), A): (v.push((function () {
+  _$jscoverage['recipe.js'][1]++;
+  A.load.apply(null, a);
+})), A);
+}), A.js = A.load, A.test = (function (a, b, d, e) {
+  _$jscoverage['recipe.js'][1]++;
+  var f = "object" == typeof a? a: {test: a, success: b? g(b)? b: [b]: false, failure: d? g(d)? d: [d]: false, callback: e || c}, h = ! ! f.test;
+  _$jscoverage['recipe.js'][1]++;
+  return h && f.success? (f.success.push(f.callback), A.load.apply(null, f.success)): ! h && f.failure? (f.failure.push(f.callback), A.load.apply(null, f.failure)): e(), A;
+}), A.ready = (function (a, b) {
+  _$jscoverage['recipe.js'][1]++;
+  if (a === t) {
+    _$jscoverage['recipe.js'][1]++;
+    return s? i(b): u.push(b), A;
+  }
+  _$jscoverage['recipe.js'][1]++;
+  if (f(a) && (b = a, a = "ALL"), "string" != typeof a || ! f(b)) {
+    _$jscoverage['recipe.js'][1]++;
+    return A;
+  }
+  _$jscoverage['recipe.js'][1]++;
+  var c = x[a];
+  _$jscoverage['recipe.js'][1]++;
+  if (c && c.state === E || "ALL" === a && k() && s) {
+    _$jscoverage['recipe.js'][1]++;
+    return i(b), A;
+  }
+  _$jscoverage['recipe.js'][1]++;
+  var d = w[a];
+  _$jscoverage['recipe.js'][1]++;
+  return d? d.push(b): d = w[a] = [b], A;
+}), A.ready(t, (function () {
+  _$jscoverage['recipe.js'][1]++;
+  k() && d(w.ALL, (function (a) {
+  _$jscoverage['recipe.js'][1]++;
+  i(a);
+})), A.feature && A.feature("domloaded", true);
+})), "complete" === t.readyState) {
+    _$jscoverage['recipe.js'][1]++;
     p();
   }
   else {
-    _$jscoverage['recipe.js'][19]++;
-    if (I.addEventListener) {
-      _$jscoverage['recipe.js'][19]++;
-      I.addEventListener("DOMContentLoaded", q, false);
-      _$jscoverage['recipe.js'][19]++;
-      i.addEventListener("load", p, false);
+    _$jscoverage['recipe.js'][1]++;
+    if (t.addEventListener) {
+      _$jscoverage['recipe.js'][1]++;
+      t.addEventListener("DOMContentLoaded", q, false), a.addEventListener("load", p, false);
     }
     else {
-      _$jscoverage['recipe.js'][19]++;
-      I.attachEvent("onreadystatechange", q);
-      _$jscoverage['recipe.js'][19]++;
-      i.attachEvent("onload", p);
-      _$jscoverage['recipe.js'][19]++;
-      var u = false;
-      _$jscoverage['recipe.js'][19]++;
+      _$jscoverage['recipe.js'][1]++;
+      t.attachEvent("onreadystatechange", q), a.attachEvent("onload", p);
+      _$jscoverage['recipe.js'][1]++;
+      var F = false;
+      _$jscoverage['recipe.js'][1]++;
       try {
-        _$jscoverage['recipe.js'][19]++;
-        u = i.frameElement == null && I.documentElement;
+        _$jscoverage['recipe.js'][1]++;
+        F = null == a.frameElement && t.documentElement;
       }
-      catch (E) {
+      catch (G) {
       }
-      _$jscoverage['recipe.js'][19]++;
-      if (u && u.doScroll) {
-        _$jscoverage['recipe.js'][19]++;
-        (function d() {
-  _$jscoverage['recipe.js'][19]++;
-  if (! f) {
-    _$jscoverage['recipe.js'][19]++;
+      _$jscoverage['recipe.js'][1]++;
+      F && F.doScroll && (function H() {
+  _$jscoverage['recipe.js'][1]++;
+  if (! s) {
+    _$jscoverage['recipe.js'][1]++;
     try {
-      _$jscoverage['recipe.js'][19]++;
-      u.doScroll("left");
+      _$jscoverage['recipe.js'][1]++;
+      F.doScroll("left");
     }
-    catch (e) {
-      _$jscoverage['recipe.js'][19]++;
-      i.clearTimeout(t.readyTimeout);
-      _$jscoverage['recipe.js'][19]++;
-      t.readyTimeout = i.setTimeout(d, 50);
-      _$jscoverage['recipe.js'][19]++;
-      return;
+    catch (b) {
+      _$jscoverage['recipe.js'][1]++;
+      return a.clearTimeout(A.readyTimeout), A.readyTimeout = a.setTimeout(H, 50), void 0;
     }
-    _$jscoverage['recipe.js'][19]++;
+    _$jscoverage['recipe.js'][1]++;
     p();
   }
 })();
-      }
     }
   }
-  _$jscoverage['recipe.js'][19]++;
+  _$jscoverage['recipe.js'][1]++;
   setTimeout((function () {
-  _$jscoverage['recipe.js'][19]++;
-  s = true;
-  _$jscoverage['recipe.js'][19]++;
-  g(x, (function (e) {
-  _$jscoverage['recipe.js'][19]++;
-  e();
+  _$jscoverage['recipe.js'][1]++;
+  r = true, d(v, (function (a) {
+  _$jscoverage['recipe.js'][1]++;
+  a();
 }));
 }), 300);
 })(window);
-_$jscoverage['recipe.js'][19]++;
-var recipe = (function (f, e, g) {
-  _$jscoverage['recipe.js'][19]++;
-  var c = "", a = "", b = {}, i = {version: new e.Deferred(), dependencies: new e.Deferred()}, j = (function (n) {
-  _$jscoverage['recipe.js'][19]++;
-  var m, k, l = [];
-  _$jscoverage['recipe.js'][19]++;
-  for (m = 0, k = n.length; m < k; m++) {
-    _$jscoverage['recipe.js'][19]++;
-    if (e.inArray(n[m], l) === -1) {
-      _$jscoverage['recipe.js'][19]++;
-      l.push(n[m]);
-    }
+_$jscoverage['recipe.js'][1]++;
+var recipe = (function (a, b, c) {
+  _$jscoverage['recipe.js'][1]++;
+  var d = "", e = "", f = {version: new b.Deferred(), dependencies: new b.Deferred()}, g = (function (a) {
+  _$jscoverage['recipe.js'][1]++;
+  var c, d, e = [];
+  _$jscoverage['recipe.js'][1]++;
+  for (c = 0, d = a.length; d > c; c++) {
+    _$jscoverage['recipe.js'][1]++;
+    -1 === b.inArray(a[c], e) && e.push(a[c]);
 }
-  _$jscoverage['recipe.js'][19]++;
-  return l;
-}), h = (function (u) {
-  _$jscoverage['recipe.js'][19]++;
-  var k, n = (u || {}).libraries || [], l = (u || {}).scripts || [], q = [], p = [], t = new e.Deferred(), o, s, r, m;
-  _$jscoverage['recipe.js'][19]++;
-  h.get.version().then((function (v) {
-  _$jscoverage['recipe.js'][19]++;
-  h.get.dependencies().then((function (w) {
-  _$jscoverage['recipe.js'][19]++;
-  for (m = 0, o = n.length; m < o; m++) {
-    _$jscoverage['recipe.js'][19]++;
-    s = w[n[m]];
-    _$jscoverage['recipe.js'][19]++;
-    if (! s) {
-      _$jscoverage['recipe.js'][19]++;
-      t.reject("Ingredients not found. namespace[" + n[m] + "]");
-      _$jscoverage['recipe.js'][19]++;
-      return t;
-    }
-    _$jscoverage['recipe.js'][19]++;
-    q = q.concat(s);
+  _$jscoverage['recipe.js'][1]++;
+  return e;
+}), h = (function (b, c) {
+  _$jscoverage['recipe.js'][1]++;
+  var d, e, f = (i.exports, []), g = b.length;
+  _$jscoverage['recipe.js'][1]++;
+  for (e = 0; g > e; e++) {
+    _$jscoverage['recipe.js'][1]++;
+    "exports" === b[e]? f.push(i.exports): (d = i.exports[b[e]], f.push(d));
 }
-  _$jscoverage['recipe.js'][19]++;
-  q = j(q.concat(l));
-  _$jscoverage['recipe.js'][19]++;
-  for (m = 0, o = q.length; m < o; m++) {
-    _$jscoverage['recipe.js'][19]++;
-    r = q[m].split("#");
-    _$jscoverage['recipe.js'][19]++;
-    if (! r[0]) {
-      _$jscoverage['recipe.js'][19]++;
-      t.reject("Illegal URL were exists. [\"" + q.join("\", \"") + "\"]");
-      _$jscoverage['recipe.js'][19]++;
-      return t;
+  _$jscoverage['recipe.js'][1]++;
+  c.apply(a, f);
+}), i = (function (d) {
+  _$jscoverage['recipe.js'][1]++;
+  var e, f, j, k, l = (d || {}).libraries || [], m = (d || {}).scripts || [], n = (d || {}).amd || false, o = [], p = [], q = new b.Deferred();
+  _$jscoverage['recipe.js'][1]++;
+  return n && (a.define = h), i.get.version().then((function (a) {
+  _$jscoverage['recipe.js'][1]++;
+  i.get.dependencies(n).then((function (b) {
+  _$jscoverage['recipe.js'][1]++;
+  for (k = 0, e = l.length; e > k; k++) {
+    _$jscoverage['recipe.js'][1]++;
+    if (f = b[l[k]], ! f) {
+      _$jscoverage['recipe.js'][1]++;
+      return q.reject("Ingredients not found. namespace[" + l[k] + "]"), q;
     }
-    _$jscoverage['recipe.js'][19]++;
-    p.push(r[0] + "?_=" + v + (r[1]? "#" + r[1]: ""));
+    _$jscoverage['recipe.js'][1]++;
+    o = o.concat(f);
 }
-  _$jscoverage['recipe.js'][19]++;
-  if (p.length) {
-    _$jscoverage['recipe.js'][19]++;
-    p.push((function () {
-  _$jscoverage['recipe.js'][19]++;
-  t.resolve();
+  _$jscoverage['recipe.js'][1]++;
+  for (o = g(o.concat(m)), k = 0, e = o.length; e > k; k++) {
+    _$jscoverage['recipe.js'][1]++;
+    if (j = o[k].split("#"), ! j[0]) {
+      _$jscoverage['recipe.js'][1]++;
+      return q.reject("Illegal URL were exists. [\"" + o.join("\", \"") + "\"]"), q;
+    }
+    _$jscoverage['recipe.js'][1]++;
+    p.push(j[0] + "?_=" + a + (j[1]? "#" + j[1]: ""));
+}
+  _$jscoverage['recipe.js'][1]++;
+  p.length? (p.push((function () {
+  _$jscoverage['recipe.js'][1]++;
+  q.resolve();
+})), c.js.apply(c, p)): q.resolve();
 }));
-    _$jscoverage['recipe.js'][19]++;
-    g.js.apply(g, p);
-  }
-  else {
-    _$jscoverage['recipe.js'][19]++;
-    t.resolve();
-  }
-}));
-}));
-  _$jscoverage['recipe.js'][19]++;
-  return t;
-}), d = {init: (function () {
-  _$jscoverage['recipe.js'][19]++;
-  var k = h.get.menu();
-  _$jscoverage['recipe.js'][19]++;
-  c = k.replace(/\/[^\/]+$/, "");
-  _$jscoverage['recipe.js'][19]++;
-  if (! k) {
-    _$jscoverage['recipe.js'][19]++;
+})), q;
+}), j = {init: (function () {
+  _$jscoverage['recipe.js'][1]++;
+  var a = i.get.menu();
+  _$jscoverage['recipe.js'][1]++;
+  if (d = a.replace(/\/[^\/]+$/, ""), ! a) {
+    _$jscoverage['recipe.js'][1]++;
     throw "You might forget to order because of menu was not founded.";
   }
-  _$jscoverage['recipe.js'][19]++;
-  h.get.version().then((function (l) {
-  _$jscoverage['recipe.js'][19]++;
-  h.resolve(k, l);
+  _$jscoverage['recipe.js'][1]++;
+  i.get.version().then((function (b) {
+  _$jscoverage['recipe.js'][1]++;
+  i.resolve(a, b);
 }));
-}), resolve: (function (l, k) {
-  _$jscoverage['recipe.js'][19]++;
-  var m = l.split("#");
-  _$jscoverage['recipe.js'][19]++;
-  g.js(m[0] + "?_=" + k + (m[1]? "#" + m[1]: ""));
+}), resolve: (function (a, b) {
+  _$jscoverage['recipe.js'][1]++;
+  var d = a.split("#");
+  _$jscoverage['recipe.js'][1]++;
+  c.js(d[0] + "?_=" + b + (d[1]? "#" + d[1]: ""));
 }), get: {menu: (function () {
-  _$jscoverage['recipe.js'][19]++;
-  var k = e("script[src$='/recipe.js'][data-menu]"), m = k.data("menu"), l = (k.attr("src") || "").replace(/[^\/]+$/, "") + m + ".js";
-  _$jscoverage['recipe.js'][19]++;
-  return m? l: "";
+  _$jscoverage['recipe.js'][1]++;
+  var a = b("script[src$='/recipe.js'][data-menu]"), c = a.data("menu"), d = (a.attr("src") || "").replace(/[^\/]+$/, "") + c + ".js";
+  _$jscoverage['recipe.js'][1]++;
+  return c? d: "";
 }), version: (function () {
-  _$jscoverage['recipe.js'][19]++;
-  if (! h.version) {
-    _$jscoverage['recipe.js'][19]++;
-    g.js(c + "/recipe.version.js?_=" + new Date().getTime(), (function () {
-  _$jscoverage['recipe.js'][19]++;
-  i.version.resolve(h.version);
-}));
-  }
-  else {
-    _$jscoverage['recipe.js'][19]++;
-    i.version.resolve(h.version);
-  }
-  _$jscoverage['recipe.js'][19]++;
-  return i.version;
-}), dependencies: (function () {
-  _$jscoverage['recipe.js'][19]++;
-  if (! h.dependencies) {
-    _$jscoverage['recipe.js'][19]++;
-    g.js(c + "/recipe.dependencies.js?_=" + h.version, (function () {
-  _$jscoverage['recipe.js'][19]++;
-  i.dependencies.resolve(h.dependencies);
-}));
-  }
-  else {
-    _$jscoverage['recipe.js'][19]++;
-    i.dependencies.resolve(h.dependencies);
-  }
-  _$jscoverage['recipe.js'][19]++;
-  return i.dependencies;
+  _$jscoverage['recipe.js'][1]++;
+  return i.version? f.version.resolve(i.version): c.js(d + "/recipe.version.js?_=" + (new Date()).getTime(), (function () {
+  _$jscoverage['recipe.js'][1]++;
+  f.version.resolve(i.version);
+})), f.version;
+}), dependencies: (function (a) {
+  _$jscoverage['recipe.js'][1]++;
+  return i.dependencies? f.dependencies.resolve(i.dependencies): c.js(d + "/recipe." + (a? "amd.": "") + "dependencies.js?_=" + i.version, (function () {
+  _$jscoverage['recipe.js'][1]++;
+  f.dependencies.resolve(i.dependencies);
+})), f.dependencies;
 })}};
-  _$jscoverage['recipe.js'][19]++;
-  for (a in d) {
-    _$jscoverage['recipe.js'][19]++;
-    h[a] = d[a];
+  _$jscoverage['recipe.js'][1]++;
+  for (e in j) {
+    _$jscoverage['recipe.js'][1]++;
+    i[e] = j[e];
 }
-  _$jscoverage['recipe.js'][19]++;
-  h.init();
-  _$jscoverage['recipe.js'][19]++;
-  return h;
+  _$jscoverage['recipe.js'][1]++;
+  return i.exports = i.exports || {}, i.init(), i;
 })(this, jQuery, head);
-_$jscoverage['recipe.js'].source = ["/*!"," * Recipe.js  Cook your javascript with recipe.js"," * Author     sideroad"," * License    MIT"," *"," * Version    0.1.0"," * https://github.com/sideroad/recipe/"," */",";","/*!"," * HeadJS     The only script in your &lt;HEAD&gt;    "," * Author     Tero Piirainen  (tipiirai)"," * Maintainer Robert Hoffmann (itechnology)"," * License    MIT / http://bit.ly/mit-license"," *"," * Version 0.99"," * http://headjs.com"," */",";(function(i,l){var I=i.document,j=[],x=[],v={},D={},o=\"async\" in I.createElement(\"script\")||\"MozAppearance\" in I.documentElement.style||i.opera,s,f,b=i.head_conf&amp;&amp;i.head_conf.head||\"head\",t=i[b]=(i[b]||function(){t.ready.apply(null,arguments)}),G=1,z=2,C=3,k=4;if(o){t.load=function(){var J=arguments,K=J[J.length-1],e={};if(!a(K)){K=null}g(J,function(M,L){if(M!==K){M=H(M);e[M.name]=M;n(M,K&amp;&amp;L===J.length-2?function(){if(B(e)){w(K)}}:null)}});return t}}else{t.load=function(){var e=arguments,K=[].slice.call(e,1),J=K[0];if(!s){x.push(function(){t.load.apply(null,e)});return t}if(!!J){g(K,function(L){if(!a(L)){y(H(L))}});n(H(e[0]),a(J)?J:function(){t.load.apply(null,K)})}else{n(H(e[0]))}return t}}t.js=t.load;t.test=function(N,K,e,M){var J=(typeof N===\"object\")?N:{test:N,success:!!K?r(K)?K:[K]:false,failure:!!e?r(e)?e:[e]:false,callback:M||h};var L=!!J.test;if(L&amp;&amp;!!J.success){J.success.push(J.callback);t.load.apply(null,J.success)}else{if(!L&amp;&amp;!!J.failure){J.failure.push(J.callback);t.load.apply(null,J.failure)}else{M()}}return t};t.ready=function(J,L){if(J===I){if(f){w(L)}else{j.push(L)}return t}if(a(J)){L=J;J=\"ALL\"}if(typeof J!==\"string\"||!a(L)){return t}var K=D[J];if(K&amp;&amp;K.state===k||J===\"ALL\"&amp;&amp;B()&amp;&amp;f){w(L);return t}var e=v[J];if(!e){e=v[J]=[L]}else{e.push(L)}return t};t.ready(I,function(){if(B()){g(v.ALL,function(e){w(e)})}if(t.feature){t.feature(\"domloaded\",true)}});function h(){}function g(e,L){if(!e){return}if(typeof e===\"object\"){e=[].slice.call(e)}for(var K=0,J=e.length;K&lt;J;K++){L.call(e,e[K],K)}}function m(e,J){var K=Object.prototype.toString.call(J).slice(8,-1);return J!==l&amp;&amp;J!==null&amp;&amp;K===e}function a(e){return m(\"Function\",e)}function r(e){return m(\"Array\",e)}function A(K){var e=K.split(\"/\"),J=e[e.length-1],L=J.indexOf(\"?\");return L!==-1?J.substring(0,L):J}function w(e){e=e||h;if(e._done){return}e();e._done=1}function H(L){var J={};if(typeof L===\"object\"){for(var e in L){if(!!L[e]){J={name:e,url:L[e],charset:L[e].split(\"#\")[1]||\"utf-8\"}}}}else{J={name:A(L),url:L,charset:L.split(\"#\")[1]||\"utf-8\"}}var K=D[J.name];if(K&amp;&amp;K.url===J.url){return K}D[J.name]=J;return J}function B(e){e=e||D;for(var J in e){if(e.hasOwnProperty(J)&amp;&amp;e[J].state!==k){return false}}return true}function F(e){e.state=z;g(e.onpreload,function(J){J.call()})}function y(e,J){if(e.state===l){e.state=G;e.onpreload=[];c({url:e.url,type:\"cache\",charset:e.charset},function(){F(e)})}}function n(e,J){J=J||h;if(e.state===k){J();return}if(e.state===C){t.ready(e.name,J);return}if(e.state===G){e.onpreload.push(function(){n(e,J)});return}e.state=C;c(e,function(){e.state=k;J();g(v[e.name],function(K){w(K)});if(f&amp;&amp;B()){g(v.ALL,function(K){w(K)})}})}function c(K,N){N=N||h;var L;if(/\\.css[^\\.]*$/.test(K.url)){L=I.createElement(\"link\");L.type=\"text/\"+(K.type||\"css\");L.rel=\"stylesheet\";L.href=K.url}else{L=I.createElement(\"script\");L.charset=K.charset;L.type=\"text/\"+(K.type||\"javascript\");L.src=K.url}L.onload=L.onreadystatechange=M;L.onerror=e;L.async=false;L.defer=false;function e(O){O=O||i.event;L.onload=L.onreadystatechange=L.onerror=null;N()}function M(O){O=O||i.event;if(O.type===\"load\"||(/loaded|complete/.test(L.readyState)&amp;&amp;(!I.documentMode||I.documentMode&lt;9))){L.onload=L.onreadystatechange=L.onerror=null;N()}}var J=I.head||I.getElementsByTagName(\"head\")[0];J.insertBefore(L,J.lastChild)}function p(){if(!I.body){i.clearTimeout(t.readyTimeout);t.readyTimeout=i.setTimeout(p,50);return}if(!f){f=true;g(j,function(e){w(e)})}}function q(){if(I.addEventListener){I.removeEventListener(\"DOMContentLoaded\",q,false);p()}else{if(I.readyState===\"complete\"){I.detachEvent(\"onreadystatechange\",q);p()}}}if(I.readyState===\"complete\"){p()}else{if(I.addEventListener){I.addEventListener(\"DOMContentLoaded\",q,false);i.addEventListener(\"load\",p,false)}else{I.attachEvent(\"onreadystatechange\",q);i.attachEvent(\"onload\",p);var u=false;try{u=i.frameElement==null&amp;&amp;I.documentElement}catch(E){}if(u&amp;&amp;u.doScroll){(function d(){if(!f){try{u.doScroll(\"left\")}catch(e){i.clearTimeout(t.readyTimeout);t.readyTimeout=i.setTimeout(d,50);return}p()}})()}}}setTimeout(function(){s=true;g(x,function(e){e()})},300)})(window);var recipe=(function(f,e,g){var c=\"\",a=\"\",b={},i={version:new e.Deferred(),dependencies:new e.Deferred()},j=function(n){var m,k,l=[];for(m=0,k=n.length;m&lt;k;m++){if(e.inArray(n[m],l)===-1){l.push(n[m])}}return l},h=function(u){var k,n=(u||{}).libraries||[],l=(u||{}).scripts||[],q=[],p=[],t=new e.Deferred(),o,s,r,m;h.get.version().then(function(v){h.get.dependencies().then(function(w){for(m=0,o=n.length;m&lt;o;m++){s=w[n[m]];if(!s){t.reject(\"Ingredients not found. namespace[\"+n[m]+\"]\");return t}q=q.concat(s)}q=j(q.concat(l));for(m=0,o=q.length;m&lt;o;m++){r=q[m].split(\"#\");if(!r[0]){t.reject('Illegal URL were exists. [\"'+q.join('\", \"')+'\"]');return t}p.push(r[0]+\"?_=\"+v+(r[1]?\"#\"+r[1]:\"\"))}if(p.length){p.push(function(){t.resolve()});g.js.apply(g,p)}else{t.resolve()}})});return t},d={init:function(){var k=h.get.menu();c=k.replace(/\\/[^\\/]+$/,\"\");if(!k){throw\"You might forget to order because of menu was not founded.\"}h.get.version().then(function(l){h.resolve(k,l)})},resolve:function(l,k){var m=l.split(\"#\");g.js(m[0]+\"?_=\"+k+(m[1]?\"#\"+m[1]:\"\"))},get:{menu:function(){var k=e(\"script[src$='/recipe.js'][data-menu]\"),m=k.data(\"menu\"),l=(k.attr(\"src\")||\"\").replace(/[^\\/]+$/,\"\")+m+\".js\";return m?l:\"\"},version:function(){if(!h.version){g.js(c+\"/recipe.version.js?_=\"+(new Date().getTime()),function(){i.version.resolve(h.version)})}else{i.version.resolve(h.version)}return i.version},dependencies:function(){if(!h.dependencies){g.js(c+\"/recipe.dependencies.js?_=\"+h.version,function(){i.dependencies.resolve(h.dependencies)})}else{i.dependencies.resolve(h.dependencies)}return i.dependencies}}};for(a in d){h[a]=d[a]}h.init();return h})(this,jQuery,head);"];
+_$jscoverage['recipe.js'].source = ["!function(a,b){\"use strict\";function c(){}function d(a,b){if(a){\"object\"==typeof a&amp;&amp;(a=[].slice.call(a));for(var c=0,d=a.length;d&gt;c;c++)b.call(a,a[c],c)}}function e(a,c){var d=Object.prototype.toString.call(c).slice(8,-1);return c!==b&amp;&amp;null!==c&amp;&amp;d===a}function f(a){return e(\"Function\",a)}function g(a){return e(\"Array\",a)}function h(a){var b=a.split(\"/\"),c=b[b.length-1],d=c.indexOf(\"?\");return-1!==d?c.substring(0,d):c}function i(a){a=a||c,a._done||(a(),a._done=1)}function j(a){var b={};if(\"object\"==typeof a)for(var c in a)a[c]&amp;&amp;(b={name:c,url:a[c],charset:a[c].split(\"#\")[1]||\"utf-8\"});else b={name:h(a),url:a,charset:a.split(\"#\")[1]||\"utf-8\"};var d=x[b.name];return d&amp;&amp;d.url===b.url?d:(x[b.name]=b,b)}function k(a){a=a||x;for(var b in a)if(a.hasOwnProperty(b)&amp;&amp;a[b].state!==E)return!1;return!0}function l(a){a.state=C,d(a.onpreload,function(a){a.call()})}function m(a){a.state===b&amp;&amp;(a.state=B,a.onpreload=[],o({url:a.url,type:\"cache\",charset:a.charset},function(){l(a)}))}function n(a,b){return b=b||c,a.state===E?(b(),void 0):a.state===D?(A.ready(a.name,b),void 0):a.state===B?(a.onpreload.push(function(){n(a,b)}),void 0):(a.state=D,o(a,function(){a.state=E,b(),d(w[a.name],function(a){i(a)}),s&amp;&amp;k()&amp;&amp;d(w.ALL,function(a){i(a)})}),void 0)}function o(b,d){function e(b){b=b||a.event,g.onload=g.onreadystatechange=g.onerror=null,d()}function f(b){b=b||a.event,(\"load\"===b.type||/loaded|complete/.test(g.readyState)&amp;&amp;(!t.documentMode||t.documentMode&lt;9))&amp;&amp;(g.onload=g.onreadystatechange=g.onerror=null,d())}d=d||c;var g;/\\.css[^\\.]*$/.test(b.url)?(g=t.createElement(\"link\"),g.type=\"text/\"+(b.type||\"css\"),g.rel=\"stylesheet\",g.href=b.url):(g=t.createElement(\"script\"),g.charset=b.charset,g.type=\"text/\"+(b.type||\"javascript\"),g.src=b.url),g.onload=g.onreadystatechange=f,g.onerror=e,g.async=!1,g.defer=!1;var h=t.head||t.getElementsByTagName(\"head\")[0];h.insertBefore(g,h.lastChild)}function p(){return t.body?(s||(s=!0,d(u,function(a){i(a)})),void 0):(a.clearTimeout(A.readyTimeout),A.readyTimeout=a.setTimeout(p,50),void 0)}function q(){t.addEventListener?(t.removeEventListener(\"DOMContentLoaded\",q,!1),p()):\"complete\"===t.readyState&amp;&amp;(t.detachEvent(\"onreadystatechange\",q),p())}var r,s,t=a.document,u=[],v=[],w={},x={},y=\"async\"in t.createElement(\"script\")||\"MozAppearance\"in t.documentElement.style||a.opera,z=a.head_conf&amp;&amp;a.head_conf.head||\"head\",A=a[z]=a[z]||function(){A.ready.apply(null,arguments)},B=1,C=2,D=3,E=4;if(A.load=y?function(){var a=arguments,b=a[a.length-1],c={};return f(b)||(b=null),d(a,function(d,e){d!==b&amp;&amp;(d=j(d),c[d.name]=d,n(d,b&amp;&amp;e===a.length-2?function(){k(c)&amp;&amp;i(b)}:null))}),A}:function(){var a=arguments,b=[].slice.call(a,1),c=b[0];return r?(c?(d(b,function(a){f(a)||m(j(a))}),n(j(a[0]),f(c)?c:function(){A.load.apply(null,b)})):n(j(a[0])),A):(v.push(function(){A.load.apply(null,a)}),A)},A.js=A.load,A.test=function(a,b,d,e){var f=\"object\"==typeof a?a:{test:a,success:b?g(b)?b:[b]:!1,failure:d?g(d)?d:[d]:!1,callback:e||c},h=!!f.test;return h&amp;&amp;f.success?(f.success.push(f.callback),A.load.apply(null,f.success)):!h&amp;&amp;f.failure?(f.failure.push(f.callback),A.load.apply(null,f.failure)):e(),A},A.ready=function(a,b){if(a===t)return s?i(b):u.push(b),A;if(f(a)&amp;&amp;(b=a,a=\"ALL\"),\"string\"!=typeof a||!f(b))return A;var c=x[a];if(c&amp;&amp;c.state===E||\"ALL\"===a&amp;&amp;k()&amp;&amp;s)return i(b),A;var d=w[a];return d?d.push(b):d=w[a]=[b],A},A.ready(t,function(){k()&amp;&amp;d(w.ALL,function(a){i(a)}),A.feature&amp;&amp;A.feature(\"domloaded\",!0)}),\"complete\"===t.readyState)p();else if(t.addEventListener)t.addEventListener(\"DOMContentLoaded\",q,!1),a.addEventListener(\"load\",p,!1);else{t.attachEvent(\"onreadystatechange\",q),a.attachEvent(\"onload\",p);var F=!1;try{F=null==a.frameElement&amp;&amp;t.documentElement}catch(G){}F&amp;&amp;F.doScroll&amp;&amp;function H(){if(!s){try{F.doScroll(\"left\")}catch(b){return a.clearTimeout(A.readyTimeout),A.readyTimeout=a.setTimeout(H,50),void 0}p()}}()}setTimeout(function(){r=!0,d(v,function(a){a()})},300)}(window);var recipe=function(a,b,c){var d=\"\",e=\"\",f={version:new b.Deferred,dependencies:new b.Deferred},g=function(a){var c,d,e=[];for(c=0,d=a.length;d&gt;c;c++)-1===b.inArray(a[c],e)&amp;&amp;e.push(a[c]);return e},h=function(b,c){var d,e,f=(i.exports,[]),g=b.length;for(e=0;g&gt;e;e++)\"exports\"===b[e]?f.push(i.exports):(d=i.exports[b[e]],f.push(d));c.apply(a,f)},i=function(d){var e,f,j,k,l=(d||{}).libraries||[],m=(d||{}).scripts||[],n=(d||{}).amd||!1,o=[],p=[],q=new b.Deferred;return n&amp;&amp;(a.define=h),i.get.version().then(function(a){i.get.dependencies(n).then(function(b){for(k=0,e=l.length;e&gt;k;k++){if(f=b[l[k]],!f)return q.reject(\"Ingredients not found. namespace[\"+l[k]+\"]\"),q;o=o.concat(f)}for(o=g(o.concat(m)),k=0,e=o.length;e&gt;k;k++){if(j=o[k].split(\"#\"),!j[0])return q.reject('Illegal URL were exists. [\"'+o.join('\", \"')+'\"]'),q;p.push(j[0]+\"?_=\"+a+(j[1]?\"#\"+j[1]:\"\"))}p.length?(p.push(function(){q.resolve()}),c.js.apply(c,p)):q.resolve()})}),q},j={init:function(){var a=i.get.menu();if(d=a.replace(/\\/[^\\/]+$/,\"\"),!a)throw\"You might forget to order because of menu was not founded.\";i.get.version().then(function(b){i.resolve(a,b)})},resolve:function(a,b){var d=a.split(\"#\");c.js(d[0]+\"?_=\"+b+(d[1]?\"#\"+d[1]:\"\"))},get:{menu:function(){var a=b(\"script[src$='/recipe.js'][data-menu]\"),c=a.data(\"menu\"),d=(a.attr(\"src\")||\"\").replace(/[^\\/]+$/,\"\")+c+\".js\";return c?d:\"\"},version:function(){return i.version?f.version.resolve(i.version):c.js(d+\"/recipe.version.js?_=\"+(new Date).getTime(),function(){f.version.resolve(i.version)}),f.version},dependencies:function(a){return i.dependencies?f.dependencies.resolve(i.dependencies):c.js(d+\"/recipe.\"+(a?\"amd.\":\"\")+\"dependencies.js?_=\"+i.version,function(){f.dependencies.resolve(i.dependencies)}),f.dependencies}}};for(e in j)i[e]=j[e];return i.exports=i.exports||{},i.init(),i}(this,jQuery,head);"];

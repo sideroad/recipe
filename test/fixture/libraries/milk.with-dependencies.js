@@ -1,1 +1,1 @@
-var milk=true;
+var milk=!0;
