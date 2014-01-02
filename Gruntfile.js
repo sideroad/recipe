@@ -8,8 +8,8 @@ module.exports = function(grunt) {
     clean: ['dist', 'test/tests.tap', 'test/fixture/libraries/*.js'],
 
     recipe: {
-      options: {
-        min: 'min'
+      options:{
+        amd: true
       },
       main: {
         files: {
@@ -36,10 +36,7 @@ module.exports = function(grunt) {
       }
     },
 
-    min: {
-      options: {
-        report: false
-      },
+    uglify: {
       main: {
         files: {
           'dist/recipe.js': ['dist/recipe.unpack.js'],
@@ -55,8 +52,13 @@ module.exports = function(grunt) {
         timeout: 10000
       },
       main: {
+        options:{
+          launch_in_ci: [ "chrome" ]
+        },
         files: {
-          'test/tests.tap': ['test/target/*.html']
+          'test/tests.tap': [
+            'test/target/*.html'
+          ]
         }
       },
       cui: {
@@ -102,7 +104,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-yui-compressor');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-devtools');
   grunt.loadNpmTasks('grunt-testem');
@@ -111,8 +113,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-recipe');
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', ['clean', 'recipe', 'jshint', 'concat', 'min', 'testem:main', 'qunit-cov', 'plato']);
-  grunt.registerTask('test', ['clean', 'recipe', 'jshint', 'concat', 'min', 'testem:cui']);
-  grunt.registerTask('jenkins', ['clean', 'recipe', 'jshint', 'concat', 'min', 'testem:cui', 'qunit-cov', 'plato']);
+  grunt.registerTask('default', ['clean', 'recipe', 'jshint', 'concat', 'uglify', 'qunit-cov', 'plato']);
+  grunt.registerTask('test', ['clean', 'recipe', 'jshint', 'concat', 'uglify', 'testem:cui']);
+  grunt.registerTask('jenkins', ['clean', 'recipe', 'jshint', 'concat', 'uglify', 'testem:cui', 'qunit-cov', 'plato']);
 
 };

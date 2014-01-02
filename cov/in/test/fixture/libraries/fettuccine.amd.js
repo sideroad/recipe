@@ -1,0 +1,1 @@
+define(["exports"],function(a){var b={};a.fettuccine=b});

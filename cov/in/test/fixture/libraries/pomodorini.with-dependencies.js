@@ -1,1 +1,1 @@
-var pomodorini=true;
+var pomodorini=!0;

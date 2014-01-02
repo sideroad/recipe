@@ -21,6 +21,7 @@ Before using this plugins, please install [grunt-recipe](https://github.com/side
 |---|----|-----|
 |libraries|Array<String>|libraries namespace list|
 |scripts|Array<String>|scripts URL list|
+|amd|Boolean|Use AMD loading|
 
 recipe function return `Deferred` object.
 `then` function call after all libraries, scripts were loaded
@@ -60,7 +61,9 @@ recipe({
 |recipe.js        |Core library|                             |
 |recipe.version.js|Version file|Update version when you release libraries or script for avoiding browser cache |
 |recipe.dependencies.js|Defining dependencies file|Update dependencies when adding library, changing dependencies |
-Required: Release your menu files, recipe.js, recipe.version.js and recipe.dependecies.js onto same directory.
+|recipe.amd.dependencies.js|Defining AMD dependencies file|Update dependencies when adding library, changing dependencies |
+
+Required: Release your menu files, recipe.js, recipe.version.js, recipe.dependecies.js and recipe.amd.dependencies.js onto same directory.
 
 
 ### Embedded on recipe.js

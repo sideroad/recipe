@@ -644,10 +644,29 @@ var recipe = (function(globals, $, head){
         }
         return uniqued;
       },
+      define = function(dependencies, callback){
+        var exports = recipe.exports,
+            variables = [],
+            variable,
+            i,
+            length = dependencies.length;
+
+        for(i=0;i<length;i++){
+          if(dependencies[i] === 'exports'){
+            variables.push(recipe.exports);
+          } else {
+            variable = recipe.exports[dependencies[i]];
+            variables.push( variable );
+          }
+        }
+
+        callback.apply( globals, variables);
+      },
       recipe = function(options){
         var namespace,
             libraries = (options||{}).libraries||[],
             scripts = (options||{}).scripts||[],
+            isAmd = (options||{}).amd||false,
             urls = [],
             args = [],
             dfd = new $.Deferred(),
@@ -656,8 +675,12 @@ var recipe = (function(globals, $, head){
             set,
             i;
 
+        if(isAmd){
+          globals.define = define;
+        }
+
         recipe.get.version().then(function(version){
-          recipe.get.dependencies().then(function(dependencies){
+          recipe.get.dependencies(isAmd).then(function(dependencies){
             for( i = 0, len = libraries.length; i<len; i++){
               deps = dependencies[libraries[i]];
               if(!deps) {
@@ -724,9 +747,9 @@ var recipe = (function(globals, $, head){
             }
             return dfd.version;
           },
-          dependencies: function(){
+          dependencies: function(isAmd){
             if(!recipe.dependencies) {
-              head.js(base+'/recipe.dependencies.js?_='+recipe.version, function(){
+              head.js(base+'/recipe.'+(isAmd?'amd.':'')+'dependencies.js?_='+recipe.version, function(){
                 dfd.dependencies.resolve(recipe.dependencies);
               });
             } else {
@@ -740,6 +763,7 @@ var recipe = (function(globals, $, head){
   for(method in methods){
     recipe[method] = methods[method];
   }
+  recipe.exports = recipe.exports || {};
 
   recipe.init();
   return recipe;

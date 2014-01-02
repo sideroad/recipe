@@ -1,1 +1,1 @@
-var salt=true;var milk=true;var parmigianoReggiano={consistOf:[this.salt,this.milk]};
+var salt=!0,milk=!0,parmigianoReggiano={consistOf:[salt,milk]};

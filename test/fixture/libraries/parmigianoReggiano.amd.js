@@ -1,0 +1,1 @@
+define(["salt","milk","exports"],function(a,b,c){var d={consistOf:[a,b]};c.parmigianoReggiano=d});

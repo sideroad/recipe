@@ -1,1 +1,1 @@
-var butter={consistOf:[this.salt,this.milk]};
+var butter={consistOf:[salt,milk]};
