@@ -31,7 +31,7 @@ module.exports = function(grunt) {
                  ' */\n'
         },
         files: {
-          'dist/recipe.unpack.js': ['lib/head.load.js'],
+          'dist/recipe.unpack.js': ['lib/q.js', 'lib/head.load.js'],
           'test/fixture/recipe/recipe.js': ['src/recipe.js']
 
         }
