@@ -1,18 +1,28 @@
-var recipe = (function(globals, $, head){
+var recipe = (function(globals, head, Q){
 
   var base = '',
       method = '',
       cache = {},
+      hasValue = function(value, array){
+        var i, len;
+
+        for(i = 0, len = array.length; i < len; i++){
+          if(value === array[i]) {
+            return true;
+          }
+        }
+        return false;
+      },
       dfd = {
-        version: new $.Deferred(),
-        dependencies: new $.Deferred()
+        version: Q.defer(),
+        dependencies: Q.defer()
       },
       uniq = function(array){
         var i,
             len,
             uniqued = [];
         for(i = 0, len = array.length; i < len; i++){
-          if( $.inArray(array[i], uniqued) === -1 ){
+          if( !hasValue(array[i], uniqued) ){
            uniqued.push(array[i]);
           }
         }
@@ -43,7 +53,7 @@ var recipe = (function(globals, $, head){
             isAmd = (options||{}).amd||false,
             urls = [],
             args = [],
-            dfd = new $.Deferred(),
+            dfd = Q.defer(),
             len,
             deps,
             set,
@@ -53,8 +63,8 @@ var recipe = (function(globals, $, head){
           globals.define = define;
         }
 
-        recipe.get.version().then(function(version){
-          recipe.get.dependencies(isAmd).then(function(dependencies){
+        recipe.get.version().promise.then(function(version){
+          recipe.get.dependencies(isAmd).promise.then(function(dependencies){
             for( i = 0, len = libraries.length; i<len; i++){
               deps = dependencies[libraries[i]];
               if(!deps) {
@@ -76,7 +86,15 @@ var recipe = (function(globals, $, head){
 
             if(args.length) {
               args.push(function(){
-                dfd.resolve();
+                var variables = {},
+                    namespace;
+                if(isAmd){
+                  for( i =0, len = libraries.length; i<len; i++){
+                    namespace = libraries[i];
+                    variables[namespace] = recipe.exports[namespace];
+                  }
+                }
+                dfd.resolve(variables);
               });
               head.js.apply(head, args);
             } else {
@@ -85,7 +103,7 @@ var recipe = (function(globals, $, head){
 
           });
         });
-        return dfd;
+        return dfd.promise;
       },
       methods = {
         init: function(){
@@ -95,7 +113,7 @@ var recipe = (function(globals, $, head){
           if(!menu) {
             throw "You might forget to order because of menu was not founded.";
           }
-          recipe.get.version().then(function(version){
+          recipe.get.version().promise.then(function(version){
             recipe.resolve(menu, version);
           });
 
@@ -105,10 +123,27 @@ var recipe = (function(globals, $, head){
           head.js(set[0]+"?_="+version+(set[1]?"#"+set[1]:""));
         },
         get: {
+          recipeTag: function(){
+            var scripts = document.getElementsByTagName("script"),
+                i,
+                len,
+                script,
+                src;
+
+            if(scripts){
+              for(i=0, len = scripts.length; i<len; i++){
+                script = scripts[i];
+                src = script.src || "";
+                if( /\/recipe\.js$/.test( src ) && script.getAttribute('data-menu')){
+                  return script;
+                }
+              }
+            }
+          },
           menu: function(){
-            var script = $("script[src$='/recipe.js'][data-menu]"),
-                menu = script.data("menu"),
-                url = (script.attr("src")||"").replace(/[^\/]+$/, "")+menu+".js";
+            var script = recipe.get.recipeTag() || {getAttribute:function(){}},
+                menu = script.getAttribute("data-menu"),
+                url = (script.getAttribute("src")||"").replace(/[^\/]+$/, "")+menu+".js";
             return menu ? url : "";
           },
           version: function(){
@@ -141,4 +176,4 @@ var recipe = (function(globals, $, head){
 
   recipe.init();
   return recipe;
-})(this, jQuery, head);
+})(this, head, Q);

@@ -45,11 +45,11 @@
   <div class="row">
     <div class="span6">
       <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
-      <p class="stat">66.62</p>
+      <p class="stat">66.16</p>
     </div>
     <div class="span6">
       <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
-      <p class="stat">144</p>
+      <p class="stat">179</p>
     </div>
   </div>
   <div class="row historical">
@@ -63,11 +63,11 @@
   <div class="row">
     <div class="span6">
       <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
-      <p class="stat">50.37</p>
+      <p class="stat">56.83</p>
     </div>
     <div class="span6">
       <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
-      <p class="stat">1.43</p>
+      <p class="stat">1.77</p>
     </div>
   </div>
 </div>
@@ -90,21 +90,31 @@
 
 <div class="container">
   <div class="row">
-    <textarea id="file-source" class="span12">var recipe = (function(globals, $, head){
+    <textarea id="file-source" class="span12">var recipe = (function(globals, head, Q){
 
   var base = '',
       method = '',
       cache = {},
+      hasValue = function(value, array){
+        var i, len;
+
+        for(i = 0, len = array.length; i < len; i++){
+          if(value === array[i]) {
+            return true;
+          }
+        }
+        return false;
+      },
       dfd = {
-        version: new $.Deferred(),
-        dependencies: new $.Deferred()
+        version: Q.defer(),
+        dependencies: Q.defer()
       },
       uniq = function(array){
         var i,
             len,
             uniqued = [];
         for(i = 0, len = array.length; i < len; i++){
-          if( $.inArray(array[i], uniqued) === -1 ){
+          if( !hasValue(array[i], uniqued) ){
            uniqued.push(array[i]);
           }
         }
@@ -135,7 +145,7 @@
             isAmd = (options||{}).amd||false,
             urls = [],
             args = [],
-            dfd = new $.Deferred(),
+            dfd = Q.defer(),
             len,
             deps,
             set,
@@ -145,8 +155,8 @@
           globals.define = define;
         }
 
-        recipe.get.version().then(function(version){
-          recipe.get.dependencies(isAmd).then(function(dependencies){
+        recipe.get.version().promise.then(function(version){
+          recipe.get.dependencies(isAmd).promise.then(function(dependencies){
             for( i = 0, len = libraries.length; i<len; i++){
               deps = dependencies[libraries[i]];
               if(!deps) {
@@ -168,7 +178,15 @@
 
             if(args.length) {
               args.push(function(){
-                dfd.resolve();
+                var variables = {},
+                    namespace;
+                if(isAmd){
+                  for( i =0, len = libraries.length; i<len; i++){
+                    namespace = libraries[i];
+                    variables[namespace] = recipe.exports[namespace];
+                  }
+                }
+                dfd.resolve(variables);
               });
               head.js.apply(head, args);
             } else {
@@ -177,7 +195,7 @@
 
           });
         });
-        return dfd;
+        return dfd.promise;
       },
       methods = {
         init: function(){
@@ -187,7 +205,7 @@
           if(!menu) {
             throw "You might forget to order because of menu was not founded.";
           }
-          recipe.get.version().then(function(version){
+          recipe.get.version().promise.then(function(version){
             recipe.resolve(menu, version);
           });
 
@@ -197,10 +215,27 @@
           head.js(set[0]+"?_="+version+(set[1]?"#"+set[1]:""));
         },
         get: {
+          recipeTag: function(){
+            var scripts = document.getElementsByTagName("script"),
+                i,
+                len,
+                script,
+                src;
+
+            if(scripts){
+              for(i=0, len = scripts.length; i<len; i++){
+                script = scripts[i];
+                src = script.src || "";
+                if( /\/recipe\.js$/.test( src ) && script.getAttribute('data-menu')){
+                  return script;
+                }
+              }
+            }
+          },
           menu: function(){
-            var script = $("script[src$='/recipe.js'][data-menu]"),
-                menu = script.data("menu"),
-                url = (script.attr("src")||"").replace(/[^\/]+$/, "")+menu+".js";
+            var script = recipe.get.recipeTag() || {getAttribute:function(){}},
+                menu = script.getAttribute("data-menu"),
+                url = (script.getAttribute("src")||"").replace(/[^\/]+$/, "")+menu+".js";
             return menu ? url : "";
           },
           version: function(){
@@ -233,7 +268,7 @@
 
   recipe.init();
   return recipe;
-})(this, jQuery, head);</textarea>
+})(this, head, Q);</textarea>
   </div>
 </div>
 

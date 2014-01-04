@@ -1,11 +1,11 @@
-(function($){
+(function(global, $){
 
 
   module("init");
 
   asyncTest("get version", function(){
     expect(1);
-    recipe.get.version().then(function(){
+    recipe.get.version().promise.then(function(){
       ok(true);
       start();
     });
@@ -13,7 +13,7 @@
 
   asyncTest("get AMD dependencies", function(){
     expect(1);
-    recipe.get.dependencies(true).then(function(){
+    recipe.get.dependencies(true).promise.then(function(){
       ok(true);
       start();
     });
@@ -26,7 +26,7 @@
   module("resolved");
 
   asyncTest("AMD loading", function(){
-    expect(27);
+    expect(29);
     recipe({
       libraries: [
         "fettuccine.alfredo",
@@ -36,19 +36,19 @@
         "../fixture/scripts/miscellaneous.js"
       ],
       amd: true
-    }).then(function(){
+    }).then(function(variables){
       ok(recipe.version);
 
       //it should not define variables in global scope.
-      ok(!this.fettuccine);
-      ok(!this.milk);
-      ok(!this.salt);
-      ok(!this.butter);
-      ok(!this.parmigianoReggiano);
-      ok(!this.fettuccine);
-      ok(!this.pomodorini);
-      ok(!this.whitefish);
-      ok(!this.acqua);
+      ok(!global.fettuccine);
+      ok(!global.milk);
+      ok(!global.salt);
+      ok(!global.butter);
+      ok(!global.parmigianoReggiano);
+      ok(!global.fettuccine);
+      ok(!global.pomodorini);
+      ok(!global.whitefish);
+      ok(!global.acqua);
 
       //it should define to recipe exports object
       ok(recipe.exports.fettuccine);
@@ -67,6 +67,10 @@
       ok(recipe.exports['acqua.pazza'].consistOf[0]);
       ok(recipe.exports['acqua.pazza'].consistOf[1]);
 
+      //it should be passed arguments with libraries variables
+      deepEqual(variables['fettuccine.alfredo'], recipe.exports['fettuccine.alfredo']);
+      deepEqual(variables['acqua.pazza'], recipe.exports['acqua.pazza']);
+
       //scirpts should be define in global scope
       ok(blah.blah.blah);
 
@@ -76,18 +80,20 @@
   });
 
   asyncTest("only libraries", function(){
-    expect(5);
+    expect(6);
     recipe({
       libraries: [
         "fettuccine.alfredo"
       ],
       amd: true
-    }).then(function(){
+    }).then(function(variables){
       ok(recipe.version);
       ok(recipe.dependencies);
 
-      ok(!this.fettuccine);
+      ok(!global.fettuccine);
       ok(recipe.exports.fettuccine.alfredo);
+
+      deepEqual(variables['fettuccine.alfredo'], recipe.exports['fettuccine.alfredo']);
 
       equal( $("script[src*='/fettuccine.alfredo.amd.js'][type='text/javascript']").length, 1);
       start();
@@ -152,4 +158,4 @@
   });
 
   
-})(jQuery);
+})(this, jQuery);

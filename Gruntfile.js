@@ -31,7 +31,9 @@ module.exports = function(grunt) {
                  ' */\n'
         },
         files: {
-          'dist/recipe.unpack.js': ['lib/head.load.js', 'src/recipe.js']
+          'dist/recipe.unpack.js': ['lib/head.load.js'],
+          'test/fixture/recipe/recipe.js': ['src/recipe.js']
+
         }
       }
     },
@@ -39,8 +41,7 @@ module.exports = function(grunt) {
     uglify: {
       main: {
         files: {
-          'dist/recipe.js': ['dist/recipe.unpack.js'],
-          'test/fixture/recipe/recipe.js': ['dist/recipe.unpack.js']
+          'dist/recipe.js': ['dist/recipe.unpack.js']
         }
       }
     },

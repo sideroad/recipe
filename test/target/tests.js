@@ -5,7 +5,7 @@
 
   asyncTest("get version", function(){
     expect(1);
-    recipe.get.version().then(function(){
+    recipe.get.version().promise.then(function(){
       ok(true);
       start();
     });
@@ -13,7 +13,7 @@
 
   asyncTest("get dependencies", function(){
     expect(1);
-    recipe.get.dependencies().then(function(){
+    recipe.get.dependencies().promise.then(function(){
       ok(true);
       start();
     });
