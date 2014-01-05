@@ -48,6 +48,7 @@ var recipe = (function(globals, head, Q){
       },
       recipe = function(options){
         var namespace,
+            exports = (options||{}).exports||{},
             libraries = (options||{}).libraries||[],
             scripts = (options||{}).scripts||[],
             isAmd = (options||{}).amd||false,
@@ -61,6 +62,10 @@ var recipe = (function(globals, head, Q){
 
         if(isAmd){
           globals.define = define;
+
+          for(namesmape in exports){
+            recipe.exports[namespace] = exports[namespace];
+          }
         }
 
         recipe.get.version().promise.then(function(version){
