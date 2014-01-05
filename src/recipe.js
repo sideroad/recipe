@@ -63,7 +63,7 @@ var recipe = (function(globals, head, Q){
         if(isAmd){
           globals.define = define;
 
-          for(namesmape in exports){
+          for(namespace in exports){
             recipe.exports[namespace] = exports[namespace];
           }
         }

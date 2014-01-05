@@ -45,11 +45,11 @@
   <div class="row">
     <div class="span6">
       <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
-      <p class="stat">66.16</p>
+      <p class="stat">65.80</p>
     </div>
     <div class="span6">
       <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
-      <p class="stat">179</p>
+      <p class="stat">184</p>
     </div>
   </div>
   <div class="row historical">
@@ -63,11 +63,11 @@
   <div class="row">
     <div class="span6">
       <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
-      <p class="stat">56.83</p>
+      <p class="stat">58.44</p>
     </div>
     <div class="span6">
       <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
-      <p class="stat">1.77</p>
+      <p class="stat">1.82</p>
     </div>
   </div>
 </div>
@@ -140,6 +140,7 @@
       },
       recipe = function(options){
         var namespace,
+            exports = (options||{}).exports||{},
             libraries = (options||{}).libraries||[],
             scripts = (options||{}).scripts||[],
             isAmd = (options||{}).amd||false,
@@ -153,6 +154,10 @@
 
         if(isAmd){
           globals.define = define;
+
+          for(namespace in exports){
+            recipe.exports[namespace] = exports[namespace];
+          }
         }
 
         recipe.get.version().promise.then(function(version){
@@ -226,7 +231,7 @@
               for(i=0, len = scripts.length; i<len; i++){
                 script = scripts[i];
                 src = script.src || "";
-                if( /\/recipe\.js$/.test( src ) && script.getAttribute('data-menu')){
+                if( /\/recipe\.js(\?.*)?$/.test( src ) && script.getAttribute('data-menu')){
                   return script;
                 }
               }

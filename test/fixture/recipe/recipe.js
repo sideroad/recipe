@@ -3,7 +3,7 @@
  * Author     sideroad
  * License    MIT
  *
- * Version    1.0.0
+ * Version    1.1.0
  * https://github.com/sideroad/recipe/
  */
 var recipe = (function(globals, head, Q){
@@ -56,6 +56,7 @@ var recipe = (function(globals, head, Q){
       },
       recipe = function(options){
         var namespace,
+            exports = (options||{}).exports||{},
             libraries = (options||{}).libraries||[],
             scripts = (options||{}).scripts||[],
             isAmd = (options||{}).amd||false,
@@ -69,6 +70,10 @@ var recipe = (function(globals, head, Q){
 
         if(isAmd){
           globals.define = define;
+
+          for(namespace in exports){
+            recipe.exports[namespace] = exports[namespace];
+          }
         }
 
         recipe.get.version().promise.then(function(version){
@@ -142,7 +147,7 @@ var recipe = (function(globals, head, Q){
               for(i=0, len = scripts.length; i<len; i++){
                 script = scripts[i];
                 src = script.src || "";
-                if( /\/recipe\.js$/.test( src ) && script.getAttribute('data-menu')){
+                if( /\/recipe\.js(\?.*)?$/.test( src ) && script.getAttribute('data-menu')){
                   return script;
                 }
               }
