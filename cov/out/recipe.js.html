@@ -35,7 +35,8 @@
 <div class="code undef"> * Version    1.1.0</div>
 <div class="code undef"> * https://github.com/sideroad/recipe/</div>
 <div class="code undef"> */</div>
-<div class="code hit">var recipe = (function(globals, head, Q){</div>
+<div class="code hit">var recipe = (function(global, head, Q){</div>
+<div class="code hit">  'use strict';</div>
 <div class="code undef"></div>
 <div class="code hit">  var base = '',</div>
 <div class="code undef">      method = '',</div>
@@ -81,7 +82,7 @@
 <div class="code undef">          }</div>
 <div class="code undef">        }</div>
 <div class="code undef"></div>
-<div class="code hit">        callback.apply( globals, variables);</div>
+<div class="code hit">        callback.apply( global, variables);</div>
 <div class="code undef">      },</div>
 <div class="code undef">      recipe = function(options){</div>
 <div class="code hit">        var namespace,</div>
@@ -98,22 +99,25 @@
 <div class="code undef">            i;</div>
 <div class="code undef"></div>
 <div class="code hit">        if(isAmd){</div>
-<div class="code hit">          globals.define = define;</div>
+<div class="code hit">          global.define = define;</div>
 <div class="code undef"></div>
 <div class="code hit">          for(namespace in exports){</div>
-<div class="code miss">            recipe.exports[namespace] = exports[namespace];</div>
+<div class="code hit">            recipe.exports[namespace] = exports[namespace];</div>
 <div class="code undef">          }</div>
 <div class="code undef">        }</div>
 <div class="code undef"></div>
 <div class="code hit">        recipe.get.version().promise.then(function(version){</div>
 <div class="code hit">          recipe.get.dependencies(isAmd).promise.then(function(dependencies){</div>
 <div class="code hit">            for( i = 0, len = libraries.length; i&lt;len; i++){</div>
-<div class="code hit">              deps = dependencies[libraries[i]];</div>
-<div class="code hit">              if(!deps) {</div>
+<div class="code hit">              namespace = libraries[i];</div>
+<div class="code hit">              deps = dependencies[namespace];</div>
+<div class="code hit">              if(!deps && !recipe.exports[namespace]) {</div>
 <div class="code hit">                dfd.reject("Ingredients not found. namespace["+libraries[i]+"]");</div>
 <div class="code hit">                return dfd;</div>
 <div class="code undef">              }</div>
-<div class="code hit">              urls = urls.concat( deps );</div>
+<div class="code hit">              if(deps){</div>
+<div class="code hit">                urls = urls.concat( deps );</div>
+<div class="code undef">              }</div>
 <div class="code undef">            }</div>
 <div class="code undef"></div>
 <div class="code hit">            urls = uniq( urls.concat(scripts) );</div>
@@ -128,19 +132,11 @@
 <div class="code undef"></div>
 <div class="code hit">            if(args.length) {</div>
 <div class="code hit">              args.push(function(){</div>
-<div class="code hit">                var variables = {},</div>
-<div class="code undef">                    namespace;</div>
-<div class="code hit">                if(isAmd){</div>
-<div class="code hit">                  for( i =0, len = libraries.length; i&lt;len; i++){</div>
-<div class="code hit">                    namespace = libraries[i];</div>
-<div class="code hit">                    variables[namespace] = recipe.exports[namespace];</div>
-<div class="code undef">                  }</div>
-<div class="code undef">                }</div>
-<div class="code hit">                dfd.resolve(variables);</div>
+<div class="code hit">                dfd.resolve(recipe.get.variables(libraries, isAmd));</div>
 <div class="code undef">              });</div>
 <div class="code hit">              head.js.apply(head, args);</div>
 <div class="code undef">            } else {</div>
-<div class="code hit">              dfd.resolve();</div>
+<div class="code hit">              dfd.resolve(recipe.get.variables(libraries, isAmd));</div>
 <div class="code undef">            }</div>
 <div class="code undef"></div>
 <div class="code undef">          });</div>
@@ -207,6 +203,20 @@
 <div class="code hit">              dfd.dependencies.resolve(recipe.dependencies);</div>
 <div class="code undef">            }</div>
 <div class="code hit">            return dfd.dependencies;</div>
+<div class="code undef">          },</div>
+<div class="code undef">          variables: function(libraries, isAmd){</div>
+<div class="code hit">            var variables = {},</div>
+<div class="code undef">                exports = recipe.exports,</div>
+<div class="code undef">                namespace,</div>
+<div class="code undef">                i, len;</div>
+<div class="code undef"></div>
+<div class="code hit">            if(isAmd) {</div>
+<div class="code hit">              for(i=0, len=libraries.length; i&lt;len; i++){</div>
+<div class="code hit">                namespace = libraries[i];</div>
+<div class="code hit">                variables[namespace] = exports[namespace];</div>
+<div class="code undef">              }</div>
+<div class="code hit">              return variables;</div>
+<div class="code undef">            }</div>
 <div class="code undef">          }</div>
 <div class="code undef">        }</div>
 <div class="code undef">      };</div>

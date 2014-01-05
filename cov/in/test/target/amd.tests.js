@@ -131,6 +131,29 @@
     });
   });
 
+  asyncTest("exports options", function(){
+    expect(3);
+    recipe({
+      exports: {
+        foo: 'BAR!!'
+      },
+      libraries: [
+        "foo"
+      ],
+      amd: true
+    }).then(function(variables){
+
+      ok(!global.foo);
+      ok(recipe.exports.foo);
+
+      equal(variables['foo'], recipe.exports['foo']);
+
+      start();
+    }).fail(function(e){
+      console.log(e);
+    });
+  });
+
   module("reject");
   
   asyncTest("Ingredients not found", function(){
@@ -157,5 +180,4 @@
     });
   });
 
-  
 })(this, jQuery);

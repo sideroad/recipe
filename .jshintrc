@@ -13,7 +13,6 @@
   "es5": true,
   "jquery": true,
   "browser": true,
-  "qunit": true,
   "globals": {
     "head": true,
     "sinon": true,
@@ -26,8 +25,9 @@
     "stop": true,
     "ok": true,
     "assert": true,
-    "QUnit": true
+    "QUnit": true,
+    "Q": true,
 
-    "recipe": true,
+    "recipe": true
   }
 }

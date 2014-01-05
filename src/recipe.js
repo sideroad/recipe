@@ -1,4 +1,5 @@
-var recipe = (function(globals, head, Q){
+var recipe = (function(global, head, Q){
+  'use strict';
 
   var base = '',
       method = '',
@@ -44,7 +45,7 @@ var recipe = (function(globals, head, Q){
           }
         }
 
-        callback.apply( globals, variables);
+        callback.apply( global, variables);
       },
       recipe = function(options){
         var namespace,
@@ -61,7 +62,7 @@ var recipe = (function(globals, head, Q){
             i;
 
         if(isAmd){
-          globals.define = define;
+          global.define = define;
 
           for(namespace in exports){
             recipe.exports[namespace] = exports[namespace];
@@ -71,12 +72,15 @@ var recipe = (function(globals, head, Q){
         recipe.get.version().promise.then(function(version){
           recipe.get.dependencies(isAmd).promise.then(function(dependencies){
             for( i = 0, len = libraries.length; i<len; i++){
-              deps = dependencies[libraries[i]];
-              if(!deps) {
+              namespace = libraries[i];
+              deps = dependencies[namespace];
+              if(!deps && !recipe.exports[namespace]) {
                 dfd.reject("Ingredients not found. namespace["+libraries[i]+"]");
                 return dfd;
               }
-              urls = urls.concat( deps );
+              if(deps){
+                urls = urls.concat( deps );
+              }
             }
 
             urls = uniq( urls.concat(scripts) );
@@ -91,19 +95,11 @@ var recipe = (function(globals, head, Q){
 
             if(args.length) {
               args.push(function(){
-                var variables = {},
-                    namespace;
-                if(isAmd){
-                  for( i =0, len = libraries.length; i<len; i++){
-                    namespace = libraries[i];
-                    variables[namespace] = recipe.exports[namespace];
-                  }
-                }
-                dfd.resolve(variables);
+                dfd.resolve(recipe.get.variables(libraries, isAmd));
               });
               head.js.apply(head, args);
             } else {
-              dfd.resolve();
+              dfd.resolve(recipe.get.variables(libraries, isAmd));
             }
 
           });
@@ -170,6 +166,20 @@ var recipe = (function(globals, head, Q){
               dfd.dependencies.resolve(recipe.dependencies);
             }
             return dfd.dependencies;
+          },
+          variables: function(libraries, isAmd){
+            var variables = {},
+                exports = recipe.exports,
+                namespace,
+                i, len;
+
+            if(isAmd) {
+              for(i=0, len=libraries.length; i<len; i++){
+                namespace = libraries[i];
+                variables[namespace] = exports[namespace];
+              }
+              return variables;
+            }
           }
         }
       };
