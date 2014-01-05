@@ -134,7 +134,7 @@ var recipe = (function(globals, head, Q){
               for(i=0, len = scripts.length; i<len; i++){
                 script = scripts[i];
                 src = script.src || "";
-                if( /\/recipe\.js$/.test( src ) && script.getAttribute('data-menu')){
+                if( /\/recipe\.js(\?.*)?$/.test( src ) && script.getAttribute('data-menu')){
                   return script;
                 }
               }

@@ -1,6 +1,6 @@
 {
   "name": "recipe",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/recipe.js",
   "ignore": [
     "**/.*",
@@ -11,6 +11,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/sideroad/jquery.sidebar"
+    "url": "git://github.com/sideroad/recipe"
   }
 }

@@ -3,7 +3,7 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    component: grunt.file.readJSON('component.json'),
+    component: grunt.file.readJSON('bower.json'),
 
     clean: ['dist', 'test/tests.tap', 'test/fixture/libraries/*.js'],
 
