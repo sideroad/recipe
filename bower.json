@@ -1,7 +1,7 @@
 {
   "name": "recipe",
   "version": "1.1.1",
-  "main": "dist/recipe.js",
+  "main": ["dist/recipe.js", "dist/recipe.unpack.js"],
   "ignore": [
     "**/.*",
     "node_modules",
