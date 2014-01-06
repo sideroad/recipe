@@ -13,5 +13,5 @@ if (! recipe) {
 _$jscoverage['recipe.version.js'][1]++;
 ;
 _$jscoverage['recipe.version.js'][1]++;
-recipe.version = "1388908961011";
-_$jscoverage['recipe.version.js'].source = ["if(!recipe){var recipe=function(){}};recipe.version=\"1388908961011\";"];
+recipe.version = "1389006231697";
+_$jscoverage['recipe.version.js'].source = ["if(!recipe){var recipe=function(){}};recipe.version=\"1389006231697\";"];

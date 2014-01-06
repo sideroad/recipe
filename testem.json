@@ -1,5 +1,5 @@
 {
   "launch_in_ci": ["safari", "chrome", "firefox", "PhantomJS"],
   "launch_in_dev": ["safari", "chrome", "firefox", "PhantomJS"],
-  "test_page": "test/target/index.html"
+  "test_page": "test/target/index.html#testem"
 }

@@ -27,15 +27,7 @@
 </head>
 <body>
 
-<div class="code undef">/*!</div>
-<div class="code undef"> * Recipe.js  Cook your javascript with recipe.js</div>
-<div class="code undef"> * Author     sideroad</div>
-<div class="code undef"> * License    MIT</div>
-<div class="code undef"> *</div>
-<div class="code undef"> * Version    1.1.0</div>
-<div class="code undef"> * https://github.com/sideroad/recipe/</div>
-<div class="code undef"> */</div>
-<div class="code hit">var recipe = (function(global, head, Q){</div>
+<div class="code hit">recipe = (function(global, head, Q){</div>
 <div class="code hit">  'use strict';</div>
 <div class="code undef"></div>
 <div class="code hit">  var base = '',</div>
@@ -224,7 +216,7 @@
 <div class="code hit">  for(method in methods){</div>
 <div class="code hit">    recipe[method] = methods[method];</div>
 <div class="code undef">  }</div>
-<div class="code hit">  recipe.exports = recipe.exports || {};</div>
+<div class="code hit">  recipe.exports = recipe.exports || {Q:Q};</div>
 <div class="code undef"></div>
 <div class="code hit">  recipe.init();</div>
 <div class="code hit">  return recipe;</div>

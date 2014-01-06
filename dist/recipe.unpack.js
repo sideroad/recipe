@@ -3,9 +3,11 @@
  * Author     sideroad
  * License    MIT
  *
- * Version    1.1.0
+ * Version    2.0.0
  * https://github.com/sideroad/recipe/
  */
+(function(){
+var Q;
 // vim:ts=4:sts=4:sw=4:
 /*!
  *
@@ -2562,7 +2564,7 @@ return Q;
     }, 300);
 
 })(window);
-var recipe = (function(global, head, Q){
+recipe = (function(global, head, Q){
   'use strict';
 
   var base = '',
@@ -2751,8 +2753,9 @@ var recipe = (function(global, head, Q){
   for(method in methods){
     recipe[method] = methods[method];
   }
-  recipe.exports = recipe.exports || {};
+  recipe.exports = recipe.exports || {Q:Q};
 
   recipe.init();
   return recipe;
 })(this, head, Q);
+})();

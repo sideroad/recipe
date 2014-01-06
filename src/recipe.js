@@ -1,4 +1,4 @@
-var recipe = (function(global, head, Q){
+recipe = (function(global, head, Q){
   'use strict';
 
   var base = '',
@@ -187,7 +187,7 @@ var recipe = (function(global, head, Q){
   for(method in methods){
     recipe[method] = methods[method];
   }
-  recipe.exports = recipe.exports || {};
+  recipe.exports = recipe.exports || {Q:Q};
 
   recipe.init();
   return recipe;

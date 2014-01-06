@@ -1,12 +1,4 @@
-/*!
- * Recipe.js  Cook your javascript with recipe.js
- * Author     sideroad
- * License    MIT
- *
- * Version    1.1.0
- * https://github.com/sideroad/recipe/
- */
-var recipe = (function(global, head, Q){
+recipe = (function(global, head, Q){
   'use strict';
 
   var base = '',
@@ -195,7 +187,7 @@ var recipe = (function(global, head, Q){
   for(method in methods){
     recipe[method] = methods[method];
   }
-  recipe.exports = recipe.exports || {};
+  recipe.exports = recipe.exports || {Q:Q};
 
   recipe.init();
   return recipe;

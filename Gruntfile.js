@@ -7,6 +7,10 @@ module.exports = function(grunt) {
 
     clean: ['dist', 'test/tests.tap', 'test/fixture/libraries/*.js'],
 
+    copy: {
+      'test/fixture/recipe/recipe.js': ['src/recipe.js']
+    },
+
     recipe: {
       options:{
         amd: true
@@ -28,22 +32,19 @@ module.exports = function(grunt) {
                  ' *\n'+
                  ' * Version    <%= component.version %>\n'+
                  ' * https://github.com/sideroad/recipe/\n'+
-                 ' */\n'
+                 ' */\n'+
+                 '(function(){\n'+
+                 'var Q;\n',
+          footer:'\n})();\n'
         },
         files: {
-          'dist/recipe.unpack.js': ['lib/q.js', 'lib/head.load.js', 'src/recipe.js'],
-          'test/fixture/recipe/recipe.js': ['src/recipe.js']
-
+          'dist/recipe.unpack.js': ['lib/q.js', 'lib/head.load.js', 'src/recipe.js']
         }
       }
     },
 
     uglify: {
-      main: {
-        files: {
-          'dist/recipe.js': ['dist/recipe.unpack.js']
-        }
-      }
+      'dist/recipe.js': ['dist/recipe.unpack.js']
     },
 
     jshint: ['src/recipe.js'],
@@ -83,11 +84,7 @@ module.exports = function(grunt) {
     },
 
     plato: {
-      main: {
-        files: {
-          'metrics': ['src/recipe.js']
-        }
-      }
+      'metrics': ['src/recipe.js']
     },
 
     watch: {
@@ -103,6 +100,7 @@ module.exports = function(grunt) {
 
 
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -114,8 +112,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-recipe');
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', ['clean', 'recipe', 'jshint', 'concat', 'uglify', 'qunit-cov', 'plato']);
-  grunt.registerTask('test', ['clean', 'recipe', 'jshint', 'concat', 'uglify', 'testem:cui']);
-  grunt.registerTask('jenkins', ['clean', 'recipe', 'jshint', 'concat', 'uglify', 'testem:cui', 'qunit-cov', 'plato']);
+  grunt.registerTask('default', ['clean', 'copy', 'recipe', 'jshint', 'concat', 'uglify', 'qunit-cov', 'plato']);
+  grunt.registerTask('test', ['clean', 'copy', 'recipe', 'jshint', 'concat', 'uglify', 'testem:cui']);
+  grunt.registerTask('jenkins', ['clean', 'copy', 'recipe', 'jshint', 'concat', 'uglify', 'testem:cui', 'qunit-cov', 'plato']);
 
 };
