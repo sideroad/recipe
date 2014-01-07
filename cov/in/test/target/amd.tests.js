@@ -3,24 +3,12 @@
 
   module("init");
 
-  asyncTest("get version", function(){
-    expect(1);
-    recipe.get.version().promise.then(function(){
-      ok(true);
-      start();
-    });
-  });
-
   asyncTest("get AMD dependencies", function(){
     expect(1);
     recipe.get.dependencies(true).promise.then(function(){
       ok(true);
       start();
     });
-  });
-
-  test("get menu", function(){
-    equal( "../fixture/recipe/menu.mock.js", recipe.get.menu());
   });
 
   module("resolved");
@@ -118,19 +106,6 @@
     });
   });
 
-  asyncTest("no dependencies", function(){
-    expect(2);
-    $.when(
-      recipe(),
-      recipe({}),
-      recipe({libraries:[],scripts:[]})
-    ).done(function(){
-      ok(recipe.version);
-      ok(recipe.dependencies);
-      start();
-    });
-  });
-
   asyncTest("exports options", function(){
     expect(3);
     recipe({
@@ -151,6 +126,21 @@
       start();
     }).fail(function(e){
       console.log(e);
+    });
+  });
+
+  module("resolved");
+
+  asyncTest("no dependencies", function(){
+    expect(2);
+    $.when(
+      recipe(),
+      recipe({}),
+      recipe({libraries:[],scripts:[],amd:true})
+    ).done(function(){
+      ok(recipe.version);
+      ok(recipe.dependencies);
+      start();
     });
   });
 
@@ -180,4 +170,4 @@
     });
   });
 
-})(this, jQuery);
+})(this, recipe.exports.jQuery || jQuery);

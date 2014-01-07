@@ -143,6 +143,8 @@
 <div class="code hit">          if(!menu) {</div>
 <div class="code hit">            throw "You might forget to order because of menu was not founded.";</div>
 <div class="code undef">          }</div>
+<div class="code undef"></div>
+<div class="code hit">          recipe.setExportsFromAttribute();</div>
 <div class="code hit">          recipe.get.version().promise.then(function(version){</div>
 <div class="code hit">            recipe.resolve(menu, version);</div>
 <div class="code undef">          });</div>
@@ -152,19 +154,45 @@
 <div class="code hit">          var set = url.split("#");</div>
 <div class="code hit">          head.js(set[0]+"?_="+version+(set[1]?"#"+set[1]:""));</div>
 <div class="code undef">        },</div>
+<div class="code undef">        setExportsFromAttribute: function(){</div>
+<div class="code hit">          var script = recipe.get.recipeTag()|| {getAttribute: function(){}},</div>
+<div class="code undef">              exports = (script.getAttribute('data-exports')||'').split(','),</div>
+<div class="code undef">              jQueryNoConflict = script.getAttribute('data-jquery-noconflict'),</div>
+<div class="code undef">              i,</div>
+<div class="code undef">              len,</div>
+<div class="code undef">              namespace,</div>
+<div class="code undef">              variable;</div>
+<div class="code undef"></div>
+<div class="code hit">          for(i=0, len=exports.length; i &lt; len; i++){</div>
+<div class="code hit">            namespace = exports[i];</div>
+<div class="code hit">            if(namespace){</div>
+<div class="code hit">              variable = global[namespace];</div>
+<div class="code hit">              if(namespace === 'jQuery' && jQueryNoConflict ){</div>
+<div class="code hit">                variable = global.jQuery.noConflict(jQueryNoConflict === "true" ? true : undefined);</div>
+<div class="code undef">              }</div>
+<div class="code hit">              recipe.exports[namespace] = variable;</div>
+<div class="code undef">            }</div>
+<div class="code undef">          }</div>
+<div class="code undef">        },</div>
 <div class="code undef">        get: {</div>
 <div class="code undef">          recipeTag: function(){</div>
-<div class="code hit">            var scripts = document.getElementsByTagName("script"),</div>
+<div class="code hit">            var scripts,</div>
 <div class="code undef">                i,</div>
 <div class="code undef">                len,</div>
 <div class="code undef">                script,</div>
 <div class="code undef">                src;</div>
+<div class="code undef"></div>
+<div class="code hit">            if(cache.recipeTag){</div>
+<div class="code hit">              return cache.recipeTag;</div>
+<div class="code undef">            }</div>
+<div class="code hit">            scripts = document.getElementsByTagName("script");</div>
 <div class="code undef"></div>
 <div class="code hit">            if(scripts){</div>
 <div class="code hit">              for(i=0, len = scripts.length; i&lt;len; i++){</div>
 <div class="code hit">                script = scripts[i];</div>
 <div class="code hit">                src = script.src || "";</div>
 <div class="code hit">                if( /\/recipe\.js(\?.*)?$/.test( src ) && script.getAttribute('data-menu')){</div>
+<div class="code hit">                  cache.recipeTag = script;</div>
 <div class="code hit">                  return script;</div>
 <div class="code undef">                }</div>
 <div class="code undef">              }</div>

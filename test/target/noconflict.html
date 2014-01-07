@@ -10,15 +10,18 @@
   <div id="qunit-fixture"></div>
   <script src="../lib/qunit.js"></script>
 
+  <!-- for exports test-->
+  <script src="../../lib/jquery-1.9.1.js"></script>
+
   <!-- source -->
   <script src="../../lib/q.js"></script>
   <script src="../../lib/head.load.js"></script>
-  <script src="../fixture/recipe/recipe.js" data-menu="menu.mock" ></script>
+  <script src="../fixture/recipe/recipe.js" data-menu="menu.mock" data-exports="jQuery" data-jquery-noconflict ></script>
 
   <!-- test source -->
-  <script src="../../lib/jquery-1.9.1.js"></script>
   <script src="tests.js"></script>
   <script src="amd.tests.js"></script>
+  <script src="noconflict.tests.js"></script>
   <script>
   if (location.hash === '#testem') {
     document.write('<script src="/testem.js"></'+'script>');
