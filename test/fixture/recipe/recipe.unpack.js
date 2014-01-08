@@ -3,7 +3,7 @@
  * Author     sideroad
  * License    MIT
  *
- * Version    2.1.0
+ * Version    2.0.0
  * https://github.com/sideroad/recipe/
  */
 (function(){

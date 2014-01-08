@@ -1,0 +1,2823 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .code {
+            white-space: pre;
+            font-family: courier new;
+            width: 100%;            
+        }
+        
+        .miss {
+            background-color: #FF0000;
+        }
+        
+        .hit {
+            background-color: #94FF7C;
+        }
+        
+        .undef {
+            background-color: #FFFFFF;
+        } 
+
+        .nottested {
+            background-color: #FFFF00;
+        }         
+    </style>
+</head>
+<body>
+
+<div class="code nottested">/*!</div>
+<div class="code nottested"> * Recipe.js  Cook your javascript with recipe.js</div>
+<div class="code nottested"> * Author     sideroad</div>
+<div class="code nottested"> * License    MIT</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * Version    2.0.0</div>
+<div class="code nottested"> * https://github.com/sideroad/recipe/</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">(function(){</div>
+<div class="code nottested">var Q;</div>
+<div class="code nottested">// vim:ts=4:sts=4:sw=4:</div>
+<div class="code nottested">/*!</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * Copyright 2009-2012 Kris Kowal under the terms of the MIT</div>
+<div class="code nottested"> * license found at http://github.com/kriskowal/q/raw/master/LICENSE</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * With parts by Tyler Close</div>
+<div class="code nottested"> * Copyright 2007-2009 Tyler Close under the terms of the MIT X license found</div>
+<div class="code nottested"> * at http://www.opensource.org/licenses/mit-license.html</div>
+<div class="code nottested"> * Forked at ref_send.js version: 2009-05-11</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * With parts by Mark Miller</div>
+<div class="code nottested"> * Copyright (C) 2011 Google Inc.</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * Licensed under the Apache License, Version 2.0 (the "License");</div>
+<div class="code nottested"> * you may not use this file except in compliance with the License.</div>
+<div class="code nottested"> * You may obtain a copy of the License at</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * http://www.apache.org/licenses/LICENSE-2.0</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * Unless required by applicable law or agreed to in writing, software</div>
+<div class="code nottested"> * distributed under the License is distributed on an "AS IS" BASIS,</div>
+<div class="code nottested"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</div>
+<div class="code nottested"> * See the License for the specific language governing permissions and</div>
+<div class="code nottested"> * limitations under the License.</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> */</div>
+<div class="code nottested"></div>
+<div class="code nottested">(function (definition) {</div>
+<div class="code nottested">    // Turn off strict mode for this function so we can assign to global.Q</div>
+<div class="code nottested">    /* jshint strict: false */</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // This file will function properly as a &lt;script&gt; tag, or a module</div>
+<div class="code nottested">    // using CommonJS and NodeJS or RequireJS module formats.  In</div>
+<div class="code nottested">    // Common/Node/RequireJS, the module exports the Q API and when</div>
+<div class="code nottested">    // executed as a simple &lt;script&gt;, it creates a Q global instead.</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // Montage Require</div>
+<div class="code nottested">    if (typeof bootstrap === "function") {</div>
+<div class="code nottested">        bootstrap("promise", definition);</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // CommonJS</div>
+<div class="code nottested">    } else if (typeof exports === "object") {</div>
+<div class="code nottested">        module.exports = definition();</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // RequireJS</div>
+<div class="code nottested">    } else if (typeof define === "function" && define.amd) {</div>
+<div class="code nottested">        define(definition);</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // SES (Secure EcmaScript)</div>
+<div class="code nottested">    } else if (typeof ses !== "undefined") {</div>
+<div class="code nottested">        if (!ses.ok()) {</div>
+<div class="code nottested">            return;</div>
+<div class="code nottested">        } else {</div>
+<div class="code nottested">            ses.makeQ = definition;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // &lt;script&gt;</div>
+<div class="code nottested">    } else {</div>
+<div class="code nottested">        Q = definition();</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">})(function () {</div>
+<div class="code nottested">"use strict";</div>
+<div class="code nottested"></div>
+<div class="code nottested">var hasStacks = false;</div>
+<div class="code nottested">try {</div>
+<div class="code nottested">    throw new Error();</div>
+<div class="code nottested">} catch (e) {</div>
+<div class="code nottested">    hasStacks = !!e.stack;</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">// All code after this point will be filtered from stack traces reported</div>
+<div class="code nottested">// by Q.</div>
+<div class="code nottested">var qStartingLine = captureLine();</div>
+<div class="code nottested">var qFileName;</div>
+<div class="code nottested"></div>
+<div class="code nottested">// shims</div>
+<div class="code nottested"></div>
+<div class="code nottested">// used for fallback in "allResolved"</div>
+<div class="code nottested">var noop = function () {};</div>
+<div class="code nottested"></div>
+<div class="code nottested">// Use the fastest possible means to execute a task in a future turn</div>
+<div class="code nottested">// of the event loop.</div>
+<div class="code nottested">var nextTick =(function () {</div>
+<div class="code nottested">    // linked list of tasks (single, with head node)</div>
+<div class="code nottested">    var head = {task: void 0, next: null};</div>
+<div class="code nottested">    var tail = head;</div>
+<div class="code nottested">    var flushing = false;</div>
+<div class="code nottested">    var requestTick = void 0;</div>
+<div class="code nottested">    var isNodeJS = false;</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function flush() {</div>
+<div class="code nottested">        /* jshint loopfunc: true */</div>
+<div class="code nottested"></div>
+<div class="code nottested">        while (head.next) {</div>
+<div class="code nottested">            head = head.next;</div>
+<div class="code nottested">            var task = head.task;</div>
+<div class="code nottested">            head.task = void 0;</div>
+<div class="code nottested">            var domain = head.domain;</div>
+<div class="code nottested"></div>
+<div class="code nottested">            if (domain) {</div>
+<div class="code nottested">                head.domain = void 0;</div>
+<div class="code nottested">                domain.enter();</div>
+<div class="code nottested">            }</div>
+<div class="code nottested"></div>
+<div class="code nottested">            try {</div>
+<div class="code nottested">                task();</div>
+<div class="code nottested"></div>
+<div class="code nottested">            } catch (e) {</div>
+<div class="code nottested">                if (isNodeJS) {</div>
+<div class="code nottested">                    // In node, uncaught exceptions are considered fatal errors.</div>
+<div class="code nottested">                    // Re-throw them synchronously to interrupt flushing!</div>
+<div class="code nottested"></div>
+<div class="code nottested">                    // Ensure continuation if the uncaught exception is suppressed</div>
+<div class="code nottested">                    // listening "uncaughtException" events (as domains does).</div>
+<div class="code nottested">                    // Continue in next event to avoid tick recursion.</div>
+<div class="code nottested">                    if (domain) {</div>
+<div class="code nottested">                        domain.exit();</div>
+<div class="code nottested">                    }</div>
+<div class="code nottested">                    setTimeout(flush, 0);</div>
+<div class="code nottested">                    if (domain) {</div>
+<div class="code nottested">                        domain.enter();</div>
+<div class="code nottested">                    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">                    throw e;</div>
+<div class="code nottested"></div>
+<div class="code nottested">                } else {</div>
+<div class="code nottested">                    // In browsers, uncaught exceptions are not fatal.</div>
+<div class="code nottested">                    // Re-throw them asynchronously to avoid slow-downs.</div>
+<div class="code nottested">                    setTimeout(function() {</div>
+<div class="code nottested">                       throw e;</div>
+<div class="code nottested">                    }, 0);</div>
+<div class="code nottested">                }</div>
+<div class="code nottested">            }</div>
+<div class="code nottested"></div>
+<div class="code nottested">            if (domain) {</div>
+<div class="code nottested">                domain.exit();</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        flushing = false;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    nextTick = function (task) {</div>
+<div class="code nottested">        tail = tail.next = {</div>
+<div class="code nottested">            task: task,</div>
+<div class="code nottested">            domain: isNodeJS && process.domain,</div>
+<div class="code nottested">            next: null</div>
+<div class="code nottested">        };</div>
+<div class="code nottested"></div>
+<div class="code nottested">        if (!flushing) {</div>
+<div class="code nottested">            flushing = true;</div>
+<div class="code nottested">            requestTick();</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    };</div>
+<div class="code nottested"></div>
+<div class="code nottested">    if (typeof process !== "undefined" && process.nextTick) {</div>
+<div class="code nottested">        // Node.js before 0.9. Note that some fake-Node environments, like the</div>
+<div class="code nottested">        // Mocha test runner, introduce a `process` global without a `nextTick`.</div>
+<div class="code nottested">        isNodeJS = true;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        requestTick = function () {</div>
+<div class="code nottested">            process.nextTick(flush);</div>
+<div class="code nottested">        };</div>
+<div class="code nottested"></div>
+<div class="code nottested">    } else if (typeof setImmediate === "function") {</div>
+<div class="code nottested">        // In IE10, Node.js 0.9+, or https://github.com/NobleJS/setImmediate</div>
+<div class="code nottested">        if (typeof window !== "undefined") {</div>
+<div class="code nottested">            requestTick = setImmediate.bind(window, flush);</div>
+<div class="code nottested">        } else {</div>
+<div class="code nottested">            requestTick = function () {</div>
+<div class="code nottested">                setImmediate(flush);</div>
+<div class="code nottested">            };</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    } else if (typeof MessageChannel !== "undefined") {</div>
+<div class="code nottested">        // modern browsers</div>
+<div class="code nottested">        // http://www.nonblocking.io/2011/06/windownexttick.html</div>
+<div class="code nottested">        var channel = new MessageChannel();</div>
+<div class="code nottested">        // At least Safari Version 6.0.5 (8536.30.1) intermittently cannot create</div>
+<div class="code nottested">        // working message ports the first time a page loads.</div>
+<div class="code nottested">        channel.port1.onmessage = function () {</div>
+<div class="code nottested">            requestTick = requestPortTick;</div>
+<div class="code nottested">            channel.port1.onmessage = flush;</div>
+<div class="code nottested">            flush();</div>
+<div class="code nottested">        };</div>
+<div class="code nottested">        var requestPortTick = function () {</div>
+<div class="code nottested">            // Opera requires us to provide a message payload, regardless of</div>
+<div class="code nottested">            // whether we use it.</div>
+<div class="code nottested">            channel.port2.postMessage(0);</div>
+<div class="code nottested">        };</div>
+<div class="code nottested">        requestTick = function () {</div>
+<div class="code nottested">            setTimeout(flush, 0);</div>
+<div class="code nottested">            requestPortTick();</div>
+<div class="code nottested">        };</div>
+<div class="code nottested"></div>
+<div class="code nottested">    } else {</div>
+<div class="code nottested">        // old browsers</div>
+<div class="code nottested">        requestTick = function () {</div>
+<div class="code nottested">            setTimeout(flush, 0);</div>
+<div class="code nottested">        };</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    return nextTick;</div>
+<div class="code nottested">})();</div>
+<div class="code nottested"></div>
+<div class="code nottested">// Attempt to make generics safe in the face of downstream</div>
+<div class="code nottested">// modifications.</div>
+<div class="code nottested">// There is no situation where this is necessary.</div>
+<div class="code nottested">// If you need a security guarantee, these primordials need to be</div>
+<div class="code nottested">// deeply frozen anyway, and if you don’t need a security guarantee,</div>
+<div class="code nottested">// this is just plain paranoid.</div>
+<div class="code nottested">// However, this does have the nice side-effect of reducing the size</div>
+<div class="code nottested">// of the code by reducing x.call() to merely x(), eliminating many</div>
+<div class="code nottested">// hard-to-minify characters.</div>
+<div class="code nottested">// See Mark Miller’s explanation of what this does.</div>
+<div class="code nottested">// http://wiki.ecmascript.org/doku.php?id=conventions:safe_meta_programming</div>
+<div class="code nottested">var call = Function.call;</div>
+<div class="code nottested">function uncurryThis(f) {</div>
+<div class="code nottested">    return function () {</div>
+<div class="code nottested">        return call.apply(f, arguments);</div>
+<div class="code nottested">    };</div>
+<div class="code nottested">}</div>
+<div class="code nottested">// This is equivalent, but slower:</div>
+<div class="code nottested">// uncurryThis = Function_bind.bind(Function_bind.call);</div>
+<div class="code nottested">// http://jsperf.com/uncurrythis</div>
+<div class="code nottested"></div>
+<div class="code nottested">var array_slice = uncurryThis(Array.prototype.slice);</div>
+<div class="code nottested"></div>
+<div class="code nottested">var array_reduce = uncurryThis(</div>
+<div class="code nottested">    Array.prototype.reduce || function (callback, basis) {</div>
+<div class="code nottested">        var index = 0,</div>
+<div class="code nottested">            length = this.length;</div>
+<div class="code nottested">        // concerning the initial value, if one is not provided</div>
+<div class="code nottested">        if (arguments.length === 1) {</div>
+<div class="code nottested">            // seek to the first value in the array, accounting</div>
+<div class="code nottested">            // for the possibility that is is a sparse array</div>
+<div class="code nottested">            do {</div>
+<div class="code nottested">                if (index in this) {</div>
+<div class="code nottested">                    basis = this[index++];</div>
+<div class="code nottested">                    break;</div>
+<div class="code nottested">                }</div>
+<div class="code nottested">                if (++index &gt;= length) {</div>
+<div class="code nottested">                    throw new TypeError();</div>
+<div class="code nottested">                }</div>
+<div class="code nottested">            } while (1);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        // reduce</div>
+<div class="code nottested">        for (; index &lt; length; index++) {</div>
+<div class="code nottested">            // account for the possibility that the array is sparse</div>
+<div class="code nottested">            if (index in this) {</div>
+<div class="code nottested">                basis = callback(basis, this[index], index);</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        return basis;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">);</div>
+<div class="code nottested"></div>
+<div class="code nottested">var array_indexOf = uncurryThis(</div>
+<div class="code nottested">    Array.prototype.indexOf || function (value) {</div>
+<div class="code nottested">        // not a very good shim, but good enough for our one use of it</div>
+<div class="code nottested">        for (var i = 0; i &lt; this.length; i++) {</div>
+<div class="code nottested">            if (this[i] === value) {</div>
+<div class="code nottested">                return i;</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        return -1;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">);</div>
+<div class="code nottested"></div>
+<div class="code nottested">var array_map = uncurryThis(</div>
+<div class="code nottested">    Array.prototype.map || function (callback, thisp) {</div>
+<div class="code nottested">        var self = this;</div>
+<div class="code nottested">        var collect = [];</div>
+<div class="code nottested">        array_reduce(self, function (undefined, value, index) {</div>
+<div class="code nottested">            collect.push(callback.call(thisp, value, index, self));</div>
+<div class="code nottested">        }, void 0);</div>
+<div class="code nottested">        return collect;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">);</div>
+<div class="code nottested"></div>
+<div class="code nottested">var object_create = Object.create || function (prototype) {</div>
+<div class="code nottested">    function Type() { }</div>
+<div class="code nottested">    Type.prototype = prototype;</div>
+<div class="code nottested">    return new Type();</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">var object_hasOwnProperty = uncurryThis(Object.prototype.hasOwnProperty);</div>
+<div class="code nottested"></div>
+<div class="code nottested">var object_keys = Object.keys || function (object) {</div>
+<div class="code nottested">    var keys = [];</div>
+<div class="code nottested">    for (var key in object) {</div>
+<div class="code nottested">        if (object_hasOwnProperty(object, key)) {</div>
+<div class="code nottested">            keys.push(key);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">    return keys;</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">var object_toString = uncurryThis(Object.prototype.toString);</div>
+<div class="code nottested"></div>
+<div class="code nottested">function isObject(value) {</div>
+<div class="code nottested">    return value === Object(value);</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">// generator related shims</div>
+<div class="code nottested"></div>
+<div class="code nottested">// FIXME: Remove this function once ES6 generators are in SpiderMonkey.</div>
+<div class="code nottested">function isStopIteration(exception) {</div>
+<div class="code nottested">    return (</div>
+<div class="code nottested">        object_toString(exception) === "[object StopIteration]" ||</div>
+<div class="code nottested">        exception instanceof QReturnValue</div>
+<div class="code nottested">    );</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">// FIXME: Remove this helper and Q.return once ES6 generators are in</div>
+<div class="code nottested">// SpiderMonkey.</div>
+<div class="code nottested">var QReturnValue;</div>
+<div class="code nottested">if (typeof ReturnValue !== "undefined") {</div>
+<div class="code nottested">    QReturnValue = ReturnValue;</div>
+<div class="code nottested">} else {</div>
+<div class="code nottested">    QReturnValue = function (value) {</div>
+<div class="code nottested">        this.value = value;</div>
+<div class="code nottested">    };</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">// Until V8 3.19 / Chromium 29 is released, SpiderMonkey is the only</div>
+<div class="code nottested">// engine that has a deployed base of browsers that support generators.</div>
+<div class="code nottested">// However, SM's generators use the Python-inspired semantics of</div>
+<div class="code nottested">// outdated ES6 drafts.  We would like to support ES6, but we'd also</div>
+<div class="code nottested">// like to make it possible to use generators in deployed browsers, so</div>
+<div class="code nottested">// we also support Python-style generators.  At some point we can remove</div>
+<div class="code nottested">// this block.</div>
+<div class="code nottested">var hasES6Generators;</div>
+<div class="code nottested">try {</div>
+<div class="code nottested">    /* jshint evil: true, nonew: false */</div>
+<div class="code nottested">    new Function("(function* (){ yield 1; })");</div>
+<div class="code nottested">    hasES6Generators = true;</div>
+<div class="code nottested">} catch (e) {</div>
+<div class="code nottested">    hasES6Generators = false;</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">// long stack traces</div>
+<div class="code nottested"></div>
+<div class="code nottested">var STACK_JUMP_SEPARATOR = "From previous event:";</div>
+<div class="code nottested"></div>
+<div class="code nottested">function makeStackTraceLong(error, promise) {</div>
+<div class="code nottested">    // If possible, transform the error stack trace by removing Node and Q</div>
+<div class="code nottested">    // cruft, then concatenating with the stack trace of `promise`. See #57.</div>
+<div class="code nottested">    if (hasStacks &&</div>
+<div class="code nottested">        promise.stack &&</div>
+<div class="code nottested">        typeof error === "object" &&</div>
+<div class="code nottested">        error !== null &&</div>
+<div class="code nottested">        error.stack &&</div>
+<div class="code nottested">        error.stack.indexOf(STACK_JUMP_SEPARATOR) === -1</div>
+<div class="code nottested">    ) {</div>
+<div class="code nottested">        var stacks = [];</div>
+<div class="code nottested">        for (var p = promise; !!p; p = p.source) {</div>
+<div class="code nottested">            if (p.stack) {</div>
+<div class="code nottested">                stacks.unshift(p.stack);</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        stacks.unshift(error.stack);</div>
+<div class="code nottested"></div>
+<div class="code nottested">        var concatedStacks = stacks.join("\n" + STACK_JUMP_SEPARATOR + "\n");</div>
+<div class="code nottested">        error.stack = filterStackString(concatedStacks);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">function filterStackString(stackString) {</div>
+<div class="code nottested">    var lines = stackString.split("\n");</div>
+<div class="code nottested">    var desiredLines = [];</div>
+<div class="code nottested">    for (var i = 0; i &lt; lines.length; ++i) {</div>
+<div class="code nottested">        var line = lines[i];</div>
+<div class="code nottested"></div>
+<div class="code nottested">        if (!isInternalFrame(line) && !isNodeFrame(line) && line) {</div>
+<div class="code nottested">            desiredLines.push(line);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">    return desiredLines.join("\n");</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">function isNodeFrame(stackLine) {</div>
+<div class="code nottested">    return stackLine.indexOf("(module.js:") !== -1 ||</div>
+<div class="code nottested">           stackLine.indexOf("(node.js:") !== -1;</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">function getFileNameAndLineNumber(stackLine) {</div>
+<div class="code nottested">    // Named functions: "at functionName (filename:lineNumber:columnNumber)"</div>
+<div class="code nottested">    // In IE10 function name can have spaces ("Anonymous function") O_o</div>
+<div class="code nottested">    var attempt1 = /at .+ \((.+):(\d+):(?:\d+)\)$/.exec(stackLine);</div>
+<div class="code nottested">    if (attempt1) {</div>
+<div class="code nottested">        return [attempt1[1], Number(attempt1[2])];</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // Anonymous functions: "at filename:lineNumber:columnNumber"</div>
+<div class="code nottested">    var attempt2 = /at ([^ ]+):(\d+):(?:\d+)$/.exec(stackLine);</div>
+<div class="code nottested">    if (attempt2) {</div>
+<div class="code nottested">        return [attempt2[1], Number(attempt2[2])];</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // Firefox style: "function@filename:lineNumber or @filename:lineNumber"</div>
+<div class="code nottested">    var attempt3 = /.*@(.+):(\d+)$/.exec(stackLine);</div>
+<div class="code nottested">    if (attempt3) {</div>
+<div class="code nottested">        return [attempt3[1], Number(attempt3[2])];</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">function isInternalFrame(stackLine) {</div>
+<div class="code nottested">    var fileNameAndLineNumber = getFileNameAndLineNumber(stackLine);</div>
+<div class="code nottested"></div>
+<div class="code nottested">    if (!fileNameAndLineNumber) {</div>
+<div class="code nottested">        return false;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    var fileName = fileNameAndLineNumber[0];</div>
+<div class="code nottested">    var lineNumber = fileNameAndLineNumber[1];</div>
+<div class="code nottested"></div>
+<div class="code nottested">    return fileName === qFileName &&</div>
+<div class="code nottested">        lineNumber &gt;= qStartingLine &&</div>
+<div class="code nottested">        lineNumber &lt;= qEndingLine;</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">// discover own file name and line number range for filtering stack</div>
+<div class="code nottested">// traces</div>
+<div class="code nottested">function captureLine() {</div>
+<div class="code nottested">    if (!hasStacks) {</div>
+<div class="code nottested">        return;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    try {</div>
+<div class="code nottested">        throw new Error();</div>
+<div class="code nottested">    } catch (e) {</div>
+<div class="code nottested">        var lines = e.stack.split("\n");</div>
+<div class="code nottested">        var firstLine = lines[0].indexOf("@") &gt; 0 ? lines[1] : lines[2];</div>
+<div class="code nottested">        var fileNameAndLineNumber = getFileNameAndLineNumber(firstLine);</div>
+<div class="code nottested">        if (!fileNameAndLineNumber) {</div>
+<div class="code nottested">            return;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        qFileName = fileNameAndLineNumber[0];</div>
+<div class="code nottested">        return fileNameAndLineNumber[1];</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">function deprecate(callback, name, alternative) {</div>
+<div class="code nottested">    return function () {</div>
+<div class="code nottested">        if (typeof console !== "undefined" &&</div>
+<div class="code nottested">            typeof console.warn === "function") {</div>
+<div class="code nottested">            console.warn(name + " is deprecated, use " + alternative +</div>
+<div class="code nottested">                         " instead.", new Error("").stack);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        return callback.apply(callback, arguments);</div>
+<div class="code nottested">    };</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">// end of shims</div>
+<div class="code nottested">// beginning of real work</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Constructs a promise for an immediate reference, passes promises through, or</div>
+<div class="code nottested"> * coerces promises from different systems.</div>
+<div class="code nottested"> * @param value immediate reference or promise</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">function Q(value) {</div>
+<div class="code nottested">    // If the object is already a Promise, return it directly.  This enables</div>
+<div class="code nottested">    // the resolve function to both be used to created references from objects,</div>
+<div class="code nottested">    // but to tolerably coerce non-promises to promises.</div>
+<div class="code nottested">    if (isPromise(value)) {</div>
+<div class="code nottested">        return value;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // assimilate thenables</div>
+<div class="code nottested">    if (isPromiseAlike(value)) {</div>
+<div class="code nottested">        return coerce(value);</div>
+<div class="code nottested">    } else {</div>
+<div class="code nottested">        return fulfill(value);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">}</div>
+<div class="code nottested">Q.resolve = Q;</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Performs a task in a future turn of the event loop.</div>
+<div class="code nottested"> * @param {Function} task</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.nextTick = nextTick;</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Controls whether or not long stack traces will be on</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.longStackSupport = false;</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Constructs a {promise, resolve, reject} object.</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * `resolve` is a callback to invoke with a more resolved value for the</div>
+<div class="code nottested"> * promise. To fulfill the promise, invoke `resolve` with any value that is</div>
+<div class="code nottested"> * not a thenable. To reject the promise, invoke `resolve` with a rejected</div>
+<div class="code nottested"> * thenable, or invoke `reject` with the reason directly. To resolve the</div>
+<div class="code nottested"> * promise to another thenable, thus putting it in the same state, invoke</div>
+<div class="code nottested"> * `resolve` with that other thenable.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.defer = defer;</div>
+<div class="code nottested">function defer() {</div>
+<div class="code nottested">    // if "messages" is an "Array", that indicates that the promise has not yet</div>
+<div class="code nottested">    // been resolved.  If it is "undefined", it has been resolved.  Each</div>
+<div class="code nottested">    // element of the messages array is itself an array of complete arguments to</div>
+<div class="code nottested">    // forward to the resolved promise.  We coerce the resolution value to a</div>
+<div class="code nottested">    // promise using the `resolve` function because it handles both fully</div>
+<div class="code nottested">    // non-thenable values and other thenables gracefully.</div>
+<div class="code nottested">    var messages = [], progressListeners = [], resolvedPromise;</div>
+<div class="code nottested"></div>
+<div class="code nottested">    var deferred = object_create(defer.prototype);</div>
+<div class="code nottested">    var promise = object_create(Promise.prototype);</div>
+<div class="code nottested"></div>
+<div class="code nottested">    promise.promiseDispatch = function (resolve, op, operands) {</div>
+<div class="code nottested">        var args = array_slice(arguments);</div>
+<div class="code nottested">        if (messages) {</div>
+<div class="code nottested">            messages.push(args);</div>
+<div class="code nottested">            if (op === "when" && operands[1]) { // progress operand</div>
+<div class="code nottested">                progressListeners.push(operands[1]);</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        } else {</div>
+<div class="code nottested">            nextTick(function () {</div>
+<div class="code nottested">                resolvedPromise.promiseDispatch.apply(resolvedPromise, args);</div>
+<div class="code nottested">            });</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    };</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // XXX deprecated</div>
+<div class="code nottested">    promise.valueOf = deprecate(function () {</div>
+<div class="code nottested">        if (messages) {</div>
+<div class="code nottested">            return promise;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        var nearerValue = nearer(resolvedPromise);</div>
+<div class="code nottested">        if (isPromise(nearerValue)) {</div>
+<div class="code nottested">            resolvedPromise = nearerValue; // shorten chain</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        return nearerValue;</div>
+<div class="code nottested">    }, "valueOf", "inspect");</div>
+<div class="code nottested"></div>
+<div class="code nottested">    promise.inspect = function () {</div>
+<div class="code nottested">        if (!resolvedPromise) {</div>
+<div class="code nottested">            return { state: "pending" };</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        return resolvedPromise.inspect();</div>
+<div class="code nottested">    };</div>
+<div class="code nottested"></div>
+<div class="code nottested">    if (Q.longStackSupport && hasStacks) {</div>
+<div class="code nottested">        try {</div>
+<div class="code nottested">            throw new Error();</div>
+<div class="code nottested">        } catch (e) {</div>
+<div class="code nottested">            // NOTE: don't try to use `Error.captureStackTrace` or transfer the</div>
+<div class="code nottested">            // accessor around; that causes memory leaks as per GH-111. Just</div>
+<div class="code nottested">            // reify the stack trace as a string ASAP.</div>
+<div class="code nottested">            //</div>
+<div class="code nottested">            // At the same time, cut off the first line; it's always just</div>
+<div class="code nottested">            // "[object Promise]\n", as per the `toString`.</div>
+<div class="code nottested">            promise.stack = e.stack.substring(e.stack.indexOf("\n") + 1);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // NOTE: we do the checks for `resolvedPromise` in each method, instead of</div>
+<div class="code nottested">    // consolidating them into `become`, since otherwise we'd create new</div>
+<div class="code nottested">    // promises with the lines `become(whatever(value))`. See e.g. GH-252.</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function become(newPromise) {</div>
+<div class="code nottested">        resolvedPromise = newPromise;</div>
+<div class="code nottested">        promise.source = newPromise;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        array_reduce(messages, function (undefined, message) {</div>
+<div class="code nottested">            nextTick(function () {</div>
+<div class="code nottested">                newPromise.promiseDispatch.apply(newPromise, message);</div>
+<div class="code nottested">            });</div>
+<div class="code nottested">        }, void 0);</div>
+<div class="code nottested"></div>
+<div class="code nottested">        messages = void 0;</div>
+<div class="code nottested">        progressListeners = void 0;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    deferred.promise = promise;</div>
+<div class="code nottested">    deferred.resolve = function (value) {</div>
+<div class="code nottested">        if (resolvedPromise) {</div>
+<div class="code nottested">            return;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        become(Q(value));</div>
+<div class="code nottested">    };</div>
+<div class="code nottested"></div>
+<div class="code nottested">    deferred.fulfill = function (value) {</div>
+<div class="code nottested">        if (resolvedPromise) {</div>
+<div class="code nottested">            return;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        become(fulfill(value));</div>
+<div class="code nottested">    };</div>
+<div class="code nottested">    deferred.reject = function (reason) {</div>
+<div class="code nottested">        if (resolvedPromise) {</div>
+<div class="code nottested">            return;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        become(reject(reason));</div>
+<div class="code nottested">    };</div>
+<div class="code nottested">    deferred.notify = function (progress) {</div>
+<div class="code nottested">        if (resolvedPromise) {</div>
+<div class="code nottested">            return;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        array_reduce(progressListeners, function (undefined, progressListener) {</div>
+<div class="code nottested">            nextTick(function () {</div>
+<div class="code nottested">                progressListener(progress);</div>
+<div class="code nottested">            });</div>
+<div class="code nottested">        }, void 0);</div>
+<div class="code nottested">    };</div>
+<div class="code nottested"></div>
+<div class="code nottested">    return deferred;</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Creates a Node-style callback that will resolve or reject the deferred</div>
+<div class="code nottested"> * promise.</div>
+<div class="code nottested"> * @returns a nodeback</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">defer.prototype.makeNodeResolver = function () {</div>
+<div class="code nottested">    var self = this;</div>
+<div class="code nottested">    return function (error, value) {</div>
+<div class="code nottested">        if (error) {</div>
+<div class="code nottested">            self.reject(error);</div>
+<div class="code nottested">        } else if (arguments.length &gt; 2) {</div>
+<div class="code nottested">            self.resolve(array_slice(arguments, 1));</div>
+<div class="code nottested">        } else {</div>
+<div class="code nottested">            self.resolve(value);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    };</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * @param resolver {Function} a function that returns nothing and accepts</div>
+<div class="code nottested"> * the resolve, reject, and notify functions for a deferred.</div>
+<div class="code nottested"> * @returns a promise that may be resolved with the given resolve and reject</div>
+<div class="code nottested"> * functions, or rejected by a thrown exception in resolver</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.promise = promise;</div>
+<div class="code nottested">function promise(resolver) {</div>
+<div class="code nottested">    if (typeof resolver !== "function") {</div>
+<div class="code nottested">        throw new TypeError("resolver must be a function.");</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">    var deferred = defer();</div>
+<div class="code nottested">    try {</div>
+<div class="code nottested">        resolver(deferred.resolve, deferred.reject, deferred.notify);</div>
+<div class="code nottested">    } catch (reason) {</div>
+<div class="code nottested">        deferred.reject(reason);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">    return deferred.promise;</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">// XXX experimental.  This method is a way to denote that a local value is</div>
+<div class="code nottested">// serializable and should be immediately dispatched to a remote upon request,</div>
+<div class="code nottested">// instead of passing a reference.</div>
+<div class="code nottested">Q.passByCopy = function (object) {</div>
+<div class="code nottested">    //freeze(object);</div>
+<div class="code nottested">    //passByCopies.set(object, true);</div>
+<div class="code nottested">    return object;</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.passByCopy = function () {</div>
+<div class="code nottested">    //freeze(object);</div>
+<div class="code nottested">    //passByCopies.set(object, true);</div>
+<div class="code nottested">    return this;</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * If two promises eventually fulfill to the same value, promises that value,</div>
+<div class="code nottested"> * but otherwise rejects.</div>
+<div class="code nottested"> * @param x {Any*}</div>
+<div class="code nottested"> * @param y {Any*}</div>
+<div class="code nottested"> * @returns {Any*} a promise for x and y if they are the same, but a rejection</div>
+<div class="code nottested"> * otherwise.</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.join = function (x, y) {</div>
+<div class="code nottested">    return Q(x).join(y);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.join = function (that) {</div>
+<div class="code nottested">    return Q([this, that]).spread(function (x, y) {</div>
+<div class="code nottested">        if (x === y) {</div>
+<div class="code nottested">            // TODO: "===" should be Object.is or equiv</div>
+<div class="code nottested">            return x;</div>
+<div class="code nottested">        } else {</div>
+<div class="code nottested">            throw new Error("Can't join: not the same: " + x + " " + y);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    });</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Returns a promise for the first of an array of promises to become fulfilled.</div>
+<div class="code nottested"> * @param answers {Array[Any*]} promises to race</div>
+<div class="code nottested"> * @returns {Any*} the first promise to be fulfilled</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.race = race;</div>
+<div class="code nottested">function race(answerPs) {</div>
+<div class="code nottested">    return promise(function(resolve, reject) {</div>
+<div class="code nottested">        // Switch to this once we can assume at least ES5</div>
+<div class="code nottested">        // answerPs.forEach(function(answerP) {</div>
+<div class="code nottested">        //     Q(answerP).then(resolve, reject);</div>
+<div class="code nottested">        // });</div>
+<div class="code nottested">        // Use this in the meantime</div>
+<div class="code nottested">        for (var i = 0, len = answerPs.length; i &lt; len; i++) {</div>
+<div class="code nottested">            Q(answerPs[i]).then(resolve, reject);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    });</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.race = function () {</div>
+<div class="code nottested">    return this.then(Q.race);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Constructs a Promise with a promise descriptor object and optional fallback</div>
+<div class="code nottested"> * function.  The descriptor contains methods like when(rejected), get(name),</div>
+<div class="code nottested"> * set(name, value), post(name, args), and delete(name), which all</div>
+<div class="code nottested"> * return either a value, a promise for a value, or a rejection.  The fallback</div>
+<div class="code nottested"> * accepts the operation name, a resolver, and any further arguments that would</div>
+<div class="code nottested"> * have been forwarded to the appropriate method above had a method been</div>
+<div class="code nottested"> * provided with the proper name.  The API makes no guarantees about the nature</div>
+<div class="code nottested"> * of the returned object, apart from that it is usable whereever promises are</div>
+<div class="code nottested"> * bought and sold.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.makePromise = Promise;</div>
+<div class="code nottested">function Promise(descriptor, fallback, inspect) {</div>
+<div class="code nottested">    if (fallback === void 0) {</div>
+<div class="code nottested">        fallback = function (op) {</div>
+<div class="code nottested">            return reject(new Error(</div>
+<div class="code nottested">                "Promise does not support operation: " + op</div>
+<div class="code nottested">            ));</div>
+<div class="code nottested">        };</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">    if (inspect === void 0) {</div>
+<div class="code nottested">        inspect = function () {</div>
+<div class="code nottested">            return {state: "unknown"};</div>
+<div class="code nottested">        };</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    var promise = object_create(Promise.prototype);</div>
+<div class="code nottested"></div>
+<div class="code nottested">    promise.promiseDispatch = function (resolve, op, args) {</div>
+<div class="code nottested">        var result;</div>
+<div class="code nottested">        try {</div>
+<div class="code nottested">            if (descriptor[op]) {</div>
+<div class="code nottested">                result = descriptor[op].apply(promise, args);</div>
+<div class="code nottested">            } else {</div>
+<div class="code nottested">                result = fallback.call(promise, op, args);</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        } catch (exception) {</div>
+<div class="code nottested">            result = reject(exception);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        if (resolve) {</div>
+<div class="code nottested">            resolve(result);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    };</div>
+<div class="code nottested"></div>
+<div class="code nottested">    promise.inspect = inspect;</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // XXX deprecated `valueOf` and `exception` support</div>
+<div class="code nottested">    if (inspect) {</div>
+<div class="code nottested">        var inspected = inspect();</div>
+<div class="code nottested">        if (inspected.state === "rejected") {</div>
+<div class="code nottested">            promise.exception = inspected.reason;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        promise.valueOf = deprecate(function () {</div>
+<div class="code nottested">            var inspected = inspect();</div>
+<div class="code nottested">            if (inspected.state === "pending" ||</div>
+<div class="code nottested">                inspected.state === "rejected") {</div>
+<div class="code nottested">                return promise;</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">            return inspected.value;</div>
+<div class="code nottested">        });</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    return promise;</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.toString = function () {</div>
+<div class="code nottested">    return "[object Promise]";</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.then = function (fulfilled, rejected, progressed) {</div>
+<div class="code nottested">    var self = this;</div>
+<div class="code nottested">    var deferred = defer();</div>
+<div class="code nottested">    var done = false;   // ensure the untrusted promise makes at most a</div>
+<div class="code nottested">                        // single call to one of the callbacks</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function _fulfilled(value) {</div>
+<div class="code nottested">        try {</div>
+<div class="code nottested">            return typeof fulfilled === "function" ? fulfilled(value) : value;</div>
+<div class="code nottested">        } catch (exception) {</div>
+<div class="code nottested">            return reject(exception);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function _rejected(exception) {</div>
+<div class="code nottested">        if (typeof rejected === "function") {</div>
+<div class="code nottested">            makeStackTraceLong(exception, self);</div>
+<div class="code nottested">            try {</div>
+<div class="code nottested">                return rejected(exception);</div>
+<div class="code nottested">            } catch (newException) {</div>
+<div class="code nottested">                return reject(newException);</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        return reject(exception);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function _progressed(value) {</div>
+<div class="code nottested">        return typeof progressed === "function" ? progressed(value) : value;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    nextTick(function () {</div>
+<div class="code nottested">        self.promiseDispatch(function (value) {</div>
+<div class="code nottested">            if (done) {</div>
+<div class="code nottested">                return;</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">            done = true;</div>
+<div class="code nottested"></div>
+<div class="code nottested">            deferred.resolve(_fulfilled(value));</div>
+<div class="code nottested">        }, "when", [function (exception) {</div>
+<div class="code nottested">            if (done) {</div>
+<div class="code nottested">                return;</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">            done = true;</div>
+<div class="code nottested"></div>
+<div class="code nottested">            deferred.resolve(_rejected(exception));</div>
+<div class="code nottested">        }]);</div>
+<div class="code nottested">    });</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // Progress propagator need to be attached in the current tick.</div>
+<div class="code nottested">    self.promiseDispatch(void 0, "when", [void 0, function (value) {</div>
+<div class="code nottested">        var newValue;</div>
+<div class="code nottested">        var threw = false;</div>
+<div class="code nottested">        try {</div>
+<div class="code nottested">            newValue = _progressed(value);</div>
+<div class="code nottested">        } catch (e) {</div>
+<div class="code nottested">            threw = true;</div>
+<div class="code nottested">            if (Q.onerror) {</div>
+<div class="code nottested">                Q.onerror(e);</div>
+<div class="code nottested">            } else {</div>
+<div class="code nottested">                throw e;</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        if (!threw) {</div>
+<div class="code nottested">            deferred.notify(newValue);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }]);</div>
+<div class="code nottested"></div>
+<div class="code nottested">    return deferred.promise;</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Registers an observer on a promise.</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * Guarantees:</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * 1. that fulfilled and rejected will be called only once.</div>
+<div class="code nottested"> * 2. that either the fulfilled callback or the rejected callback will be</div>
+<div class="code nottested"> *    called, but not both.</div>
+<div class="code nottested"> * 3. that fulfilled and rejected will not be called in this turn.</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * @param value      promise or immediate reference to observe</div>
+<div class="code nottested"> * @param fulfilled  function to be called with the fulfilled value</div>
+<div class="code nottested"> * @param rejected   function to be called with the rejection exception</div>
+<div class="code nottested"> * @param progressed function to be called on any progress notifications</div>
+<div class="code nottested"> * @return promise for the return value from the invoked callback</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.when = when;</div>
+<div class="code nottested">function when(value, fulfilled, rejected, progressed) {</div>
+<div class="code nottested">    return Q(value).then(fulfilled, rejected, progressed);</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.thenResolve = function (value) {</div>
+<div class="code nottested">    return this.then(function () { return value; });</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Q.thenResolve = function (promise, value) {</div>
+<div class="code nottested">    return Q(promise).thenResolve(value);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.thenReject = function (reason) {</div>
+<div class="code nottested">    return this.then(function () { throw reason; });</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Q.thenReject = function (promise, reason) {</div>
+<div class="code nottested">    return Q(promise).thenReject(reason);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * If an object is not a promise, it is as "near" as possible.</div>
+<div class="code nottested"> * If a promise is rejected, it is as "near" as possible too.</div>
+<div class="code nottested"> * If it’s a fulfilled promise, the fulfillment value is nearer.</div>
+<div class="code nottested"> * If it’s a deferred promise and the deferred has been resolved, the</div>
+<div class="code nottested"> * resolution is "nearer".</div>
+<div class="code nottested"> * @param object</div>
+<div class="code nottested"> * @returns most resolved (nearest) form of the object</div>
+<div class="code nottested"> */</div>
+<div class="code nottested"></div>
+<div class="code nottested">// XXX should we re-do this?</div>
+<div class="code nottested">Q.nearer = nearer;</div>
+<div class="code nottested">function nearer(value) {</div>
+<div class="code nottested">    if (isPromise(value)) {</div>
+<div class="code nottested">        var inspected = value.inspect();</div>
+<div class="code nottested">        if (inspected.state === "fulfilled") {</div>
+<div class="code nottested">            return inspected.value;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">    return value;</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * @returns whether the given object is a promise.</div>
+<div class="code nottested"> * Otherwise it is a fulfilled value.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.isPromise = isPromise;</div>
+<div class="code nottested">function isPromise(object) {</div>
+<div class="code nottested">    return isObject(object) &&</div>
+<div class="code nottested">        typeof object.promiseDispatch === "function" &&</div>
+<div class="code nottested">        typeof object.inspect === "function";</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Q.isPromiseAlike = isPromiseAlike;</div>
+<div class="code nottested">function isPromiseAlike(object) {</div>
+<div class="code nottested">    return isObject(object) && typeof object.then === "function";</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * @returns whether the given object is a pending promise, meaning not</div>
+<div class="code nottested"> * fulfilled or rejected.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.isPending = isPending;</div>
+<div class="code nottested">function isPending(object) {</div>
+<div class="code nottested">    return isPromise(object) && object.inspect().state === "pending";</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.isPending = function () {</div>
+<div class="code nottested">    return this.inspect().state === "pending";</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * @returns whether the given object is a value or fulfilled</div>
+<div class="code nottested"> * promise.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.isFulfilled = isFulfilled;</div>
+<div class="code nottested">function isFulfilled(object) {</div>
+<div class="code nottested">    return !isPromise(object) || object.inspect().state === "fulfilled";</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.isFulfilled = function () {</div>
+<div class="code nottested">    return this.inspect().state === "fulfilled";</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * @returns whether the given object is a rejected promise.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.isRejected = isRejected;</div>
+<div class="code nottested">function isRejected(object) {</div>
+<div class="code nottested">    return isPromise(object) && object.inspect().state === "rejected";</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.isRejected = function () {</div>
+<div class="code nottested">    return this.inspect().state === "rejected";</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">//// BEGIN UNHANDLED REJECTION TRACKING</div>
+<div class="code nottested"></div>
+<div class="code nottested">// This promise library consumes exceptions thrown in handlers so they can be</div>
+<div class="code nottested">// handled by a subsequent promise.  The exceptions get added to this array when</div>
+<div class="code nottested">// they are created, and removed when they are handled.  Note that in ES6 or</div>
+<div class="code nottested">// shimmed environments, this would naturally be a `Set`.</div>
+<div class="code nottested">var unhandledReasons = [];</div>
+<div class="code nottested">var unhandledRejections = [];</div>
+<div class="code nottested">var unhandledReasonsDisplayed = false;</div>
+<div class="code nottested">var trackUnhandledRejections = true;</div>
+<div class="code nottested">function displayUnhandledReasons() {</div>
+<div class="code nottested">    if (</div>
+<div class="code nottested">        !unhandledReasonsDisplayed &&</div>
+<div class="code nottested">        typeof window !== "undefined" &&</div>
+<div class="code nottested">        !window.Touch &&</div>
+<div class="code nottested">        window.console</div>
+<div class="code nottested">    ) {</div>
+<div class="code nottested">        console.warn("[Q] Unhandled rejection reasons (should be empty):",</div>
+<div class="code nottested">                     unhandledReasons);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    unhandledReasonsDisplayed = true;</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">function logUnhandledReasons() {</div>
+<div class="code nottested">    for (var i = 0; i &lt; unhandledReasons.length; i++) {</div>
+<div class="code nottested">        var reason = unhandledReasons[i];</div>
+<div class="code nottested">        console.warn("Unhandled rejection reason:", reason);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">function resetUnhandledRejections() {</div>
+<div class="code nottested">    unhandledReasons.length = 0;</div>
+<div class="code nottested">    unhandledRejections.length = 0;</div>
+<div class="code nottested">    unhandledReasonsDisplayed = false;</div>
+<div class="code nottested"></div>
+<div class="code nottested">    if (!trackUnhandledRejections) {</div>
+<div class="code nottested">        trackUnhandledRejections = true;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // Show unhandled rejection reasons if Node exits without handling an</div>
+<div class="code nottested">        // outstanding rejection.  (Note that Browserify presently produces a</div>
+<div class="code nottested">        // `process` global without the `EventEmitter` `on` method.)</div>
+<div class="code nottested">        if (typeof process !== "undefined" && process.on) {</div>
+<div class="code nottested">            process.on("exit", logUnhandledReasons);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">function trackRejection(promise, reason) {</div>
+<div class="code nottested">    if (!trackUnhandledRejections) {</div>
+<div class="code nottested">        return;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    unhandledRejections.push(promise);</div>
+<div class="code nottested">    if (reason && typeof reason.stack !== "undefined") {</div>
+<div class="code nottested">        unhandledReasons.push(reason.stack);</div>
+<div class="code nottested">    } else {</div>
+<div class="code nottested">        unhandledReasons.push("(no stack) " + reason);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">    displayUnhandledReasons();</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">function untrackRejection(promise) {</div>
+<div class="code nottested">    if (!trackUnhandledRejections) {</div>
+<div class="code nottested">        return;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    var at = array_indexOf(unhandledRejections, promise);</div>
+<div class="code nottested">    if (at !== -1) {</div>
+<div class="code nottested">        unhandledRejections.splice(at, 1);</div>
+<div class="code nottested">        unhandledReasons.splice(at, 1);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Q.resetUnhandledRejections = resetUnhandledRejections;</div>
+<div class="code nottested"></div>
+<div class="code nottested">Q.getUnhandledReasons = function () {</div>
+<div class="code nottested">    // Make a copy so that consumers can't interfere with our internal state.</div>
+<div class="code nottested">    return unhandledReasons.slice();</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Q.stopUnhandledRejectionTracking = function () {</div>
+<div class="code nottested">    resetUnhandledRejections();</div>
+<div class="code nottested">    if (typeof process !== "undefined" && process.on) {</div>
+<div class="code nottested">        process.removeListener("exit", logUnhandledReasons);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">    trackUnhandledRejections = false;</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">resetUnhandledRejections();</div>
+<div class="code nottested"></div>
+<div class="code nottested">//// END UNHANDLED REJECTION TRACKING</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Constructs a rejected promise.</div>
+<div class="code nottested"> * @param reason value describing the failure</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.reject = reject;</div>
+<div class="code nottested">function reject(reason) {</div>
+<div class="code nottested">    var rejection = Promise({</div>
+<div class="code nottested">        "when": function (rejected) {</div>
+<div class="code nottested">            // note that the error has been handled</div>
+<div class="code nottested">            if (rejected) {</div>
+<div class="code nottested">                untrackRejection(this);</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">            return rejected ? rejected(reason) : this;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }, function fallback() {</div>
+<div class="code nottested">        return this;</div>
+<div class="code nottested">    }, function inspect() {</div>
+<div class="code nottested">        return { state: "rejected", reason: reason };</div>
+<div class="code nottested">    });</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // Note that the reason has not been handled.</div>
+<div class="code nottested">    trackRejection(rejection, reason);</div>
+<div class="code nottested"></div>
+<div class="code nottested">    return rejection;</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Constructs a fulfilled promise for an immediate reference.</div>
+<div class="code nottested"> * @param value immediate reference</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.fulfill = fulfill;</div>
+<div class="code nottested">function fulfill(value) {</div>
+<div class="code nottested">    return Promise({</div>
+<div class="code nottested">        "when": function () {</div>
+<div class="code nottested">            return value;</div>
+<div class="code nottested">        },</div>
+<div class="code nottested">        "get": function (name) {</div>
+<div class="code nottested">            return value[name];</div>
+<div class="code nottested">        },</div>
+<div class="code nottested">        "set": function (name, rhs) {</div>
+<div class="code nottested">            value[name] = rhs;</div>
+<div class="code nottested">        },</div>
+<div class="code nottested">        "delete": function (name) {</div>
+<div class="code nottested">            delete value[name];</div>
+<div class="code nottested">        },</div>
+<div class="code nottested">        "post": function (name, args) {</div>
+<div class="code nottested">            // Mark Miller proposes that post with no name should apply a</div>
+<div class="code nottested">            // promised function.</div>
+<div class="code nottested">            if (name === null || name === void 0) {</div>
+<div class="code nottested">                return value.apply(void 0, args);</div>
+<div class="code nottested">            } else {</div>
+<div class="code nottested">                return value[name].apply(value, args);</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        },</div>
+<div class="code nottested">        "apply": function (thisp, args) {</div>
+<div class="code nottested">            return value.apply(thisp, args);</div>
+<div class="code nottested">        },</div>
+<div class="code nottested">        "keys": function () {</div>
+<div class="code nottested">            return object_keys(value);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }, void 0, function inspect() {</div>
+<div class="code nottested">        return { state: "fulfilled", value: value };</div>
+<div class="code nottested">    });</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Converts thenables to Q promises.</div>
+<div class="code nottested"> * @param promise thenable promise</div>
+<div class="code nottested"> * @returns a Q promise</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">function coerce(promise) {</div>
+<div class="code nottested">    var deferred = defer();</div>
+<div class="code nottested">    nextTick(function () {</div>
+<div class="code nottested">        try {</div>
+<div class="code nottested">            promise.then(deferred.resolve, deferred.reject, deferred.notify);</div>
+<div class="code nottested">        } catch (exception) {</div>
+<div class="code nottested">            deferred.reject(exception);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    });</div>
+<div class="code nottested">    return deferred.promise;</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Annotates an object such that it will never be</div>
+<div class="code nottested"> * transferred away from this process over any promise</div>
+<div class="code nottested"> * communication channel.</div>
+<div class="code nottested"> * @param object</div>
+<div class="code nottested"> * @returns promise a wrapping of that object that</div>
+<div class="code nottested"> * additionally responds to the "isDef" message</div>
+<div class="code nottested"> * without a rejection.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.master = master;</div>
+<div class="code nottested">function master(object) {</div>
+<div class="code nottested">    return Promise({</div>
+<div class="code nottested">        "isDef": function () {}</div>
+<div class="code nottested">    }, function fallback(op, args) {</div>
+<div class="code nottested">        return dispatch(object, op, args);</div>
+<div class="code nottested">    }, function () {</div>
+<div class="code nottested">        return Q(object).inspect();</div>
+<div class="code nottested">    });</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Spreads the values of a promised array of arguments into the</div>
+<div class="code nottested"> * fulfillment callback.</div>
+<div class="code nottested"> * @param fulfilled callback that receives variadic arguments from the</div>
+<div class="code nottested"> * promised array</div>
+<div class="code nottested"> * @param rejected callback that receives the exception if the promise</div>
+<div class="code nottested"> * is rejected.</div>
+<div class="code nottested"> * @returns a promise for the return value or thrown exception of</div>
+<div class="code nottested"> * either callback.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.spread = spread;</div>
+<div class="code nottested">function spread(value, fulfilled, rejected) {</div>
+<div class="code nottested">    return Q(value).spread(fulfilled, rejected);</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.spread = function (fulfilled, rejected) {</div>
+<div class="code nottested">    return this.all().then(function (array) {</div>
+<div class="code nottested">        return fulfilled.apply(void 0, array);</div>
+<div class="code nottested">    }, rejected);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * The async function is a decorator for generator functions, turning</div>
+<div class="code nottested"> * them into asynchronous generators.  Although generators are only part</div>
+<div class="code nottested"> * of the newest ECMAScript 6 drafts, this code does not cause syntax</div>
+<div class="code nottested"> * errors in older engines.  This code should continue to work and will</div>
+<div class="code nottested"> * in fact improve over time as the language improves.</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * ES6 generators are currently part of V8 version 3.19 with the</div>
+<div class="code nottested"> * --harmony-generators runtime flag enabled.  SpiderMonkey has had them</div>
+<div class="code nottested"> * for longer, but under an older Python-inspired form.  This function</div>
+<div class="code nottested"> * works on both kinds of generators.</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * Decorates a generator function such that:</div>
+<div class="code nottested"> *  - it may yield promises</div>
+<div class="code nottested"> *  - execution will continue when that promise is fulfilled</div>
+<div class="code nottested"> *  - the value of the yield expression will be the fulfilled value</div>
+<div class="code nottested"> *  - it returns a promise for the return value (when the generator</div>
+<div class="code nottested"> *    stops iterating)</div>
+<div class="code nottested"> *  - the decorated function returns a promise for the return value</div>
+<div class="code nottested"> *    of the generator or the first rejected promise among those</div>
+<div class="code nottested"> *    yielded.</div>
+<div class="code nottested"> *  - if an error is thrown in the generator, it propagates through</div>
+<div class="code nottested"> *    every following yield until it is caught, or until it escapes</div>
+<div class="code nottested"> *    the generator function altogether, and is translated into a</div>
+<div class="code nottested"> *    rejection for the promise returned by the decorated generator.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.async = async;</div>
+<div class="code nottested">function async(makeGenerator) {</div>
+<div class="code nottested">    return function () {</div>
+<div class="code nottested">        // when verb is "send", arg is a value</div>
+<div class="code nottested">        // when verb is "throw", arg is an exception</div>
+<div class="code nottested">        function continuer(verb, arg) {</div>
+<div class="code nottested">            var result;</div>
+<div class="code nottested">            if (hasES6Generators) {</div>
+<div class="code nottested">                try {</div>
+<div class="code nottested">                    result = generator[verb](arg);</div>
+<div class="code nottested">                } catch (exception) {</div>
+<div class="code nottested">                    return reject(exception);</div>
+<div class="code nottested">                }</div>
+<div class="code nottested">                if (result.done) {</div>
+<div class="code nottested">                    return result.value;</div>
+<div class="code nottested">                } else {</div>
+<div class="code nottested">                    return when(result.value, callback, errback);</div>
+<div class="code nottested">                }</div>
+<div class="code nottested">            } else {</div>
+<div class="code nottested">                // FIXME: Remove this case when SM does ES6 generators.</div>
+<div class="code nottested">                try {</div>
+<div class="code nottested">                    result = generator[verb](arg);</div>
+<div class="code nottested">                } catch (exception) {</div>
+<div class="code nottested">                    if (isStopIteration(exception)) {</div>
+<div class="code nottested">                        return exception.value;</div>
+<div class="code nottested">                    } else {</div>
+<div class="code nottested">                        return reject(exception);</div>
+<div class="code nottested">                    }</div>
+<div class="code nottested">                }</div>
+<div class="code nottested">                return when(result, callback, errback);</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        var generator = makeGenerator.apply(this, arguments);</div>
+<div class="code nottested">        var callback = continuer.bind(continuer, "next");</div>
+<div class="code nottested">        var errback = continuer.bind(continuer, "throw");</div>
+<div class="code nottested">        return callback();</div>
+<div class="code nottested">    };</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * The spawn function is a small wrapper around async that immediately</div>
+<div class="code nottested"> * calls the generator and also ends the promise chain, so that any</div>
+<div class="code nottested"> * unhandled errors are thrown instead of forwarded to the error</div>
+<div class="code nottested"> * handler. This is useful because it's extremely common to run</div>
+<div class="code nottested"> * generators at the top-level to work with libraries.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.spawn = spawn;</div>
+<div class="code nottested">function spawn(makeGenerator) {</div>
+<div class="code nottested">    Q.done(Q.async(makeGenerator)());</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">// FIXME: Remove this interface once ES6 generators are in SpiderMonkey.</div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Throws a ReturnValue exception to stop an asynchronous generator.</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * This interface is a stop-gap measure to support generator return</div>
+<div class="code nottested"> * values in older Firefox/SpiderMonkey.  In browsers that support ES6</div>
+<div class="code nottested"> * generators like Chromium 29, just use "return" in your generator</div>
+<div class="code nottested"> * functions.</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * @param value the return value for the surrounding generator</div>
+<div class="code nottested"> * @throws ReturnValue exception with the value.</div>
+<div class="code nottested"> * @example</div>
+<div class="code nottested"> * // ES6 style</div>
+<div class="code nottested"> * Q.async(function* () {</div>
+<div class="code nottested"> *      var foo = yield getFooPromise();</div>
+<div class="code nottested"> *      var bar = yield getBarPromise();</div>
+<div class="code nottested"> *      return foo + bar;</div>
+<div class="code nottested"> * })</div>
+<div class="code nottested"> * // Older SpiderMonkey style</div>
+<div class="code nottested"> * Q.async(function () {</div>
+<div class="code nottested"> *      var foo = yield getFooPromise();</div>
+<div class="code nottested"> *      var bar = yield getBarPromise();</div>
+<div class="code nottested"> *      Q.return(foo + bar);</div>
+<div class="code nottested"> * })</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q["return"] = _return;</div>
+<div class="code nottested">function _return(value) {</div>
+<div class="code nottested">    throw new QReturnValue(value);</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * The promised function decorator ensures that any promise arguments</div>
+<div class="code nottested"> * are settled and passed as values (`this` is also settled and passed</div>
+<div class="code nottested"> * as a value).  It will also ensure that the result of a function is</div>
+<div class="code nottested"> * always a promise.</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * @example</div>
+<div class="code nottested"> * var add = Q.promised(function (a, b) {</div>
+<div class="code nottested"> *     return a + b;</div>
+<div class="code nottested"> * });</div>
+<div class="code nottested"> * add(Q(a), Q(B));</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * @param {function} callback The function to decorate</div>
+<div class="code nottested"> * @returns {function} a function that has been decorated.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.promised = promised;</div>
+<div class="code nottested">function promised(callback) {</div>
+<div class="code nottested">    return function () {</div>
+<div class="code nottested">        return spread([this, all(arguments)], function (self, args) {</div>
+<div class="code nottested">            return callback.apply(self, args);</div>
+<div class="code nottested">        });</div>
+<div class="code nottested">    };</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * sends a message to a value in a future turn</div>
+<div class="code nottested"> * @param object* the recipient</div>
+<div class="code nottested"> * @param op the name of the message operation, e.g., "when",</div>
+<div class="code nottested"> * @param args further arguments to be forwarded to the operation</div>
+<div class="code nottested"> * @returns result {Promise} a promise for the result of the operation</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.dispatch = dispatch;</div>
+<div class="code nottested">function dispatch(object, op, args) {</div>
+<div class="code nottested">    return Q(object).dispatch(op, args);</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.dispatch = function (op, args) {</div>
+<div class="code nottested">    var self = this;</div>
+<div class="code nottested">    var deferred = defer();</div>
+<div class="code nottested">    nextTick(function () {</div>
+<div class="code nottested">        self.promiseDispatch(deferred.resolve, op, args);</div>
+<div class="code nottested">    });</div>
+<div class="code nottested">    return deferred.promise;</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Gets the value of a property in a future turn.</div>
+<div class="code nottested"> * @param object    promise or immediate reference for target object</div>
+<div class="code nottested"> * @param name      name of property to get</div>
+<div class="code nottested"> * @return promise for the property value</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.get = function (object, key) {</div>
+<div class="code nottested">    return Q(object).dispatch("get", [key]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.get = function (key) {</div>
+<div class="code nottested">    return this.dispatch("get", [key]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Sets the value of a property in a future turn.</div>
+<div class="code nottested"> * @param object    promise or immediate reference for object object</div>
+<div class="code nottested"> * @param name      name of property to set</div>
+<div class="code nottested"> * @param value     new value of property</div>
+<div class="code nottested"> * @return promise for the return value</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.set = function (object, key, value) {</div>
+<div class="code nottested">    return Q(object).dispatch("set", [key, value]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.set = function (key, value) {</div>
+<div class="code nottested">    return this.dispatch("set", [key, value]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Deletes a property in a future turn.</div>
+<div class="code nottested"> * @param object    promise or immediate reference for target object</div>
+<div class="code nottested"> * @param name      name of property to delete</div>
+<div class="code nottested"> * @return promise for the return value</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.del = // XXX legacy</div>
+<div class="code nottested">Q["delete"] = function (object, key) {</div>
+<div class="code nottested">    return Q(object).dispatch("delete", [key]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.del = // XXX legacy</div>
+<div class="code nottested">Promise.prototype["delete"] = function (key) {</div>
+<div class="code nottested">    return this.dispatch("delete", [key]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Invokes a method in a future turn.</div>
+<div class="code nottested"> * @param object    promise or immediate reference for target object</div>
+<div class="code nottested"> * @param name      name of method to invoke</div>
+<div class="code nottested"> * @param value     a value to post, typically an array of</div>
+<div class="code nottested"> *                  invocation arguments for promises that</div>
+<div class="code nottested"> *                  are ultimately backed with `resolve` values,</div>
+<div class="code nottested"> *                  as opposed to those backed with URLs</div>
+<div class="code nottested"> *                  wherein the posted value can be any</div>
+<div class="code nottested"> *                  JSON serializable object.</div>
+<div class="code nottested"> * @return promise for the return value</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">// bound locally because it is used by other methods</div>
+<div class="code nottested">Q.mapply = // XXX As proposed by "Redsandro"</div>
+<div class="code nottested">Q.post = function (object, name, args) {</div>
+<div class="code nottested">    return Q(object).dispatch("post", [name, args]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.mapply = // XXX As proposed by "Redsandro"</div>
+<div class="code nottested">Promise.prototype.post = function (name, args) {</div>
+<div class="code nottested">    return this.dispatch("post", [name, args]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Invokes a method in a future turn.</div>
+<div class="code nottested"> * @param object    promise or immediate reference for target object</div>
+<div class="code nottested"> * @param name      name of method to invoke</div>
+<div class="code nottested"> * @param ...args   array of invocation arguments</div>
+<div class="code nottested"> * @return promise for the return value</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.send = // XXX Mark Miller's proposed parlance</div>
+<div class="code nottested">Q.mcall = // XXX As proposed by "Redsandro"</div>
+<div class="code nottested">Q.invoke = function (object, name /*...args*/) {</div>
+<div class="code nottested">    return Q(object).dispatch("post", [name, array_slice(arguments, 2)]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.send = // XXX Mark Miller's proposed parlance</div>
+<div class="code nottested">Promise.prototype.mcall = // XXX As proposed by "Redsandro"</div>
+<div class="code nottested">Promise.prototype.invoke = function (name /*...args*/) {</div>
+<div class="code nottested">    return this.dispatch("post", [name, array_slice(arguments, 1)]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Applies the promised function in a future turn.</div>
+<div class="code nottested"> * @param object    promise or immediate reference for target function</div>
+<div class="code nottested"> * @param args      array of application arguments</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.fapply = function (object, args) {</div>
+<div class="code nottested">    return Q(object).dispatch("apply", [void 0, args]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.fapply = function (args) {</div>
+<div class="code nottested">    return this.dispatch("apply", [void 0, args]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Calls the promised function in a future turn.</div>
+<div class="code nottested"> * @param object    promise or immediate reference for target function</div>
+<div class="code nottested"> * @param ...args   array of application arguments</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q["try"] =</div>
+<div class="code nottested">Q.fcall = function (object /* ...args*/) {</div>
+<div class="code nottested">    return Q(object).dispatch("apply", [void 0, array_slice(arguments, 1)]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.fcall = function (/*...args*/) {</div>
+<div class="code nottested">    return this.dispatch("apply", [void 0, array_slice(arguments)]);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Binds the promised function, transforming return values into a fulfilled</div>
+<div class="code nottested"> * promise and thrown errors into a rejected one.</div>
+<div class="code nottested"> * @param object    promise or immediate reference for target function</div>
+<div class="code nottested"> * @param ...args   array of application arguments</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.fbind = function (object /*...args*/) {</div>
+<div class="code nottested">    var promise = Q(object);</div>
+<div class="code nottested">    var args = array_slice(arguments, 1);</div>
+<div class="code nottested">    return function fbound() {</div>
+<div class="code nottested">        return promise.dispatch("apply", [</div>
+<div class="code nottested">            this,</div>
+<div class="code nottested">            args.concat(array_slice(arguments))</div>
+<div class="code nottested">        ]);</div>
+<div class="code nottested">    };</div>
+<div class="code nottested">};</div>
+<div class="code nottested">Promise.prototype.fbind = function (/*...args*/) {</div>
+<div class="code nottested">    var promise = this;</div>
+<div class="code nottested">    var args = array_slice(arguments);</div>
+<div class="code nottested">    return function fbound() {</div>
+<div class="code nottested">        return promise.dispatch("apply", [</div>
+<div class="code nottested">            this,</div>
+<div class="code nottested">            args.concat(array_slice(arguments))</div>
+<div class="code nottested">        ]);</div>
+<div class="code nottested">    };</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Requests the names of the owned properties of a promised</div>
+<div class="code nottested"> * object in a future turn.</div>
+<div class="code nottested"> * @param object    promise or immediate reference for target object</div>
+<div class="code nottested"> * @return promise for the keys of the eventually settled object</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.keys = function (object) {</div>
+<div class="code nottested">    return Q(object).dispatch("keys", []);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.keys = function () {</div>
+<div class="code nottested">    return this.dispatch("keys", []);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Turns an array of promises into a promise for an array.  If any of</div>
+<div class="code nottested"> * the promises gets rejected, the whole array is rejected immediately.</div>
+<div class="code nottested"> * @param {Array*} an array (or promise for an array) of values (or</div>
+<div class="code nottested"> * promises for values)</div>
+<div class="code nottested"> * @returns a promise for an array of the corresponding values</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">// By Mark Miller</div>
+<div class="code nottested">// http://wiki.ecmascript.org/doku.php?id=strawman:concurrency&rev=1308776521#allfulfilled</div>
+<div class="code nottested">Q.all = all;</div>
+<div class="code nottested">function all(promises) {</div>
+<div class="code nottested">    return when(promises, function (promises) {</div>
+<div class="code nottested">        var countDown = 0;</div>
+<div class="code nottested">        var deferred = defer();</div>
+<div class="code nottested">        array_reduce(promises, function (undefined, promise, index) {</div>
+<div class="code nottested">            var snapshot;</div>
+<div class="code nottested">            if (</div>
+<div class="code nottested">                isPromise(promise) &&</div>
+<div class="code nottested">                (snapshot = promise.inspect()).state === "fulfilled"</div>
+<div class="code nottested">            ) {</div>
+<div class="code nottested">                promises[index] = snapshot.value;</div>
+<div class="code nottested">            } else {</div>
+<div class="code nottested">                ++countDown;</div>
+<div class="code nottested">                when(</div>
+<div class="code nottested">                    promise,</div>
+<div class="code nottested">                    function (value) {</div>
+<div class="code nottested">                        promises[index] = value;</div>
+<div class="code nottested">                        if (--countDown === 0) {</div>
+<div class="code nottested">                            deferred.resolve(promises);</div>
+<div class="code nottested">                        }</div>
+<div class="code nottested">                    },</div>
+<div class="code nottested">                    deferred.reject,</div>
+<div class="code nottested">                    function (progress) {</div>
+<div class="code nottested">                        deferred.notify({ index: index, value: progress });</div>
+<div class="code nottested">                    }</div>
+<div class="code nottested">                );</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        }, void 0);</div>
+<div class="code nottested">        if (countDown === 0) {</div>
+<div class="code nottested">            deferred.resolve(promises);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        return deferred.promise;</div>
+<div class="code nottested">    });</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.all = function () {</div>
+<div class="code nottested">    return all(this);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Waits for all promises to be settled, either fulfilled or</div>
+<div class="code nottested"> * rejected.  This is distinct from `all` since that would stop</div>
+<div class="code nottested"> * waiting at the first rejection.  The promise returned by</div>
+<div class="code nottested"> * `allResolved` will never be rejected.</div>
+<div class="code nottested"> * @param promises a promise for an array (or an array) of promises</div>
+<div class="code nottested"> * (or values)</div>
+<div class="code nottested"> * @return a promise for an array of promises</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.allResolved = deprecate(allResolved, "allResolved", "allSettled");</div>
+<div class="code nottested">function allResolved(promises) {</div>
+<div class="code nottested">    return when(promises, function (promises) {</div>
+<div class="code nottested">        promises = array_map(promises, Q);</div>
+<div class="code nottested">        return when(all(array_map(promises, function (promise) {</div>
+<div class="code nottested">            return when(promise, noop, noop);</div>
+<div class="code nottested">        })), function () {</div>
+<div class="code nottested">            return promises;</div>
+<div class="code nottested">        });</div>
+<div class="code nottested">    });</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.allResolved = function () {</div>
+<div class="code nottested">    return allResolved(this);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * @see Promise#allSettled</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.allSettled = allSettled;</div>
+<div class="code nottested">function allSettled(promises) {</div>
+<div class="code nottested">    return Q(promises).allSettled();</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Turns an array of promises into a promise for an array of their states (as</div>
+<div class="code nottested"> * returned by `inspect`) when they have all settled.</div>
+<div class="code nottested"> * @param {Array[Any*]} values an array (or promise for an array) of values (or</div>
+<div class="code nottested"> * promises for values)</div>
+<div class="code nottested"> * @returns {Array[State]} an array of states for the respective values.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Promise.prototype.allSettled = function () {</div>
+<div class="code nottested">    return this.then(function (promises) {</div>
+<div class="code nottested">        return all(array_map(promises, function (promise) {</div>
+<div class="code nottested">            promise = Q(promise);</div>
+<div class="code nottested">            function regardless() {</div>
+<div class="code nottested">                return promise.inspect();</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">            return promise.then(regardless, regardless);</div>
+<div class="code nottested">        }));</div>
+<div class="code nottested">    });</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Captures the failure of a promise, giving an oportunity to recover</div>
+<div class="code nottested"> * with a callback.  If the given promise is fulfilled, the returned</div>
+<div class="code nottested"> * promise is fulfilled.</div>
+<div class="code nottested"> * @param {Any*} promise for something</div>
+<div class="code nottested"> * @param {Function} callback to fulfill the returned promise if the</div>
+<div class="code nottested"> * given promise is rejected</div>
+<div class="code nottested"> * @returns a promise for the return value of the callback</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.fail = // XXX legacy</div>
+<div class="code nottested">Q["catch"] = function (object, rejected) {</div>
+<div class="code nottested">    return Q(object).then(void 0, rejected);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.fail = // XXX legacy</div>
+<div class="code nottested">Promise.prototype["catch"] = function (rejected) {</div>
+<div class="code nottested">    return this.then(void 0, rejected);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Attaches a listener that can respond to progress notifications from a</div>
+<div class="code nottested"> * promise's originating deferred. This listener receives the exact arguments</div>
+<div class="code nottested"> * passed to ``deferred.notify``.</div>
+<div class="code nottested"> * @param {Any*} promise for something</div>
+<div class="code nottested"> * @param {Function} callback to receive any progress notifications</div>
+<div class="code nottested"> * @returns the given promise, unchanged</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.progress = progress;</div>
+<div class="code nottested">function progress(object, progressed) {</div>
+<div class="code nottested">    return Q(object).then(void 0, void 0, progressed);</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.progress = function (progressed) {</div>
+<div class="code nottested">    return this.then(void 0, void 0, progressed);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Provides an opportunity to observe the settling of a promise,</div>
+<div class="code nottested"> * regardless of whether the promise is fulfilled or rejected.  Forwards</div>
+<div class="code nottested"> * the resolution to the returned promise when the callback is done.</div>
+<div class="code nottested"> * The callback can return a promise to defer completion.</div>
+<div class="code nottested"> * @param {Any*} promise</div>
+<div class="code nottested"> * @param {Function} callback to observe the resolution of the given</div>
+<div class="code nottested"> * promise, takes no arguments.</div>
+<div class="code nottested"> * @returns a promise for the resolution of the given promise when</div>
+<div class="code nottested"> * ``fin`` is done.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.fin = // XXX legacy</div>
+<div class="code nottested">Q["finally"] = function (object, callback) {</div>
+<div class="code nottested">    return Q(object)["finally"](callback);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.fin = // XXX legacy</div>
+<div class="code nottested">Promise.prototype["finally"] = function (callback) {</div>
+<div class="code nottested">    callback = Q(callback);</div>
+<div class="code nottested">    return this.then(function (value) {</div>
+<div class="code nottested">        return callback.fcall().then(function () {</div>
+<div class="code nottested">            return value;</div>
+<div class="code nottested">        });</div>
+<div class="code nottested">    }, function (reason) {</div>
+<div class="code nottested">        // TODO attempt to recycle the rejection with "this".</div>
+<div class="code nottested">        return callback.fcall().then(function () {</div>
+<div class="code nottested">            throw reason;</div>
+<div class="code nottested">        });</div>
+<div class="code nottested">    });</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Terminates a chain of promises, forcing rejections to be</div>
+<div class="code nottested"> * thrown as exceptions.</div>
+<div class="code nottested"> * @param {Any*} promise at the end of a chain of promises</div>
+<div class="code nottested"> * @returns nothing</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.done = function (object, fulfilled, rejected, progress) {</div>
+<div class="code nottested">    return Q(object).done(fulfilled, rejected, progress);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.done = function (fulfilled, rejected, progress) {</div>
+<div class="code nottested">    var onUnhandledError = function (error) {</div>
+<div class="code nottested">        // forward to a future turn so that ``when``</div>
+<div class="code nottested">        // does not catch it and turn it into a rejection.</div>
+<div class="code nottested">        nextTick(function () {</div>
+<div class="code nottested">            makeStackTraceLong(error, promise);</div>
+<div class="code nottested">            if (Q.onerror) {</div>
+<div class="code nottested">                Q.onerror(error);</div>
+<div class="code nottested">            } else {</div>
+<div class="code nottested">                throw error;</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        });</div>
+<div class="code nottested">    };</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // Avoid unnecessary `nextTick`ing via an unnecessary `when`.</div>
+<div class="code nottested">    var promise = fulfilled || rejected || progress ?</div>
+<div class="code nottested">        this.then(fulfilled, rejected, progress) :</div>
+<div class="code nottested">        this;</div>
+<div class="code nottested"></div>
+<div class="code nottested">    if (typeof process === "object" && process && process.domain) {</div>
+<div class="code nottested">        onUnhandledError = process.domain.bind(onUnhandledError);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    promise.then(void 0, onUnhandledError);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Causes a promise to be rejected if it does not get fulfilled before</div>
+<div class="code nottested"> * some milliseconds time out.</div>
+<div class="code nottested"> * @param {Any*} promise</div>
+<div class="code nottested"> * @param {Number} milliseconds timeout</div>
+<div class="code nottested"> * @param {String} custom error message (optional)</div>
+<div class="code nottested"> * @returns a promise for the resolution of the given promise if it is</div>
+<div class="code nottested"> * fulfilled before the timeout, otherwise rejected.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.timeout = function (object, ms, message) {</div>
+<div class="code nottested">    return Q(object).timeout(ms, message);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.timeout = function (ms, message) {</div>
+<div class="code nottested">    var deferred = defer();</div>
+<div class="code nottested">    var timeoutId = setTimeout(function () {</div>
+<div class="code nottested">        deferred.reject(new Error(message || "Timed out after " + ms + " ms"));</div>
+<div class="code nottested">    }, ms);</div>
+<div class="code nottested"></div>
+<div class="code nottested">    this.then(function (value) {</div>
+<div class="code nottested">        clearTimeout(timeoutId);</div>
+<div class="code nottested">        deferred.resolve(value);</div>
+<div class="code nottested">    }, function (exception) {</div>
+<div class="code nottested">        clearTimeout(timeoutId);</div>
+<div class="code nottested">        deferred.reject(exception);</div>
+<div class="code nottested">    }, deferred.notify);</div>
+<div class="code nottested"></div>
+<div class="code nottested">    return deferred.promise;</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Returns a promise for the given value (or promised value), some</div>
+<div class="code nottested"> * milliseconds after it resolved. Passes rejections immediately.</div>
+<div class="code nottested"> * @param {Any*} promise</div>
+<div class="code nottested"> * @param {Number} milliseconds</div>
+<div class="code nottested"> * @returns a promise for the resolution of the given promise after milliseconds</div>
+<div class="code nottested"> * time has elapsed since the resolution of the given promise.</div>
+<div class="code nottested"> * If the given promise rejects, that is passed immediately.</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.delay = function (object, timeout) {</div>
+<div class="code nottested">    if (timeout === void 0) {</div>
+<div class="code nottested">        timeout = object;</div>
+<div class="code nottested">        object = void 0;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">    return Q(object).delay(timeout);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.delay = function (timeout) {</div>
+<div class="code nottested">    return this.then(function (value) {</div>
+<div class="code nottested">        var deferred = defer();</div>
+<div class="code nottested">        setTimeout(function () {</div>
+<div class="code nottested">            deferred.resolve(value);</div>
+<div class="code nottested">        }, timeout);</div>
+<div class="code nottested">        return deferred.promise;</div>
+<div class="code nottested">    });</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Passes a continuation to a Node function, which is called with the given</div>
+<div class="code nottested"> * arguments provided as an array, and returns a promise.</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> *      Q.nfapply(FS.readFile, [__filename])</div>
+<div class="code nottested"> *      .then(function (content) {</div>
+<div class="code nottested"> *      })</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.nfapply = function (callback, args) {</div>
+<div class="code nottested">    return Q(callback).nfapply(args);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.nfapply = function (args) {</div>
+<div class="code nottested">    var deferred = defer();</div>
+<div class="code nottested">    var nodeArgs = array_slice(args);</div>
+<div class="code nottested">    nodeArgs.push(deferred.makeNodeResolver());</div>
+<div class="code nottested">    this.fapply(nodeArgs).fail(deferred.reject);</div>
+<div class="code nottested">    return deferred.promise;</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Passes a continuation to a Node function, which is called with the given</div>
+<div class="code nottested"> * arguments provided individually, and returns a promise.</div>
+<div class="code nottested"> * @example</div>
+<div class="code nottested"> * Q.nfcall(FS.readFile, __filename)</div>
+<div class="code nottested"> * .then(function (content) {</div>
+<div class="code nottested"> * })</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.nfcall = function (callback /*...args*/) {</div>
+<div class="code nottested">    var args = array_slice(arguments, 1);</div>
+<div class="code nottested">    return Q(callback).nfapply(args);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.nfcall = function (/*...args*/) {</div>
+<div class="code nottested">    var nodeArgs = array_slice(arguments);</div>
+<div class="code nottested">    var deferred = defer();</div>
+<div class="code nottested">    nodeArgs.push(deferred.makeNodeResolver());</div>
+<div class="code nottested">    this.fapply(nodeArgs).fail(deferred.reject);</div>
+<div class="code nottested">    return deferred.promise;</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Wraps a NodeJS continuation passing function and returns an equivalent</div>
+<div class="code nottested"> * version that returns a promise.</div>
+<div class="code nottested"> * @example</div>
+<div class="code nottested"> * Q.nfbind(FS.readFile, __filename)("utf-8")</div>
+<div class="code nottested"> * .then(console.log)</div>
+<div class="code nottested"> * .done()</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.nfbind =</div>
+<div class="code nottested">Q.denodeify = function (callback /*...args*/) {</div>
+<div class="code nottested">    var baseArgs = array_slice(arguments, 1);</div>
+<div class="code nottested">    return function () {</div>
+<div class="code nottested">        var nodeArgs = baseArgs.concat(array_slice(arguments));</div>
+<div class="code nottested">        var deferred = defer();</div>
+<div class="code nottested">        nodeArgs.push(deferred.makeNodeResolver());</div>
+<div class="code nottested">        Q(callback).fapply(nodeArgs).fail(deferred.reject);</div>
+<div class="code nottested">        return deferred.promise;</div>
+<div class="code nottested">    };</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.nfbind =</div>
+<div class="code nottested">Promise.prototype.denodeify = function (/*...args*/) {</div>
+<div class="code nottested">    var args = array_slice(arguments);</div>
+<div class="code nottested">    args.unshift(this);</div>
+<div class="code nottested">    return Q.denodeify.apply(void 0, args);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Q.nbind = function (callback, thisp /*...args*/) {</div>
+<div class="code nottested">    var baseArgs = array_slice(arguments, 2);</div>
+<div class="code nottested">    return function () {</div>
+<div class="code nottested">        var nodeArgs = baseArgs.concat(array_slice(arguments));</div>
+<div class="code nottested">        var deferred = defer();</div>
+<div class="code nottested">        nodeArgs.push(deferred.makeNodeResolver());</div>
+<div class="code nottested">        function bound() {</div>
+<div class="code nottested">            return callback.apply(thisp, arguments);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        Q(bound).fapply(nodeArgs).fail(deferred.reject);</div>
+<div class="code nottested">        return deferred.promise;</div>
+<div class="code nottested">    };</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.nbind = function (/*thisp, ...args*/) {</div>
+<div class="code nottested">    var args = array_slice(arguments, 0);</div>
+<div class="code nottested">    args.unshift(this);</div>
+<div class="code nottested">    return Q.nbind.apply(void 0, args);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Calls a method of a Node-style object that accepts a Node-style</div>
+<div class="code nottested"> * callback with a given array of arguments, plus a provided callback.</div>
+<div class="code nottested"> * @param object an object that has the named method</div>
+<div class="code nottested"> * @param {String} name name of the method of object</div>
+<div class="code nottested"> * @param {Array} args arguments to pass to the method; the callback</div>
+<div class="code nottested"> * will be provided by Q and appended to these arguments.</div>
+<div class="code nottested"> * @returns a promise for the value or error</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.nmapply = // XXX As proposed by "Redsandro"</div>
+<div class="code nottested">Q.npost = function (object, name, args) {</div>
+<div class="code nottested">    return Q(object).npost(name, args);</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.nmapply = // XXX As proposed by "Redsandro"</div>
+<div class="code nottested">Promise.prototype.npost = function (name, args) {</div>
+<div class="code nottested">    var nodeArgs = array_slice(args || []);</div>
+<div class="code nottested">    var deferred = defer();</div>
+<div class="code nottested">    nodeArgs.push(deferred.makeNodeResolver());</div>
+<div class="code nottested">    this.dispatch("post", [name, nodeArgs]).fail(deferred.reject);</div>
+<div class="code nottested">    return deferred.promise;</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * Calls a method of a Node-style object that accepts a Node-style</div>
+<div class="code nottested"> * callback, forwarding the given variadic arguments, plus a provided</div>
+<div class="code nottested"> * callback argument.</div>
+<div class="code nottested"> * @param object an object that has the named method</div>
+<div class="code nottested"> * @param {String} name name of the method of object</div>
+<div class="code nottested"> * @param ...args arguments to pass to the method; the callback will</div>
+<div class="code nottested"> * be provided by Q and appended to these arguments.</div>
+<div class="code nottested"> * @returns a promise for the value or error</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.nsend = // XXX Based on Mark Miller's proposed "send"</div>
+<div class="code nottested">Q.nmcall = // XXX Based on "Redsandro's" proposal</div>
+<div class="code nottested">Q.ninvoke = function (object, name /*...args*/) {</div>
+<div class="code nottested">    var nodeArgs = array_slice(arguments, 2);</div>
+<div class="code nottested">    var deferred = defer();</div>
+<div class="code nottested">    nodeArgs.push(deferred.makeNodeResolver());</div>
+<div class="code nottested">    Q(object).dispatch("post", [name, nodeArgs]).fail(deferred.reject);</div>
+<div class="code nottested">    return deferred.promise;</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.nsend = // XXX Based on Mark Miller's proposed "send"</div>
+<div class="code nottested">Promise.prototype.nmcall = // XXX Based on "Redsandro's" proposal</div>
+<div class="code nottested">Promise.prototype.ninvoke = function (name /*...args*/) {</div>
+<div class="code nottested">    var nodeArgs = array_slice(arguments, 1);</div>
+<div class="code nottested">    var deferred = defer();</div>
+<div class="code nottested">    nodeArgs.push(deferred.makeNodeResolver());</div>
+<div class="code nottested">    this.dispatch("post", [name, nodeArgs]).fail(deferred.reject);</div>
+<div class="code nottested">    return deferred.promise;</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">/**</div>
+<div class="code nottested"> * If a function would like to support both Node continuation-passing-style and</div>
+<div class="code nottested"> * promise-returning-style, it can end its internal promise chain with</div>
+<div class="code nottested"> * `nodeify(nodeback)`, forwarding the optional nodeback argument.  If the user</div>
+<div class="code nottested"> * elects to use a nodeback, the result will be sent there.  If they do not</div>
+<div class="code nottested"> * pass a nodeback, they will receive the result promise.</div>
+<div class="code nottested"> * @param object a result (or a promise for a result)</div>
+<div class="code nottested"> * @param {Function} nodeback a Node.js-style callback</div>
+<div class="code nottested"> * @returns either the promise or nothing</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">Q.nodeify = nodeify;</div>
+<div class="code nottested">function nodeify(object, nodeback) {</div>
+<div class="code nottested">    return Q(object).nodeify(nodeback);</div>
+<div class="code nottested">}</div>
+<div class="code nottested"></div>
+<div class="code nottested">Promise.prototype.nodeify = function (nodeback) {</div>
+<div class="code nottested">    if (nodeback) {</div>
+<div class="code nottested">        this.then(function (value) {</div>
+<div class="code nottested">            nextTick(function () {</div>
+<div class="code nottested">                nodeback(null, value);</div>
+<div class="code nottested">            });</div>
+<div class="code nottested">        }, function (error) {</div>
+<div class="code nottested">            nextTick(function () {</div>
+<div class="code nottested">                nodeback(error);</div>
+<div class="code nottested">            });</div>
+<div class="code nottested">        });</div>
+<div class="code nottested">    } else {</div>
+<div class="code nottested">        return this;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested">};</div>
+<div class="code nottested"></div>
+<div class="code nottested">// All code before this point will be filtered from stack traces.</div>
+<div class="code nottested">var qEndingLine = captureLine();</div>
+<div class="code nottested"></div>
+<div class="code nottested">return Q;</div>
+<div class="code nottested"></div>
+<div class="code nottested">});</div>
+<div class="code nottested"></div>
+<div class="code nottested">/*!</div>
+<div class="code nottested"> * HeadJS     The only script in your &lt;HEAD&gt;    </div>
+<div class="code nottested"> * Author     Tero Piirainen  (tipiirai)</div>
+<div class="code nottested"> * Maintainer Robert Hoffmann (itechnology)</div>
+<div class="code nottested"> * License    MIT / http://bit.ly/mit-license</div>
+<div class="code nottested"> *</div>
+<div class="code nottested"> * Version 0.99</div>
+<div class="code nottested"> * http://headjs.com</div>
+<div class="code nottested"> */</div>
+<div class="code nottested">; (function (win, undefined) {</div>
+<div class="code nottested">    "use strict";</div>
+<div class="code nottested"></div>
+<div class="code nottested">    var doc = win.document,</div>
+<div class="code nottested">        domWaiters = [],</div>
+<div class="code nottested">        queue      = [], // waiters for the "head ready" event</div>
+<div class="code nottested">        handlers   = {}, // user functions waiting for events</div>
+<div class="code nottested">        assets     = {}, // loadable items in various states</div>
+<div class="code nottested">        isAsync    = "async" in doc.createElement("script") || "MozAppearance" in doc.documentElement.style || win.opera,</div>
+<div class="code nottested">        isHeadReady,</div>
+<div class="code nottested">        isDomReady,</div>
+<div class="code nottested"></div>
+<div class="code nottested">        /*** public API ***/</div>
+<div class="code nottested">        headVar = win.head_conf && win.head_conf.head || "head",</div>
+<div class="code nottested">        api     = win[headVar] = (win[headVar] || function () { api.ready.apply(null, arguments); }),</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // states</div>
+<div class="code nottested">        PRELOADING = 1,</div>
+<div class="code nottested">        PRELOADED  = 2,</div>
+<div class="code nottested">        LOADING    = 3,</div>
+<div class="code nottested">        LOADED     = 4;</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // Method 1: simply load and let browser take care of ordering</div>
+<div class="code nottested">    if (isAsync) {</div>
+<div class="code nottested">        api.load = function () {</div>
+<div class="code nottested">            ///&lt;summary&gt;</div>
+<div class="code nottested">            /// INFO: use cases</div>
+<div class="code nottested">            ///    head.load("http://domain.com/file.js","http://domain.com/file.js", callBack)</div>
+<div class="code nottested">            ///    head.load({ label1: "http://domain.com/file.js" }, { label2: "http://domain.com/file.js" }, callBack)</div>
+<div class="code nottested">            ///&lt;/summary&gt; </div>
+<div class="code nottested">            var args      = arguments,</div>
+<div class="code nottested">                 callback = args[args.length - 1],</div>
+<div class="code nottested">                 items    = {};</div>
+<div class="code nottested"></div>
+<div class="code nottested">            if (!isFunction(callback)) {</div>
+<div class="code nottested">                callback = null;</div>
+<div class="code nottested">            }</div>
+<div class="code nottested"></div>
+<div class="code nottested">            each(args, function (item, i) {</div>
+<div class="code nottested">                if (item !== callback) {</div>
+<div class="code nottested">                    item             = getAsset(item);</div>
+<div class="code nottested">                    items[item.name] = item;</div>
+<div class="code nottested"></div>
+<div class="code nottested">                    load(item, callback && i === args.length - 2 ? function () {</div>
+<div class="code nottested">                        if (allLoaded(items)) {</div>
+<div class="code nottested">                            one(callback);</div>
+<div class="code nottested">                        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">                    } : null);</div>
+<div class="code nottested">                }</div>
+<div class="code nottested">            });</div>
+<div class="code nottested"></div>
+<div class="code nottested">            return api;</div>
+<div class="code nottested">        };</div>
+<div class="code nottested"></div>
+<div class="code nottested"></div>
+<div class="code nottested">    // Method 2: preload with text/cache hack</div>
+<div class="code nottested">    } else {</div>
+<div class="code nottested">        api.load = function () {</div>
+<div class="code nottested">            var args = arguments,</div>
+<div class="code nottested">                rest = [].slice.call(args, 1),</div>
+<div class="code nottested">                next = rest[0];</div>
+<div class="code nottested"></div>
+<div class="code nottested">            // wait for a while. immediate execution causes some browsers to ignore caching</div>
+<div class="code nottested">            if (!isHeadReady) {</div>
+<div class="code nottested">                queue.push(function () {</div>
+<div class="code nottested">                    api.load.apply(null, args);</div>
+<div class="code nottested">                });</div>
+<div class="code nottested"></div>
+<div class="code nottested">                return api;</div>
+<div class="code nottested">            }            </div>
+<div class="code nottested"></div>
+<div class="code nottested">            // multiple arguments</div>
+<div class="code nottested">            if (!!next) {</div>
+<div class="code nottested">                /* Preload with text/cache hack (not good!)</div>
+<div class="code nottested">                 * http://blog.getify.com/on-script-loaders/</div>
+<div class="code nottested">                 * http://www.nczonline.net/blog/2010/12/21/thoughts-on-script-loaders/</div>
+<div class="code nottested">                 * If caching is not configured correctly on the server, then items could load twice !</div>
+<div class="code nottested">                 *************************************************************************************/</div>
+<div class="code nottested">                each(rest, function (item) {</div>
+<div class="code nottested">                    if (!isFunction(item)) {</div>
+<div class="code nottested">                        preLoad(getAsset(item));</div>
+<div class="code nottested">                    }</div>
+<div class="code nottested">                });</div>
+<div class="code nottested"></div>
+<div class="code nottested">                // execute</div>
+<div class="code nottested">                load(getAsset(args[0]), isFunction(next) ? next : function () {</div>
+<div class="code nottested">                    api.load.apply(null, rest);</div>
+<div class="code nottested">                });                </div>
+<div class="code nottested">            }</div>
+<div class="code nottested">            else {</div>
+<div class="code nottested">                // single item</div>
+<div class="code nottested">                load(getAsset(args[0]));</div>
+<div class="code nottested">            }</div>
+<div class="code nottested"></div>
+<div class="code nottested">            return api;</div>
+<div class="code nottested">        };</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // INFO: for retro compatibility</div>
+<div class="code nottested">    api.js = api.load;</div>
+<div class="code nottested">    </div>
+<div class="code nottested">    api.test = function (test, success, failure, callback) {</div>
+<div class="code nottested">        ///&lt;summary&gt;</div>
+<div class="code nottested">        /// INFO: use cases:</div>
+<div class="code nottested">        ///    head.test(condition, null       , "file.NOk" , callback);</div>
+<div class="code nottested">        ///    head.test(condition, "fileOk.js", null       , callback);        </div>
+<div class="code nottested">        ///    head.test(condition, "fileOk.js", "file.NOk" , callback);</div>
+<div class="code nottested">        ///    head.test(condition, "fileOk.js", ["file.NOk", "file.NOk"], callback);</div>
+<div class="code nottested">        ///    head.test({</div>
+<div class="code nottested">        ///               test    : condition,</div>
+<div class="code nottested">        ///               success : [{ label1: "file1Ok.js"  }, { label2: "file2Ok.js" }],</div>
+<div class="code nottested">        ///               failure : [{ label1: "file1NOk.js" }, { label2: "file2NOk.js" }],</div>
+<div class="code nottested">        ///               callback: callback</div>
+<div class="code nottested">        ///    );  </div>
+<div class="code nottested">        ///    head.test({</div>
+<div class="code nottested">        ///               test    : condition,</div>
+<div class="code nottested">        ///               success : ["file1Ok.js" , "file2Ok.js"],</div>
+<div class="code nottested">        ///               failure : ["file1NOk.js", "file2NOk.js"],</div>
+<div class="code nottested">        ///               callback: callback</div>
+<div class="code nottested">        ///    );         </div>
+<div class="code nottested">        ///&lt;/summary&gt;    </div>
+<div class="code nottested">        var obj = (typeof test === 'object') ? test : {</div>
+<div class="code nottested">            test: test,</div>
+<div class="code nottested">            success: !!success ? isArray(success) ? success : [success] : false,</div>
+<div class="code nottested">            failure: !!failure ? isArray(failure) ? failure : [failure] : false,</div>
+<div class="code nottested">            callback: callback || noop</div>
+<div class="code nottested">        };</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // Test Passed ?</div>
+<div class="code nottested">        var passed = !!obj.test;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // Do we have a success case</div>
+<div class="code nottested">        if (passed && !!obj.success) {</div>
+<div class="code nottested">            obj.success.push(obj.callback);</div>
+<div class="code nottested">            api.load.apply(null, obj.success);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">            // Do we have a fail case</div>
+<div class="code nottested">        else if (!passed && !!obj.failure) {</div>
+<div class="code nottested">            obj.failure.push(obj.callback);</div>
+<div class="code nottested">            api.load.apply(null, obj.failure);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        else {</div>
+<div class="code nottested">            callback();</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        return api;</div>
+<div class="code nottested">    };</div>
+<div class="code nottested"></div>
+<div class="code nottested">    api.ready = function (key, callback) {</div>
+<div class="code nottested">        ///&lt;summary&gt;</div>
+<div class="code nottested">        /// INFO: use cases:</div>
+<div class="code nottested">        ///    head.ready(callBack)</div>
+<div class="code nottested">        ///    head.ready(document , callBack)</div>
+<div class="code nottested">        ///    head.ready("file.js", callBack);</div>
+<div class="code nottested">        ///    head.ready("label"  , callBack);        </div>
+<div class="code nottested">        ///&lt;/summary&gt;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // DOM ready check: head.ready(document, function() { });</div>
+<div class="code nottested">        if (key === doc) {</div>
+<div class="code nottested">            if (isDomReady) {</div>
+<div class="code nottested">                one(callback);</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">            else {</div>
+<div class="code nottested">                domWaiters.push(callback);</div>
+<div class="code nottested">            }</div>
+<div class="code nottested"></div>
+<div class="code nottested">            return api;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // shift arguments</div>
+<div class="code nottested">        if (isFunction(key)) {</div>
+<div class="code nottested">            callback = key;</div>
+<div class="code nottested">            key      = "ALL";</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // make sure arguments are sane</div>
+<div class="code nottested">        if (typeof key !== 'string' || !isFunction(callback)) {</div>
+<div class="code nottested">            return api;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // This can also be called when we trigger events based on filenames & labels</div>
+<div class="code nottested">        var asset = assets[key];</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // item already loaded --&gt; execute and return</div>
+<div class="code nottested">        if (asset && asset.state === LOADED || key === 'ALL' && allLoaded() && isDomReady) {</div>
+<div class="code nottested">            one(callback);</div>
+<div class="code nottested">            return api;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        var arr = handlers[key];</div>
+<div class="code nottested">        if (!arr) {</div>
+<div class="code nottested">            arr = handlers[key] = [callback];</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        else {</div>
+<div class="code nottested">            arr.push(callback);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        return api;</div>
+<div class="code nottested">    };</div>
+<div class="code nottested"></div>
+<div class="code nottested"></div>
+<div class="code nottested">    // perform this when DOM is ready</div>
+<div class="code nottested">    api.ready(doc, function () {</div>
+<div class="code nottested"></div>
+<div class="code nottested">        if (allLoaded()) {</div>
+<div class="code nottested">            each(handlers.ALL, function (callback) {</div>
+<div class="code nottested">                one(callback);</div>
+<div class="code nottested">            });</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        if (api.feature) {</div>
+<div class="code nottested">            api.feature("domloaded", true);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    });</div>
+<div class="code nottested"></div>
+<div class="code nottested"></div>
+<div class="code nottested">    /* private functions</div>
+<div class="code nottested">    *********************/</div>
+<div class="code nottested">    function noop() {</div>
+<div class="code nottested">        // does nothing</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function each(arr, callback) {</div>
+<div class="code nottested">        if (!arr) {</div>
+<div class="code nottested">            return;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // arguments special type</div>
+<div class="code nottested">        if (typeof arr === 'object') {</div>
+<div class="code nottested">            arr = [].slice.call(arr);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // do the job</div>
+<div class="code nottested">        for (var i = 0, l = arr.length; i &lt; l; i++) {</div>
+<div class="code nottested">            callback.call(arr, arr[i], i);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    /* A must read: http://bonsaiden.github.com/JavaScript-Garden</div>
+<div class="code nottested">     ************************************************************/</div>
+<div class="code nottested">    function is(type, obj) {</div>
+<div class="code nottested">        var clas = Object.prototype.toString.call(obj).slice(8, -1);</div>
+<div class="code nottested">        return obj !== undefined && obj !== null && clas === type;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function isFunction(item) {</div>
+<div class="code nottested">        return is("Function", item);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function isArray(item) {</div>
+<div class="code nottested">        return is("Array", item);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function toLabel(url) {</div>
+<div class="code nottested">        ///&lt;summary&gt;Converts a url to a file label</summary></div>
+<div class="code nottested">        var items = url.split("/"),</div>
+<div class="code nottested">             name = items[items.length - 1],</div>
+<div class="code nottested">             i    = name.indexOf("?");</div>
+<div class="code nottested"></div>
+<div class="code nottested">        return i !== -1 ? name.substring(0, i) : name;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // INFO: this look like a "im triggering callbacks all over the place, but only wanna run it one time function" ..should try to make everything work without it if possible</div>
+<div class="code nottested">    // INFO: Even better. Look into promises/defered's like jQuery is doing</div>
+<div class="code nottested">    function one(callback) {</div>
+<div class="code nottested">        ///&lt;summary&gt;Execute a callback only once</summary></div>
+<div class="code nottested">        callback = callback || noop;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        if (callback._done) {</div>
+<div class="code nottested">            return;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        callback();</div>
+<div class="code nottested">        callback._done = 1;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function getAsset(item) {</div>
+<div class="code nottested">        ///&lt;summary&gt;</div>
+<div class="code nottested">        /// Assets are in the form of</div>
+<div class="code nottested">        /// { </div>
+<div class="code nottested">        ///     name : label,</div>
+<div class="code nottested">        ///     url  : url,</div>
+<div class="code nottested">        ///     state: state</div>
+<div class="code nottested">        /// }</div>
+<div class="code nottested">        ///&lt;/summary&gt;</div>
+<div class="code nottested">        var asset = {};</div>
+<div class="code nottested"></div>
+<div class="code nottested">        if (typeof item === 'object') {</div>
+<div class="code nottested">            for (var label in item) {</div>
+<div class="code nottested">                if (!!item[label]) {</div>
+<div class="code nottested">                    asset = {</div>
+<div class="code nottested">                        name: label,</div>
+<div class="code nottested">                        url : item[label],</div>
+<div class="code nottested">                        charset: item[label].split("#")[1]||"utf-8"</div>
+<div class="code nottested">                    };</div>
+<div class="code nottested">                }</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        else {</div>
+<div class="code nottested">            asset = {</div>
+<div class="code nottested">                name: toLabel(item),</div>
+<div class="code nottested">                url : item,</div>
+<div class="code nottested">                charset: item.split("#")[1]||"utf-8"</div>
+<div class="code nottested">            };</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // is the item already existant</div>
+<div class="code nottested">        var existing = assets[asset.name];</div>
+<div class="code nottested">        if (existing && existing.url === asset.url) {</div>
+<div class="code nottested">            return existing;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        assets[asset.name] = asset;</div>
+<div class="code nottested">        return asset;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function allLoaded(items) {</div>
+<div class="code nottested">        items = items || assets;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        for (var name in items) {</div>
+<div class="code nottested">            if (items.hasOwnProperty(name) && items[name].state !== LOADED) {</div>
+<div class="code nottested">                return false;</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        </div>
+<div class="code nottested">        return true;</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested"></div>
+<div class="code nottested">    function onPreload(asset) {</div>
+<div class="code nottested">        asset.state = PRELOADED;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        each(asset.onpreload, function (afterPreload) {</div>
+<div class="code nottested">            afterPreload.call();</div>
+<div class="code nottested">        });</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function preLoad(asset, callback) {</div>
+<div class="code nottested">        if (asset.state === undefined) {</div>
+<div class="code nottested"></div>
+<div class="code nottested">            asset.state     = PRELOADING;</div>
+<div class="code nottested">            asset.onpreload = [];</div>
+<div class="code nottested"></div>
+<div class="code nottested">            loadAsset({ url: asset.url, type: 'cache', charset: asset.charset }, function () {</div>
+<div class="code nottested">                onPreload(asset);</div>
+<div class="code nottested">            });</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function load(asset, callback) {</div>
+<div class="code nottested">        ///&lt;summary&gt;Used with normal loading logic</summary></div>
+<div class="code nottested">        callback = callback || noop;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        if (asset.state === LOADED) {</div>
+<div class="code nottested">            callback();</div>
+<div class="code nottested">            return;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // INFO: why would we trigger a ready event when its not really loaded yet ?</div>
+<div class="code nottested">        if (asset.state === LOADING) {</div>
+<div class="code nottested">            api.ready(asset.name, callback);</div>
+<div class="code nottested">            return;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        if (asset.state === PRELOADING) {</div>
+<div class="code nottested">            asset.onpreload.push(function () {</div>
+<div class="code nottested">                load(asset, callback);</div>
+<div class="code nottested">            });</div>
+<div class="code nottested">            return;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        asset.state = LOADING;</div>
+<div class="code nottested">        </div>
+<div class="code nottested">        loadAsset(asset, function () {</div>
+<div class="code nottested">            asset.state = LOADED;</div>
+<div class="code nottested">            callback();</div>
+<div class="code nottested"></div>
+<div class="code nottested">            // handlers for this asset</div>
+<div class="code nottested">            each(handlers[asset.name], function (fn) {</div>
+<div class="code nottested">                one(fn);</div>
+<div class="code nottested">            });</div>
+<div class="code nottested"></div>
+<div class="code nottested">            // dom is ready & no assets are queued for loading</div>
+<div class="code nottested">            // INFO: shouldn't we be doing the same test above ?</div>
+<div class="code nottested">            if (isDomReady && allLoaded()) {</div>
+<div class="code nottested">                each(handlers.ALL, function (fn) {</div>
+<div class="code nottested">                    one(fn);</div>
+<div class="code nottested">                });</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">        });</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    /* Parts inspired from: https://github.com/cujojs/curl</div>
+<div class="code nottested">    ******************************************************/</div>
+<div class="code nottested">    function loadAsset(asset, callback) {</div>
+<div class="code nottested">        callback = callback || noop;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        var ele;</div>
+<div class="code nottested">        if (/\.css[^\.]*$/.test(asset.url)) {</div>
+<div class="code nottested">            ele      = doc.createElement('link');</div>
+<div class="code nottested">            ele.type = 'text/' + (asset.type || 'css');</div>
+<div class="code nottested">            ele.rel  = 'stylesheet';</div>
+<div class="code nottested">            ele.href = asset.url;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        else {</div>
+<div class="code nottested">            ele         = doc.createElement('script');</div>
+<div class="code nottested">            ele.charset = asset.charset;</div>
+<div class="code nottested">            ele.type    = 'text/' + (asset.type || 'javascript');</div>
+<div class="code nottested">            ele.src     = asset.url;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        ele.onload  = ele.onreadystatechange = process;</div>
+<div class="code nottested">        ele.onerror = error;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        /* Good read, but doesn't give much hope !</div>
+<div class="code nottested">         * http://blog.getify.com/on-script-loaders/</div>
+<div class="code nottested">         * http://www.nczonline.net/blog/2010/12/21/thoughts-on-script-loaders/</div>
+<div class="code nottested">         * https://hacks.mozilla.org/2009/06/defer/</div>
+<div class="code nottested">         */</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // ASYNC: load in parellel and execute as soon as possible</div>
+<div class="code nottested">        ele.async = false;</div>
+<div class="code nottested">        // DEFER: load in parallel but maintain execution order</div>
+<div class="code nottested">        ele.defer = false;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        function error(event) {</div>
+<div class="code nottested">            event = event || win.event;</div>
+<div class="code nottested">            </div>
+<div class="code nottested">            // need some more detailed error handling here</div>
+<div class="code nottested"></div>
+<div class="code nottested">            // release event listeners</div>
+<div class="code nottested">            ele.onload = ele.onreadystatechange = ele.onerror = null;</div>
+<div class="code nottested">                        </div>
+<div class="code nottested">            // do callback</div>
+<div class="code nottested">            callback();</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        function process(event) {</div>
+<div class="code nottested">            event = event || win.event;</div>
+<div class="code nottested"></div>
+<div class="code nottested">            // IE 7/8 (2 events on 1st load)</div>
+<div class="code nottested">            // 1) event.type = readystatechange, s.readyState = loading</div>
+<div class="code nottested">            // 2) event.type = readystatechange, s.readyState = loaded</div>
+<div class="code nottested"></div>
+<div class="code nottested">            // IE 7/8 (1 event on reload)</div>
+<div class="code nottested">            // 1) event.type = readystatechange, s.readyState = complete </div>
+<div class="code nottested"></div>
+<div class="code nottested">            // event.type === 'readystatechange' && /loaded|complete/.test(s.readyState)</div>
+<div class="code nottested"></div>
+<div class="code nottested">            // IE 9 (3 events on 1st load)</div>
+<div class="code nottested">            // 1) event.type = readystatechange, s.readyState = loading</div>
+<div class="code nottested">            // 2) event.type = readystatechange, s.readyState = loaded</div>
+<div class="code nottested">            // 3) event.type = load            , s.readyState = loaded</div>
+<div class="code nottested"></div>
+<div class="code nottested">            // IE 9 (2 events on reload)</div>
+<div class="code nottested">            // 1) event.type = readystatechange, s.readyState = complete </div>
+<div class="code nottested">            // 2) event.type = load            , s.readyState = complete </div>
+<div class="code nottested"></div>
+<div class="code nottested">            // event.type === 'load'             && /loaded|complete/.test(s.readyState)</div>
+<div class="code nottested">            // event.type === 'readystatechange' && /loaded|complete/.test(s.readyState)</div>
+<div class="code nottested"></div>
+<div class="code nottested">            // IE 10 (3 events on 1st load)</div>
+<div class="code nottested">            // 1) event.type = readystatechange, s.readyState = loading</div>
+<div class="code nottested">            // 2) event.type = load            , s.readyState = complete</div>
+<div class="code nottested">            // 3) event.type = readystatechange, s.readyState = loaded</div>
+<div class="code nottested"></div>
+<div class="code nottested">            // IE 10 (3 events on reload)</div>
+<div class="code nottested">            // 1) event.type = readystatechange, s.readyState = loaded</div>
+<div class="code nottested">            // 2) event.type = load            , s.readyState = complete</div>
+<div class="code nottested">            // 3) event.type = readystatechange, s.readyState = complete </div>
+<div class="code nottested"></div>
+<div class="code nottested">            // event.type === 'load'             && /loaded|complete/.test(s.readyState)</div>
+<div class="code nottested">            // event.type === 'readystatechange' && /complete/.test(s.readyState)</div>
+<div class="code nottested"></div>
+<div class="code nottested">            // Other Browsers (1 event on 1st load)</div>
+<div class="code nottested">            // 1) event.type = load, s.readyState = undefined</div>
+<div class="code nottested"></div>
+<div class="code nottested">            // Other Browsers (1 event on reload)</div>
+<div class="code nottested">            // 1) event.type = load, s.readyState = undefined            </div>
+<div class="code nottested"></div>
+<div class="code nottested">            // event.type == 'load' && s.readyState = undefined</div>
+<div class="code nottested"></div>
+<div class="code nottested"></div>
+<div class="code nottested">            // !doc.documentMode is for IE6/7, IE8+ have documentMode</div>
+<div class="code nottested">            if (event.type === 'load' || (/loaded|complete/.test(ele.readyState) && (!doc.documentMode || doc.documentMode &lt; 9))) {</div>
+<div class="code nottested">                // release event listeners               </div>
+<div class="code nottested">                ele.onload = ele.onreadystatechange = ele.onerror = null;</div>
+<div class="code nottested"></div>
+<div class="code nottested">                // do callback</div>
+<div class="code nottested">                callback();</div>
+<div class="code nottested">            }</div>
+<div class="code nottested"></div>
+<div class="code nottested">            // emulates error on browsers that don't create an exception</div>
+<div class="code nottested">            // INFO: timeout not clearing ..why ?</div>
+<div class="code nottested">            //asset.timeout = win.setTimeout(function () {</div>
+<div class="code nottested">            //    error({ type: "timeout" });</div>
+<div class="code nottested">            //}, 3000);</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // use insertBefore to keep IE from throwing Operation Aborted (thx Bryan Forbes!)</div>
+<div class="code nottested">        var head = doc.head || doc.getElementsByTagName('head')[0];</div>
+<div class="code nottested">        // but insert at end of head, because otherwise if it is a stylesheet, it will not ovverride values</div>
+<div class="code nottested">        head.insertBefore(ele, head.lastChild);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    /* Mix of stuff from jQuery & IEContentLoaded</div>
+<div class="code nottested">     * http://dev.w3.org/html5/spec/the-end.html#the-end</div>
+<div class="code nottested">     ***************************************************/</div>
+<div class="code nottested">    function domReady() {</div>
+<div class="code nottested">        // Make sure body exists, at least, in case IE gets a little overzealous (jQuery ticket #5443).</div>
+<div class="code nottested">        if (!doc.body) {</div>
+<div class="code nottested">            // let's not get nasty by setting a timeout too small.. (loop mania guaranteed if assets are queued)</div>
+<div class="code nottested">            win.clearTimeout(api.readyTimeout);</div>
+<div class="code nottested">            api.readyTimeout = win.setTimeout(domReady, 50);</div>
+<div class="code nottested">            return;</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        if (!isDomReady) {</div>
+<div class="code nottested">            isDomReady = true;</div>
+<div class="code nottested">            each(domWaiters, function (fn) {</div>
+<div class="code nottested">                one(fn);</div>
+<div class="code nottested">            });</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    function domContentLoaded() {</div>
+<div class="code nottested">        // W3C</div>
+<div class="code nottested">        if (doc.addEventListener) {</div>
+<div class="code nottested">            doc.removeEventListener("DOMContentLoaded", domContentLoaded, false);</div>
+<div class="code nottested">            domReady();</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // IE</div>
+<div class="code nottested">        else if (doc.readyState === "complete") {</div>
+<div class="code nottested">            // we're here because readyState === "complete" in oldIE</div>
+<div class="code nottested">            // which is good enough for us to call the dom ready!            </div>
+<div class="code nottested">            doc.detachEvent("onreadystatechange", domContentLoaded);</div>
+<div class="code nottested">            domReady();</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // Catch cases where ready() is called after the browser event has already occurred.</div>
+<div class="code nottested">    // we once tried to use readyState "interactive" here, but it caused issues like the one</div>
+<div class="code nottested">    // discovered by ChrisS here: http://bugs.jquery.com/ticket/12282#comment:15    </div>
+<div class="code nottested">    if (doc.readyState === "complete") {</div>
+<div class="code nottested">        domReady();</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // W3C</div>
+<div class="code nottested">    else if (doc.addEventListener) {</div>
+<div class="code nottested">        doc.addEventListener("DOMContentLoaded", domContentLoaded, false);</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // A fallback to window.onload, that will always work</div>
+<div class="code nottested">        win.addEventListener("load", domReady, false);</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    // IE</div>
+<div class="code nottested">    else {</div>
+<div class="code nottested">        // Ensure firing before onload, maybe late but safe also for iframes</div>
+<div class="code nottested">        doc.attachEvent("onreadystatechange", domContentLoaded);</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // A fallback to window.onload, that will always work</div>
+<div class="code nottested">        win.attachEvent("onload", domReady);</div>
+<div class="code nottested"></div>
+<div class="code nottested">        // If IE and not a frame</div>
+<div class="code nottested">        // continually check to see if the document is ready</div>
+<div class="code nottested">        var top = false;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        try {</div>
+<div class="code nottested">            top = win.frameElement == null && doc.documentElement;</div>
+<div class="code nottested">        } catch (e) { }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        if (top && top.doScroll) {</div>
+<div class="code nottested">            (function doScrollCheck() {</div>
+<div class="code nottested">                if (!isDomReady) {</div>
+<div class="code nottested">                    try {</div>
+<div class="code nottested">                        // Use the trick by Diego Perini</div>
+<div class="code nottested">                        // http://javascript.nwbox.com/IEContentLoaded/</div>
+<div class="code nottested">                        top.doScroll("left");</div>
+<div class="code nottested">                    } catch (error) {</div>
+<div class="code nottested">                        // let's not get nasty by setting a timeout too small.. (loop mania guaranteed if assets are queued)</div>
+<div class="code nottested">                        win.clearTimeout(api.readyTimeout);</div>
+<div class="code nottested">                        api.readyTimeout = win.setTimeout(doScrollCheck, 50);</div>
+<div class="code nottested">                        return;</div>
+<div class="code nottested">                    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">                    // and execute any waiting functions</div>
+<div class="code nottested">                    domReady();</div>
+<div class="code nottested">                }</div>
+<div class="code nottested">            })();</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">    }</div>
+<div class="code nottested"></div>
+<div class="code nottested">    /*</div>
+<div class="code nottested">        We wait for 300 ms before asset loading starts. for some reason this is needed</div>
+<div class="code nottested">        to make sure assets are cached. Not sure why this happens yet. A case study:</div>
+<div class="code nottested"></div>
+<div class="code nottested">        https://github.com/headjs/headjs/issues/closed#issue/83</div>
+<div class="code nottested">    */</div>
+<div class="code nottested">    setTimeout(function () {</div>
+<div class="code nottested">        isHeadReady = true;</div>
+<div class="code nottested">        each(queue, function (fn) {</div>
+<div class="code nottested">            fn();</div>
+<div class="code nottested">        });</div>
+<div class="code nottested"></div>
+<div class="code nottested">    }, 300);</div>
+<div class="code nottested"></div>
+<div class="code nottested">})(window);</div>
+<div class="code nottested">recipe = (function(global, head, Q){</div>
+<div class="code nottested">  'use strict';</div>
+<div class="code nottested"></div>
+<div class="code nottested">  var base = '',</div>
+<div class="code nottested">      method = '',</div>
+<div class="code nottested">      cache = {},</div>
+<div class="code nottested">      hasValue = function(value, array){</div>
+<div class="code nottested">        var i, len;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        for(i = 0, len = array.length; i &lt; len; i++){</div>
+<div class="code nottested">          if(value === array[i]) {</div>
+<div class="code nottested">            return true;</div>
+<div class="code nottested">          }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        return false;</div>
+<div class="code nottested">      },</div>
+<div class="code nottested">      dfd = {</div>
+<div class="code nottested">        version: Q.defer(),</div>
+<div class="code nottested">        dependencies: Q.defer()</div>
+<div class="code nottested">      },</div>
+<div class="code nottested">      uniq = function(array){</div>
+<div class="code nottested">        var i,</div>
+<div class="code nottested">            len,</div>
+<div class="code nottested">            uniqued = [];</div>
+<div class="code nottested">        for(i = 0, len = array.length; i &lt; len; i++){</div>
+<div class="code nottested">          if( !hasValue(array[i], uniqued) ){</div>
+<div class="code nottested">           uniqued.push(array[i]);</div>
+<div class="code nottested">          }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">        return uniqued;</div>
+<div class="code nottested">      },</div>
+<div class="code nottested">      define = function(dependencies, callback){</div>
+<div class="code nottested">        var exports = recipe.exports,</div>
+<div class="code nottested">            variables = [],</div>
+<div class="code nottested">            variable,</div>
+<div class="code nottested">            i,</div>
+<div class="code nottested">            length = dependencies.length;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        for(i=0;i&lt;length;i++){</div>
+<div class="code nottested">          if(dependencies[i] === 'exports'){</div>
+<div class="code nottested">            variables.push(recipe.exports);</div>
+<div class="code nottested">          } else {</div>
+<div class="code nottested">            variable = recipe.exports[dependencies[i]];</div>
+<div class="code nottested">            variables.push( variable );</div>
+<div class="code nottested">          }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        callback.apply( global, variables);</div>
+<div class="code nottested">      },</div>
+<div class="code nottested">      recipe = function(options){</div>
+<div class="code nottested">        var namespace,</div>
+<div class="code nottested">            exports = (options||{}).exports||{},</div>
+<div class="code nottested">            libraries = (options||{}).libraries||[],</div>
+<div class="code nottested">            scripts = (options||{}).scripts||[],</div>
+<div class="code nottested">            isAmd = (options||{}).amd||false,</div>
+<div class="code nottested">            urls = [],</div>
+<div class="code nottested">            args = [],</div>
+<div class="code nottested">            dfd = Q.defer(),</div>
+<div class="code nottested">            len,</div>
+<div class="code nottested">            deps,</div>
+<div class="code nottested">            set,</div>
+<div class="code nottested">            i;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        if(isAmd){</div>
+<div class="code nottested">          global.define = define;</div>
+<div class="code nottested"></div>
+<div class="code nottested">          for(namespace in exports){</div>
+<div class="code nottested">            recipe.exports[namespace] = exports[namespace];</div>
+<div class="code nottested">          }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested"></div>
+<div class="code nottested">        recipe.get.version().promise.then(function(version){</div>
+<div class="code nottested">          recipe.get.dependencies(isAmd).promise.then(function(dependencies){</div>
+<div class="code nottested">            for( i = 0, len = libraries.length; i&lt;len; i++){</div>
+<div class="code nottested">              namespace = libraries[i];</div>
+<div class="code nottested">              deps = dependencies[namespace];</div>
+<div class="code nottested">              if(!deps && !recipe.exports[namespace]) {</div>
+<div class="code nottested">                dfd.reject("Ingredients not found. namespace["+libraries[i]+"]");</div>
+<div class="code nottested">                return dfd;</div>
+<div class="code nottested">              }</div>
+<div class="code nottested">              if(deps){</div>
+<div class="code nottested">                urls = urls.concat( deps );</div>
+<div class="code nottested">              }</div>
+<div class="code nottested">            }</div>
+<div class="code nottested"></div>
+<div class="code nottested">            urls = uniq( urls.concat(scripts) );</div>
+<div class="code nottested">            for( i = 0, len = urls.length; i&lt;len; i++){</div>
+<div class="code nottested">              set = urls[i].split("#");</div>
+<div class="code nottested">              if(!set[0]){</div>
+<div class="code nottested">                dfd.reject("Illegal URL were exists. [\""+urls.join("\", \"")+"\"]");</div>
+<div class="code nottested">                return dfd;</div>
+<div class="code nottested">              }</div>
+<div class="code nottested">              args.push(set[0]+"?_="+version+(set[1]?"#"+set[1]:""));</div>
+<div class="code nottested">            }</div>
+<div class="code nottested"></div>
+<div class="code nottested">            if(args.length) {</div>
+<div class="code nottested">              args.push(function(){</div>
+<div class="code nottested">                dfd.resolve(recipe.get.variables(libraries, isAmd));</div>
+<div class="code nottested">              });</div>
+<div class="code nottested">              head.js.apply(head, args);</div>
+<div class="code nottested">            } else {</div>
+<div class="code nottested">              dfd.resolve(recipe.get.variables(libraries, isAmd));</div>
+<div class="code nottested">            }</div>
+<div class="code nottested"></div>
+<div class="code nottested">          });</div>
+<div class="code nottested">        });</div>
+<div class="code nottested">        return dfd.promise;</div>
+<div class="code nottested">      },</div>
+<div class="code nottested">      methods = {</div>
+<div class="code nottested">        init: function(){</div>
+<div class="code nottested">          var menu = recipe.get.menu();</div>
+<div class="code nottested">          </div>
+<div class="code nottested">          base = menu.replace(/\/[^\/]+$/, "");</div>
+<div class="code nottested">          if(!menu) {</div>
+<div class="code nottested">            throw "You might forget to order because of menu was not founded.";</div>
+<div class="code nottested">          }</div>
+<div class="code nottested"></div>
+<div class="code nottested">          recipe.setExportsFromAttribute();</div>
+<div class="code nottested">          recipe.get.version().promise.then(function(version){</div>
+<div class="code nottested">            recipe.resolve(menu, version);</div>
+<div class="code nottested">          });</div>
+<div class="code nottested"></div>
+<div class="code nottested">        },</div>
+<div class="code nottested">        resolve: function(url, version){</div>
+<div class="code nottested">          var set = url.split("#");</div>
+<div class="code nottested">          head.js(set[0]+"?_="+version+(set[1]?"#"+set[1]:""));</div>
+<div class="code nottested">        },</div>
+<div class="code nottested">        setExportsFromAttribute: function(){</div>
+<div class="code nottested">          var script = recipe.get.recipeTag()|| {getAttribute: function(){}},</div>
+<div class="code nottested">              exports = (script.getAttribute('data-exports')||'').split(','),</div>
+<div class="code nottested">              jQueryNoConflict = script.getAttribute('data-jquery-noconflict'),</div>
+<div class="code nottested">              i,</div>
+<div class="code nottested">              len,</div>
+<div class="code nottested">              namespace,</div>
+<div class="code nottested">              variable;</div>
+<div class="code nottested"></div>
+<div class="code nottested">          for(i=0, len=exports.length; i &lt; len; i++){</div>
+<div class="code nottested">            namespace = exports[i];</div>
+<div class="code nottested">            if(namespace){</div>
+<div class="code nottested">              variable = global[namespace];</div>
+<div class="code nottested">              if(namespace === 'jQuery' && jQueryNoConflict ){</div>
+<div class="code nottested">                variable = global.jQuery.noConflict(jQueryNoConflict === "true" ? true : undefined);</div>
+<div class="code nottested">              }</div>
+<div class="code nottested">              recipe.exports[namespace] = variable;</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">          }</div>
+<div class="code nottested">        },</div>
+<div class="code nottested">        get: {</div>
+<div class="code nottested">          recipeTag: function(){</div>
+<div class="code nottested">            var scripts,</div>
+<div class="code nottested">                i,</div>
+<div class="code nottested">                len,</div>
+<div class="code nottested">                script,</div>
+<div class="code nottested">                src;</div>
+<div class="code nottested"></div>
+<div class="code nottested">            if(cache.recipeTag){</div>
+<div class="code nottested">              return cache.recipeTag;</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">            scripts = document.getElementsByTagName("script");</div>
+<div class="code nottested"></div>
+<div class="code nottested">            if(scripts){</div>
+<div class="code nottested">              for(i=0, len = scripts.length; i&lt;len; i++){</div>
+<div class="code nottested">                script = scripts[i];</div>
+<div class="code nottested">                src = script.src || "";</div>
+<div class="code nottested">                if( /\/recipe\.js(\?.*)?$/.test( src ) && script.getAttribute('data-menu')){</div>
+<div class="code nottested">                  cache.recipeTag = script;</div>
+<div class="code nottested">                  return script;</div>
+<div class="code nottested">                }</div>
+<div class="code nottested">              }</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">          },</div>
+<div class="code nottested">          menu: function(){</div>
+<div class="code nottested">            var script = recipe.get.recipeTag() || {getAttribute:function(){}},</div>
+<div class="code nottested">                menu = script.getAttribute("data-menu"),</div>
+<div class="code nottested">                url = (script.getAttribute("src")||"").replace(/[^\/]+$/, "")+menu+".js";</div>
+<div class="code nottested">            return menu ? url : "";</div>
+<div class="code nottested">          },</div>
+<div class="code nottested">          version: function(){</div>
+<div class="code nottested">            if( !recipe.version ) {</div>
+<div class="code nottested">              head.js(base+'/recipe.version.js?_='+(new Date().getTime()), function(){</div>
+<div class="code nottested">                dfd.version.resolve(recipe.version);</div>
+<div class="code nottested">              });</div>
+<div class="code nottested">            } else {</div>
+<div class="code nottested">              dfd.version.resolve(recipe.version);</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">            return dfd.version;</div>
+<div class="code nottested">          },</div>
+<div class="code nottested">          dependencies: function(isAmd){</div>
+<div class="code nottested">            if(!recipe.dependencies) {</div>
+<div class="code nottested">              head.js(base+'/recipe.'+(isAmd?'amd.':'')+'dependencies.js?_='+recipe.version, function(){</div>
+<div class="code nottested">                dfd.dependencies.resolve(recipe.dependencies);</div>
+<div class="code nottested">              });</div>
+<div class="code nottested">            } else {</div>
+<div class="code nottested">              dfd.dependencies.resolve(recipe.dependencies);</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">            return dfd.dependencies;</div>
+<div class="code nottested">          },</div>
+<div class="code nottested">          variables: function(libraries, isAmd){</div>
+<div class="code nottested">            var variables = {},</div>
+<div class="code nottested">                exports = recipe.exports,</div>
+<div class="code nottested">                namespace,</div>
+<div class="code nottested">                i, len;</div>
+<div class="code nottested"></div>
+<div class="code nottested">            if(isAmd) {</div>
+<div class="code nottested">              for(i=0, len=libraries.length; i&lt;len; i++){</div>
+<div class="code nottested">                namespace = libraries[i];</div>
+<div class="code nottested">                variables[namespace] = exports[namespace];</div>
+<div class="code nottested">              }</div>
+<div class="code nottested">              return variables;</div>
+<div class="code nottested">            }</div>
+<div class="code nottested">          }</div>
+<div class="code nottested">        }</div>
+<div class="code nottested">      };</div>
+<div class="code nottested"></div>
+<div class="code nottested">  for(method in methods){</div>
+<div class="code nottested">    recipe[method] = methods[method];</div>
+<div class="code nottested">  }</div>
+<div class="code nottested">  recipe.exports = recipe.exports || {Q:Q};</div>
+<div class="code nottested"></div>
+<div class="code nottested">  recipe.init();</div>
+<div class="code nottested">  return recipe;</div>
+<div class="code nottested">})(this, head, Q);</div>
+<div class="code nottested">})();</div>
+<div class="code nottested"></div>
+
+
+</body>
+</html>
