@@ -11,7 +11,7 @@
     "grunt-contrib-watch": "~0.4.4",
     "grunt-devtools": "~0.1.0-7",
     "grunt-recipe": "3.0.0",
-    "grunt-testem": "~0.4.0",
+    "grunt-testem": "~0.5.0",
     "grunt-contrib-uglify": "~0.2.7",
     "grunt-contrib-copy": "~0.5.0"
   },
