@@ -1,53 +1,54 @@
-PhantomJS 1.9 - init: get AMD dependencies
-PhantomJS 1.9 - resolved: AMD loading
-PhantomJS 1.9 - resolved: only libraries
-PhantomJS 1.9 - resolved: only scripts
-PhantomJS 1.9 - resolved: exports options
-PhantomJS 1.9 - resolved: no dependencies
-PhantomJS 1.9 - reject: Ingredients not found
-PhantomJS 1.9 - reject: Illegal URL were exists
-PhantomJS 1.9 - common tests: get version
-PhantomJS 1.9 - common tests: get menu
-PhantomJS 1.9 - init: get AMD dependencies
-PhantomJS 1.9 - resolved: AMD loading
-PhantomJS 1.9 - resolved: only libraries
-PhantomJS 1.9 - resolved: only scripts
-PhantomJS 1.9 - resolved: exports options
-PhantomJS 1.9 - resolved: no dependencies
-PhantomJS 1.9 - reject: Ingredients not found
-PhantomJS 1.9 - reject: Illegal URL were exists
-PhantomJS 1.9 - reject: jQuery Loading
-PhantomJS 1.9 - reject: jQuery with other library Loading
-PhantomJS 1.9 - common tests: get version
-PhantomJS 1.9 - common tests: get menu
-PhantomJS 1.9 - init: get dependencies
-PhantomJS 1.9 - resolved: recipe
-PhantomJS 1.9 - resolved: only libraries
-PhantomJS 1.9 - resolved: only scripts
-PhantomJS 1.9 - resolved: no dependencies
-PhantomJS 1.9 - reject: Ingredients not found
-PhantomJS 1.9 - reject: Illegal URL were exists
-PhantomJS 1.9 - missing menu: recipe
-PhantomJS 1.9 - common tests: get version
-PhantomJS 1.9 - common tests: get menu
-PhantomJS 1.9 - init: get AMD dependencies
-PhantomJS 1.9 - resolved: AMD loading
-PhantomJS 1.9 - resolved: only libraries
-PhantomJS 1.9 - resolved: only scripts
-PhantomJS 1.9 - resolved: exports options
-PhantomJS 1.9 - resolved: no dependencies
-PhantomJS 1.9 - reject: Ingredients not found
-PhantomJS 1.9 - reject: Illegal URL were exists
-PhantomJS 1.9 - common tests: get version
-PhantomJS 1.9 - common tests: get menu
-PhantomJS 1.9 - init: get AMD dependencies
-PhantomJS 1.9 - resolved: AMD loading
-PhantomJS 1.9 - resolved: only libraries
-PhantomJS 1.9 - resolved: only scripts
-PhantomJS 1.9 - resolved: exports options
-PhantomJS 1.9 - resolved: no dependencies
-PhantomJS 1.9 - reject: Ingredients not found
-PhantomJS 1.9 - reject: Illegal URL were exists
+# Whole lists of tests
+# PhantomJS 1.9 - init: get AMD dependencies
+# PhantomJS 1.9 - resolved: AMD loading
+# PhantomJS 1.9 - resolved: only libraries
+# PhantomJS 1.9 - resolved: only scripts
+# PhantomJS 1.9 - resolved: exports options
+# PhantomJS 1.9 - resolved: no dependencies
+# PhantomJS 1.9 - reject: Ingredients not found
+# PhantomJS 1.9 - reject: Illegal URL were exists
+# PhantomJS 1.9 - common tests: get version
+# PhantomJS 1.9 - common tests: get menu
+# PhantomJS 1.9 - init: get AMD dependencies
+# PhantomJS 1.9 - resolved: AMD loading
+# PhantomJS 1.9 - resolved: only libraries
+# PhantomJS 1.9 - resolved: only scripts
+# PhantomJS 1.9 - resolved: exports options
+# PhantomJS 1.9 - resolved: no dependencies
+# PhantomJS 1.9 - reject: Ingredients not found
+# PhantomJS 1.9 - reject: Illegal URL were exists
+# PhantomJS 1.9 - reject: jQuery Loading
+# PhantomJS 1.9 - reject: jQuery with other library Loading
+# PhantomJS 1.9 - common tests: get version
+# PhantomJS 1.9 - common tests: get menu
+# PhantomJS 1.9 - init: get dependencies
+# PhantomJS 1.9 - resolved: recipe
+# PhantomJS 1.9 - resolved: only libraries
+# PhantomJS 1.9 - resolved: only scripts
+# PhantomJS 1.9 - resolved: no dependencies
+# PhantomJS 1.9 - reject: Ingredients not found
+# PhantomJS 1.9 - reject: Illegal URL were exists
+# PhantomJS 1.9 - missing menu: recipe
+# PhantomJS 1.9 - common tests: get version
+# PhantomJS 1.9 - common tests: get menu
+# PhantomJS 1.9 - init: get AMD dependencies
+# PhantomJS 1.9 - resolved: AMD loading
+# PhantomJS 1.9 - resolved: only libraries
+# PhantomJS 1.9 - resolved: only scripts
+# PhantomJS 1.9 - resolved: exports options
+# PhantomJS 1.9 - resolved: no dependencies
+# PhantomJS 1.9 - reject: Ingredients not found
+# PhantomJS 1.9 - reject: Illegal URL were exists
+# PhantomJS 1.9 - common tests: get version
+# PhantomJS 1.9 - common tests: get menu
+# PhantomJS 1.9 - init: get AMD dependencies
+# PhantomJS 1.9 - resolved: AMD loading
+# PhantomJS 1.9 - resolved: only libraries
+# PhantomJS 1.9 - resolved: only scripts
+# PhantomJS 1.9 - resolved: exports options
+# PhantomJS 1.9 - resolved: no dependencies
+# PhantomJS 1.9 - reject: Ingredients not found
+# PhantomJS 1.9 - reject: Illegal URL were exists
 
 1..50
 # tests 50
