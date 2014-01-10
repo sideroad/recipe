@@ -1,4 +1,4 @@
-define(["exports"], function(exports){
+define("whitefish", [], function(){
 var whitefish = true;
-;exports["whitefish"] = whitefish;
+;return whitefish;
 });

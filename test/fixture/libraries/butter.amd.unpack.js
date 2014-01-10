@@ -1,6 +1,6 @@
-define(["salt","milk","exports"], function(salt,milk,exports){
+define("butter", ["salt","milk"], function(salt,milk){
 var butter = {
   consistOf: [salt, milk]
 };
-;exports["butter"] = butter;
+;return butter;
 });

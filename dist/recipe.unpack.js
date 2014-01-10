@@ -3,7 +3,7 @@
  * Author     sideroad
  * License    MIT
  *
- * Version    2.1.0
+ * Version    3.1.0
  * https://github.com/sideroad/recipe/
  */
 (function(){
@@ -2631,8 +2631,9 @@ recipe = (function(global, head, Q){
             i;
 
         if(isAmd){
-          global.define = define;
-          global.define.amd = {};
+          if(!global.define){
+            global.define = define;
+          }
 
           for(namespace in exports){
             recipe.exports[namespace] = exports[namespace];
@@ -2786,6 +2787,7 @@ recipe = (function(global, head, Q){
     recipe[method] = methods[method];
   }
   recipe.exports = recipe.exports || {Q:Q};
+  define.amd = {};
 
   recipe.init();
   return recipe;

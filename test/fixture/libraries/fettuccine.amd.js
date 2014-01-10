@@ -1,1 +1,1 @@
-define(["exports"],function(a){var b={};a.fettuccine=b});
+define("fettuccine",[],function(){var a={};return a});

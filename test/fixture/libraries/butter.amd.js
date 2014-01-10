@@ -1,1 +1,1 @@
-define(["salt","milk","exports"],function(a,b,c){var d={consistOf:[a,b]};c.butter=d});
+define("butter",["salt","milk"],function(a,b){var c={consistOf:[a,b]};return c});

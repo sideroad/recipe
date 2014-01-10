@@ -1,1 +1,1 @@
-define(["exports"],function(a){var b=!0;a.whitefish=b});
+define("whitefish",[],function(){var a=!0;return a});

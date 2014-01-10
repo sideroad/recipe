@@ -3,7 +3,7 @@
  * Author     sideroad
  * License    MIT
  *
- * Version    2.0.0
+ * Version    2.1.0
  * https://github.com/sideroad/recipe/
  */
 (function(){
@@ -2595,23 +2595,26 @@ recipe = (function(global, head, Q){
         }
         return uniqued;
       },
-      define = function(dependencies, callback){
+      define = function(id, deps, callback){
         var exports = recipe.exports,
+            exported,
             variables = [],
             variable,
             i,
-            length = dependencies.length;
+            length = deps.length;
+
+        //initialize namespace
 
         for(i=0;i<length;i++){
-          if(dependencies[i] === 'exports'){
-            variables.push(recipe.exports);
-          } else {
-            variable = recipe.exports[dependencies[i]];
-            variables.push( variable );
-          }
+          variable = recipe.exports[deps[i]];
+          variables.push( variable );
         }
 
-        callback.apply( global, variables);
+        exported = callback.apply( global, variables);
+
+        if(exported) {
+          recipe.exports[id] = exported;
+        }
       },
       recipe = function(options){
         var namespace,
@@ -2629,6 +2632,7 @@ recipe = (function(global, head, Q){
 
         if(isAmd){
           global.define = define;
+          global.define.amd = {};
 
           for(namespace in exports){
             recipe.exports[namespace] = exports[namespace];

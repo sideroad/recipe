@@ -1,4 +1,4 @@
-define(["exports"], function(exports){
+define("milk", [], function(){
 var milk = true;
-;exports["milk"] = milk;
+;return milk;
 });
