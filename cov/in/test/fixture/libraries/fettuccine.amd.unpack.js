@@ -1,4 +1,4 @@
-define(["exports"], function(exports){
+define("fettuccine", [], function(){
 var fettuccine = {};
-;exports["fettuccine"] = fettuccine;
+;return fettuccine;
 });

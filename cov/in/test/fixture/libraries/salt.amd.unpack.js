@@ -1,4 +1,4 @@
-define(["exports"], function(exports){
+define("salt", [], function(){
 var salt = true;
-;exports["salt"] = salt;
+;return salt;
 });

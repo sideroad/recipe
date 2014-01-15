@@ -1,6 +1,6 @@
-define(["salt","milk","exports"], function(salt,milk,exports){
+define("parmigianoReggiano", ["salt","milk"], function(salt,milk){
 var parmigianoReggiano = {
   consistOf: [salt, milk]
 };
-;exports["parmigianoReggiano"] = parmigianoReggiano;
+;return parmigianoReggiano;
 });

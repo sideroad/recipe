@@ -1,5 +1,5 @@
-define(["exports"], function(exports){
+define("pomodorini", [], function(){
 var pomodorini = true;
 
-;exports["pomodorini"] = pomodorini;
+;return pomodorini;
 });

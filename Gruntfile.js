@@ -44,7 +44,14 @@ module.exports = function(grunt) {
     },
 
     uglify: {
-      'dist/recipe.js': ['dist/recipe.unpack.js']
+      options: {
+        preserveComments: 'some'
+      },
+      recipe: {
+        files: {
+          'dist/recipe.js': ['dist/recipe.unpack.js']
+        }
+      }
     },
 
     jshint: ['src/recipe.js'],

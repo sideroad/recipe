@@ -1,1 +1,1 @@
-define(["salt","milk","exports"],function(a,b,c){var d={consistOf:[a,b]};c.parmigianoReggiano=d});
+define("parmigianoReggiano",["salt","milk"],function(a,b){var c={consistOf:[a,b]};return c});

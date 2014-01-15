@@ -1,5 +1,5 @@
-define(["fettuccine","salt","milk","butter","parmigianoReggiano","exports"], function(fettuccine,salt,milk,butter,parmigianoReggiano,exports){
+define("fettuccine.alfredo", ["fettuccine","salt","milk","butter","parmigianoReggiano"], function(fettuccine,salt,milk,butter,parmigianoReggiano){
 fettuccine.alfredo = true;
 
-;exports["fettuccine.alfredo"] = fettuccine.alfredo;
+;return fettuccine.alfredo;
 });

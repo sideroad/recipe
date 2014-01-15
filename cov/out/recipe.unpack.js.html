@@ -32,7 +32,7 @@
 <div class="code nottested"> * Author     sideroad</div>
 <div class="code nottested"> * License    MIT</div>
 <div class="code nottested"> *</div>
-<div class="code nottested"> * Version    2.0.0</div>
+<div class="code nottested"> * Version    3.1.0</div>
 <div class="code nottested"> * https://github.com/sideroad/recipe/</div>
 <div class="code nottested"> */</div>
 <div class="code nottested">(function(){</div>
@@ -2624,23 +2624,26 @@
 <div class="code nottested">        }</div>
 <div class="code nottested">        return uniqued;</div>
 <div class="code nottested">      },</div>
-<div class="code nottested">      define = function(dependencies, callback){</div>
+<div class="code nottested">      define = function(id, deps, callback){</div>
 <div class="code nottested">        var exports = recipe.exports,</div>
+<div class="code nottested">            exported,</div>
 <div class="code nottested">            variables = [],</div>
 <div class="code nottested">            variable,</div>
 <div class="code nottested">            i,</div>
-<div class="code nottested">            length = dependencies.length;</div>
+<div class="code nottested">            length = deps.length;</div>
+<div class="code nottested"></div>
+<div class="code nottested">        //initialize namespace</div>
 <div class="code nottested"></div>
 <div class="code nottested">        for(i=0;i&lt;length;i++){</div>
-<div class="code nottested">          if(dependencies[i] === 'exports'){</div>
-<div class="code nottested">            variables.push(recipe.exports);</div>
-<div class="code nottested">          } else {</div>
-<div class="code nottested">            variable = recipe.exports[dependencies[i]];</div>
-<div class="code nottested">            variables.push( variable );</div>
-<div class="code nottested">          }</div>
+<div class="code nottested">          variable = recipe.exports[deps[i]];</div>
+<div class="code nottested">          variables.push( variable );</div>
 <div class="code nottested">        }</div>
 <div class="code nottested"></div>
-<div class="code nottested">        callback.apply( global, variables);</div>
+<div class="code nottested">        exported = callback.apply( global, variables);</div>
+<div class="code nottested"></div>
+<div class="code nottested">        if(exported) {</div>
+<div class="code nottested">          recipe.exports[id] = exported;</div>
+<div class="code nottested">        }</div>
 <div class="code nottested">      },</div>
 <div class="code nottested">      recipe = function(options){</div>
 <div class="code nottested">        var namespace,</div>
@@ -2657,7 +2660,9 @@
 <div class="code nottested">            i;</div>
 <div class="code nottested"></div>
 <div class="code nottested">        if(isAmd){</div>
-<div class="code nottested">          global.define = define;</div>
+<div class="code nottested">          if(!global.define){</div>
+<div class="code nottested">            global.define = define;</div>
+<div class="code nottested">          }</div>
 <div class="code nottested"></div>
 <div class="code nottested">          for(namespace in exports){</div>
 <div class="code nottested">            recipe.exports[namespace] = exports[namespace];</div>
@@ -2811,6 +2816,7 @@
 <div class="code nottested">    recipe[method] = methods[method];</div>
 <div class="code nottested">  }</div>
 <div class="code nottested">  recipe.exports = recipe.exports || {Q:Q};</div>
+<div class="code nottested">  define.amd = {};</div>
 <div class="code nottested"></div>
 <div class="code nottested">  recipe.init();</div>
 <div class="code nottested">  return recipe;</div>

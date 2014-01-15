@@ -1,1 +1,1 @@
-define(["exports"],function(a){var b=!0;a.salt=b});
+define("salt",[],function(){var a=!0;return a});

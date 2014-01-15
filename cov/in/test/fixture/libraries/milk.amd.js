@@ -1,1 +1,1 @@
-define(["exports"],function(a){var b=!0;a.milk=b});
+define("milk",[],function(){var a=!0;return a});
