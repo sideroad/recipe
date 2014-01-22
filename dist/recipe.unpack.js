@@ -3,7 +3,7 @@
  * Author     sideroad
  * License    MIT
  *
- * Version    3.1.0
+ * Version    4.0.0
  * https://github.com/sideroad/recipe/
  */
 (function(){
@@ -2631,8 +2631,8 @@ recipe = (function(global, head, Q){
             i;
 
         if(isAmd){
-          if(!global.define){
-            global.define = define;
+          if(!recipe.define){
+            recipe.define = define;
           }
 
           for(namespace in exports){
@@ -2675,7 +2675,12 @@ recipe = (function(global, head, Q){
 
           });
         });
-        return dfd.promise;
+        return dfd.promise.fail(function(e){
+          if(global.console && global.console.error){
+            console.error(e);
+          }
+          throw e;
+        });
       },
       methods = {
         init: function(){
