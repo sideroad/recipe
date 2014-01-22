@@ -1,1 +1,1 @@
-define("fettuccine",[],function(){var a={};return a});
+recipe.define("fettuccine",[],function(){var a={};return a});

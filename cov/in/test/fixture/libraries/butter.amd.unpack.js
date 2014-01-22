@@ -1,4 +1,4 @@
-define("butter", ["salt","milk"], function(salt,milk){
+recipe.define("butter", ["salt","milk"], function(salt,milk){
 var butter = {
   consistOf: [salt, milk]
 };

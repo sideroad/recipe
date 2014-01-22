@@ -1,4 +1,4 @@
-define("milk", [], function(){
+recipe.define("milk", [], function(){
 var milk = true;
 ;return milk;
 });

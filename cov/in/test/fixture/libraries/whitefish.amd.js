@@ -1,1 +1,1 @@
-define("whitefish",[],function(){var a=!0;return a});
+recipe.define("whitefish",[],function(){var a=!0;return a});

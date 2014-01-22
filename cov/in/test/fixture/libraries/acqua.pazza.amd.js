@@ -1,1 +1,1 @@
-define("acqua.pazza",["pomodorini","salt","whitefish"],function(a,b,c){if(!d)var d={};return d.pazza={consistOf:[a,c]},d.pazza});
+recipe.define("acqua.pazza",["pomodorini","salt","whitefish"],function(a,b,c){if(!d)var d={};return d.pazza={consistOf:[a,c]},d.pazza});

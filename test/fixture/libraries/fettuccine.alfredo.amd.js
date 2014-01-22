@@ -1,1 +1,1 @@
-define("fettuccine.alfredo",["fettuccine","salt","milk","butter","parmigianoReggiano"],function(a){return a.alfredo=!0,a.alfredo});
+recipe.define("fettuccine.alfredo",["fettuccine","salt","milk","butter","parmigianoReggiano"],function(a){return a.alfredo=!0,a.alfredo});

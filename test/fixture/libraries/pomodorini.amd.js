@@ -1,1 +1,1 @@
-define("pomodorini",[],function(){var a=!0;return a});
+recipe.define("pomodorini",[],function(){var a=!0;return a});

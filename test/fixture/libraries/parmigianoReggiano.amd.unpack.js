@@ -1,4 +1,4 @@
-define("parmigianoReggiano", ["salt","milk"], function(salt,milk){
+recipe.define("parmigianoReggiano", ["salt","milk"], function(salt,milk){
 var parmigianoReggiano = {
   consistOf: [salt, milk]
 };

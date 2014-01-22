@@ -1,4 +1,4 @@
-define("salt", [], function(){
+recipe.define("salt", [], function(){
 var salt = true;
 ;return salt;
 });

@@ -1,1 +1,1 @@
-define("salt",[],function(){var a=!0;return a});
+recipe.define("salt",[],function(){var a=!0;return a});

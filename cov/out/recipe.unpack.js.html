@@ -32,7 +32,7 @@
 <div class="code nottested"> * Author     sideroad</div>
 <div class="code nottested"> * License    MIT</div>
 <div class="code nottested"> *</div>
-<div class="code nottested"> * Version    3.1.0</div>
+<div class="code nottested"> * Version    4.0.0</div>
 <div class="code nottested"> * https://github.com/sideroad/recipe/</div>
 <div class="code nottested"> */</div>
 <div class="code nottested">(function(){</div>
@@ -2660,8 +2660,8 @@
 <div class="code nottested">            i;</div>
 <div class="code nottested"></div>
 <div class="code nottested">        if(isAmd){</div>
-<div class="code nottested">          if(!global.define){</div>
-<div class="code nottested">            global.define = define;</div>
+<div class="code nottested">          if(!recipe.define){</div>
+<div class="code nottested">            recipe.define = define;</div>
 <div class="code nottested">          }</div>
 <div class="code nottested"></div>
 <div class="code nottested">          for(namespace in exports){</div>
@@ -2704,7 +2704,12 @@
 <div class="code nottested"></div>
 <div class="code nottested">          });</div>
 <div class="code nottested">        });</div>
-<div class="code nottested">        return dfd.promise;</div>
+<div class="code nottested">        return dfd.promise.fail(function(e){</div>
+<div class="code nottested">          if(global.console && global.console.error){</div>
+<div class="code nottested">            console.error(e);</div>
+<div class="code nottested">          }</div>
+<div class="code nottested">          throw e;</div>
+<div class="code nottested">        });</div>
 <div class="code nottested">      },</div>
 <div class="code nottested">      methods = {</div>
 <div class="code nottested">        init: function(){</div>
