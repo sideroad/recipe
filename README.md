@@ -1,4 +1,5 @@
-# Cook your javascript with recipe.js[![Build Status](https://api.travis-ci.org/sideroad/recipe.png?branch=master)](https://travis-ci.org/sideroad/recipe)
+# Cook your javascript with recipe.js[![Build Status](https://api.travis-ci.org/sideroad/recipe.png?branch=master)](https://travis-ci.org/sideroad/recipe)[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/sideroad/recipe/trend.png)](https://bitdeli.com/free "Bitdeli Badge")[![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
+
 
 
 ## Overview
